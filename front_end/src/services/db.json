@@ -850,6 +850,5 @@
       "respuesta": "No participar",
       "fecha": "5/8/2026, 3:05:32 PM"
     }
-  ],
-  "$schema": "./node_modules/json-server/schema.json"
+  ]
 }

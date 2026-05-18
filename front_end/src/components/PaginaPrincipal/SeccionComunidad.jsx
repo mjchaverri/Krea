@@ -53,10 +53,10 @@ function ComunidadMockup() {
 
                 {/* Card evento */}
                 <div className="com-event-card">
-                    <div className="com-event-badge">PRÓXIMO EVENTO</div>
-                    <p className="com-event-title">Webinar: Future of AI en Diseño</p>
+                    <div className="com-event-badge">NUEVA CONVOCATORIA</div>
+                    <p className="com-event-title">!Atención! Nueva convocatoria abierta:</p>
                     <div className="com-event-meta">
-                        <i className="fa-regular fa-calendar" /> Jue 22 May · 6:00 PM
+                        <i className="fa-regular fa-calendar" /> Hasta el 25 de Mayo
                     </div>
                     <button className="com-event-btn">Participar</button>
                 </div>

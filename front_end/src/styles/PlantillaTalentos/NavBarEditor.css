@@ -26,29 +26,30 @@
   gap: 12px;
 }
 
-.logo-icon {
-  font-size: 22px;
-  color: #3b82f6;
+.navbar-editor__logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0ea5e9;
+  letter-spacing: -0.5px;
+  cursor: pointer;
 }
 
-/* TITULO */
-.navbar-editor__title h1 {
-  font-size: 16px;
-  margin: 0;
-  font-weight: 600;
-  color: #1f2937;
+.navbar-editor__divider {
+  width: 1px;
+  height: 20px;
+  background: #d1d5db;
 }
 
-.navbar-editor__title p {
-  font-size: 12px;
-  margin: 0;
-  color: #6b7280;
+.navbar-editor__subtitle {
+  font-size: 13px;
+  color: #7f8c8d;
+  font-weight: 400;
 }
 
 /* CENTER */
 .navbar-editor__center {
   display: flex;
-  gap: 30px;
+  gap: 2.5rem;
 
   position: absolute;
   left: 50%;
@@ -57,14 +58,30 @@
 
 .navbar-editor__center a {
   text-decoration: none;
-  color: #4b5563;
+  color: #2c3e50;
   font-size: 14px;
   font-weight: 500;
-  transition: 0.2s;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar-editor__center a::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #0ea5e9;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .navbar-editor__center a:hover {
-  color: #111827;
+  color: #0ea5e9;
+}
+
+.navbar-editor__center a:hover::after {
+  width: 100%;
 }
 
 /* RIGHT */
@@ -74,29 +91,28 @@
   gap: 12px;
 }
 
-/* BOTÓN PREVIEW */
+/* BOTÓN PREVIEW — estilo ghost (BtnLogin) */
 .btn-preview {
   display: flex;
   align-items: center;
   gap: 6px;
 
   padding: 6px 12px;
-  border: 1px solid #e5e7eb;
-  background: #f9fafb;
-  border-radius: 8px;
+  border: none;
+  background: transparent;
 
   font-size: 13px;
   color: #374151;
 
   cursor: pointer;
-  transition: 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-preview:hover {
-  background: #f3f4f6;
+  color: #0ea5e9;
 }
 
-/* BOTÓN GUARDAR */
+/* BOTÓN GUARDAR — estilo primario (BtnRegister) */
 .btn-save {
   display: flex;
   align-items: center;
@@ -104,30 +120,42 @@
 
   padding: 6px 14px;
   border: none;
-  background: linear-gradient(135deg, #22c1c3, #3b82f6);
-  color: white;
+  background: #0DB9F2;
+  color: #ffffff;
 
   border-radius: 8px;
   font-size: 13px;
   font-weight: 500;
 
   cursor: pointer;
-  transition: 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-save:hover {
-  opacity: 0.9;
+  background: #0284c7;
+  transform: translateY(-1px);
 }
 
 /* AVATAR */
+.avatar-link {
+  display: flex;
+  align-items: center;
+}
+
 .avatar {
   width: 34px;
   height: 34px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #e5e7eb;
-}
-.portafolio-container {
-  margin-top: 70px; /* igual altura del navbar */
+  cursor: pointer;
+  transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.avatar:hover {
+  border-color: #0ea5e9;
+}
+
+.portafolio-container {
+  margin-top: 70px;
+}

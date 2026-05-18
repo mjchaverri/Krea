@@ -5,7 +5,7 @@ import { useEditable } from "./useEditable";
 import { useEstilos } from "./useEstilos";
 import { useState } from "react";
 
-function GrillaDoble({ onActivate, initialData, onUpdate }) {
+function GrillaDoble({ onActivate, activeElement, initialData, onUpdate }) {
 
     const handleUpdate = (key, newData) => {
         if (onUpdate) {
@@ -52,6 +52,7 @@ function GrillaDoble({ onActivate, initialData, onUpdate }) {
                 data={bloque1.state}
                 update={bloque1.update}
                 onActivate={onActivate}
+                activeElement={activeElement}
             />
 
             <EditableBlock
@@ -59,6 +60,7 @@ function GrillaDoble({ onActivate, initialData, onUpdate }) {
                 data={bloque2.state}
                 update={bloque2.update}
                 onActivate={onActivate}
+                activeElement={activeElement}
             />
 
         </div>

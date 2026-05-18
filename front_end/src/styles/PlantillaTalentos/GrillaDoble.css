@@ -1,83 +1,14 @@
-/* 🔥 GRID PRINCIPAL */
+/* ── GRILLA DOBLE ── */
 .grillaDoble__grid {
-    
-    height: 600px;
-    min-height: 600px;
+    min-height: 400px;
+    width: 100%;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-    width: 100%;
+    gap: 16px;
     padding: 20px;
-}
-
-/* 🔥 BLOQUES */
-.grillaDoble__image {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border: 1px dashed rgba(0, 0, 0, 0.2);
-    transition: border 0.2s ease;
-}
-
-/* 🔥 HOVER */
-.grillaDoble__image:hover {
-    border: 1px dashed rgba(0, 0, 0, 0.4);
-}
-
-/* 🔥 ACTIVO (tipo Canva) */
-.grillaDoble__image.activo {
-    outline: 2px solid #3b82f6;
-    outline-offset: 2px;
-    border: none;
-}
-
-/* 🔥 TEXTAREA */
-.bloque-texto {
-    position: absolute;   /* 🔥 clave */
-    top: 0;
-    left: 0;
-
-    width: 100%;
-    height: 100%;
-
-    border: none;
-    outline: none;
-    resize: none;
-
-    background: transparent;
-
-    padding: 15px;
-    font-size: 16px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* 🔥 CUANDO NO EDITAS */
-.bloque-texto[readonly] {
     cursor: pointer;
 }
 
-/* 🔥 INPUTS GENERALES */
-.input-titulo,
-.input-textbox {
-    border: 1px dashed rgba(0, 0, 0, 0.2);
-    background: transparent;
-    outline: none;
-    transition: border 0.2s ease;
-}
-
-/* cuando hay texto */
-.input-titulo:not(:placeholder-shown),
-.input-textbox:not(:placeholder-shown) {
-    border: none;
-}
-
-/* focus */
-.input-titulo:focus,
-.input-textbox:focus {
-    border: 1px dashed rgba(0, 0, 0, 0.4);
+.grillaDoble__image {
+    min-height: 340px;
 }

@@ -1,83 +1,18 @@
+/* ── ESTRUCTURA 1: BLOQUE ÚNICO CENTRADO ── */
 .est1 {
-    
-    height: 600px;
-    min-height: 600px;
+    min-height: 400px;
     width: 100%;
-
     padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
     cursor: pointer;
-    transition: all 0.3s ease;
-    border: none;
-    box-shadow: 0 0 10 rgba(0, 0, 0, 0.08);
 }
 
-/* Hover suave */
-.est1:hover {
-    border-color: #888;
-}
-
-/* Input del título */
-.est1__title {
-    background: transparent;
-    border: none;
-    outline: none;
-    font-size: 28px;
-    font-weight: bold;
-    text-align: center;
+/* El bloque interior: centrado, altura libre según contenido */
+.est1__child {
     width: 100%;
-}
-
-/* Placeholder */
-.est1__title::placeholder {
-    color: #999;
-}
-
-/* Clase reutilizable que ya usas */
-.input-titulo {
-    font-family: inherit;
-}
-
-/* 🔥 LOADING OVERLAY PARA FONDO */
-.loading-overlay-fondo {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    border-radius: 8px;
-}
-
-/* 🔥 LOADING OVERLAY PARA CHILD */
-.loading-overlay-child {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    border-radius: 8px;
-}
-
-/* 🔥 SPINNER */
-.spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3b82f6;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    min-height: 200px;
+    /* editable-block aporta: border-radius, box-shadow, cursor, flex column */
 }

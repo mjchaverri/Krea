@@ -51,10 +51,6 @@ function IniciarSesion() {
             </div>
 
             <div className='CardLogin'>
-                <div className='headerLogo'>
-                    <div className="logo-icon" style={{ width: '40px', height: '40px', background: '#0db9f2', borderRadius: '8px', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>K</div>
-                    <h3 className='TituloLogo'>Krea</h3>
-                </div>
 
                 <div className='DivForm'>
                     <h2 className='TituloPrincipal'> <strong>Iniciar sesión</strong> </h2>

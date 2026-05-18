@@ -1,12 +1,14 @@
+/* SIDEBAR */
 .sidebartalentos {
-  width: 280px;
-  height: 100vh;
-  background: #f8fafc;
-  border-left: 1px solid #e5e7eb;
-  padding: 16px;
+  width: 260px;
+  height: calc(100vh - 70px);
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  padding: 18px 14px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 14px;
+  overflow-y: auto;
 }
 
 /* HEADER */
@@ -23,48 +25,59 @@
 }
 
 .sidebartalentos__icon {
-  font-size: 18px;
-  color: #0ea5e9;
+  font-size: 16px;
+  color: #3b82f6;
 }
 
 .sidebartalentos__header h6 {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
   margin: 0;
+  color: #1f2937;
 }
 
 .sidebartalentos__badge {
-  background: #e0f2fe;
-  color: #0284c7;
+  background: #eff6ff;
+  color: #3b82f6;
   font-size: 10px;
+  font-weight: 600;
   padding: 3px 8px;
-  border-radius: 6px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
 }
 
 /* SEARCH */
 .sidebartalentos__search {
   width: 100%;
-  padding: 10px;
-  border-radius: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
   border: 1px solid #e5e7eb;
   font-size: 13px;
   outline: none;
+  background: #f9fafb;
+  color: #374151;
+  transition: border-color 0.2s;
+}
+
+.sidebartalentos__search:focus {
+  border-color: #3b82f6;
   background: #fff;
 }
 
-/* TITULOS */
+/* TITULO SECCIÓN */
 .sidebartalentos__section-title {
-  font-size: 11px;
-  font-weight: 600;
-  color: #94a3b8;
-  margin-top: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #9ca3af;
+  letter-spacing: 0.8px;
+  margin: 4px 0 0;
 }
 
 /* GRID */
 .sidebartalentos__grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap: 10px;
 }
 
 /* CARD */
@@ -74,82 +87,85 @@
   gap: 6px;
   cursor: pointer;
   text-align: center;
+  border-radius: 10px;
+  padding: 6px;
+  transition: background 0.15s;
+}
+
+.sidebartalentos__layout:hover {
+  background: #eff6ff;
+}
+
+.sidebartalentos__layout:hover .sidebartalentos__layout-preview {
+  border-color: #3b82f6;
 }
 
 .sidebartalentos__layout span {
   font-size: 11px;
-  color: #64748b;
+  color: #6b7280;
+  font-weight: 500;
 }
 
-/* PREVIEW */
+/* PREVIEW BOX */
 .sidebartalentos__layout-preview {
-  height: 70px;
-  background: #e2e8f0;
-  border-radius: 10px;
+  height: 64px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  border: 1.5px solid #e2e8f0;
   padding: 6px;
   display: grid;
   gap: 4px;
+  transition: border-color 0.15s;
 }
 
-
-
-/* 🔥 LAYOUT CENTRADO */
+/* ── LAYOUT CENTRADO ── */
 .layout-centered {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-/* CUADRO INTERNO */
 .layout-centered__box {
-  width: 75%;
-  height: 40%;
+  width: 70%;
+  height: 45%;
   background: #cbd5e1;
-  border-radius: 6px;
+  border-radius: 5px;
 }
 
-
-
-/* 🔥 LAYOUT HEADER + COLUMNA */
+/* ── LAYOUT 1:1 ── */
 .layout-header-column {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-/* fila arriba (más pequeña) */
 .layout-header-column__top {
   height: 30%;
   background: #cbd5e1;
   border-radius: 4px;
 }
 
-/* bloque abajo */
 .layout-header-column__bottom {
-  height: 70%;
+  flex: 1;
   background: #cbd5e1;
   border-radius: 4px;
 }
 
-
-
-/* 🔥 LAYOUT 1:2 PERSONALIZADO */
+/* ── LAYOUT 1:2 ── */
 .layout-1-2 {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-/* fila de arriba */
 .layout-1-2__top {
   height: 30%;
   background: #cbd5e1;
   border-radius: 4px;
 }
 
-/* fila de abajo */
 .layout-1-2__bottom {
-  height: 70%;
+  flex: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 4px;
@@ -160,30 +176,22 @@
   border-radius: 4px;
 }
 
-.layout-2 {
-  grid-template-columns: 1fr 1fr;
-}
-
-/* 🔥 LAYOUT 1:3 PREVIEW */
+/* ── LAYOUT 1:3 ── */
 .layout-1-3 {
   display: grid;
-  grid-template-rows: 30% 70%;
+  grid-template-rows: 30% 1fr;
   gap: 4px;
 }
 
-/* HEADER */
 .layout-1-3__top {
   background: #cbd5e1;
   border-radius: 4px;
 }
 
-/* CONTENIDO (3 columnas) */
 .layout-1-3__bottom {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  /* 🔥 3 columnas */
   gap: 4px;
-  margin-bottom: 4px;
 }
 
 .layout-1-3__bottom div {
@@ -191,38 +199,33 @@
   border-radius: 4px;
 }
 
-/* 🔥 LAYOUT 1:4 PREVIEW */
+/* ── LAYOUT 1:4 ── */
 .layout-1-4 {
   display: grid;
-  grid-template-rows: 30% 70%;
+  grid-template-rows: 30% 1fr;
   gap: 4px;
 }
 
-/* HEADER */
 .layout-1-4__top {
   background: #cbd5e1;
   border-radius: 4px;
 }
 
-/* CONTENIDO (4 columnas) */
 .layout-1-4__bottom {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  /* 🔥 4 columnas */
-  gap: 4px;
-  margin-bottom: 4px;
+  gap: 3px;
 }
 
 .layout-1-4__bottom div {
   background: #cbd5e1;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
-/* 🔥 LAYOUT 2 COLUMNAS */
+/* ── GRILLA DOBLE ── */
 .layout-2-cols {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  /* 👈 2 iguales */
   gap: 4px;
 }
 
@@ -231,11 +234,10 @@
   border-radius: 4px;
 }
 
-/* 🔥 LAYOUT 3 COLUMNAS */
+/* ── GRILLA TRIPLE ── */
 .layout-3-cols {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  /* 👈 3 iguales */
   gap: 4px;
 }
 
@@ -244,71 +246,16 @@
   border-radius: 4px;
 }
 
-
-
-
-/* IMAGEN */
-.sidebartalentos__image-card {
-  height: 60px;
-  background: #e2e8f0;
-  border-radius: 10px;
+/* SIN RESULTADOS */
+.sidebartalentos__empty {
+  grid-column: 1 / -1;
+  font-size: 12px;
+  color: #9ca3af;
+  text-align: center;
+  padding: 16px 8px;
+  line-height: 1.6;
 }
 
-.sidebartalentos__hero-card {
-  height: 90px;
-  background: #cbd5e1;
-  border-radius: 10px;
-}
-
-/* TEXTO */
-.sidebartalentos__text-block {
-  background: #e2e8f0;
-  padding: 10px;
-  border-radius: 10px;
-}
-
-.sidebartalentos__line {
-  height: 8px;
-  background: #cbd5e1;
-  border-radius: 10px;
-  margin-bottom: 6px;
-}
-
-.sidebartalentos__line.long {
-  width: 90%;
-}
-
-.sidebartalentos__line.short {
-  width: 50%;
-}
-
-/* LABEL */
-.sidebartalentos__label {
-  font-size: 11px;
+.sidebartalentos__empty strong {
   color: #6b7280;
-}
-
-/* BOTON FAKE */
-.sidebartalentos__button {
-  height: 35px;
-  width: 70%;
-  background: #7dd3fc;
-  border-radius: 20px;
-}
-
-/* BOTON FINAL */
-.sidebartalentos__add-btn {
-  margin-top: auto;
-  padding: 12px;
-  border: none;
-  background: #0ea5e9;
-  color: white;
-  border-radius: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.sidebartalentos__add-btn:hover {
-  background: #0284c7;
 }

@@ -1,8 +1,6 @@
-//import { useImage } from "./HookImagenCloudinary";
 import { useRef } from "react";
 
-function UploadImage({ setImageUrl }) {
-  //const { setImageUrl } = useImage();
+function UploadImage({ setImageUrl, id = "upload-input" }) {
   const inputRef = useRef();
 
   const handleUpload = async (e) => {
@@ -33,18 +31,13 @@ function UploadImage({ setImageUrl }) {
 
   return (
      <>
-      {/* INPUT OCULTO */}
       <input
         type="file"
+        id={id}
         ref={inputRef}
         onChange={handleUpload}
         style={{ display: "none" }}
       />
-
-      {/* ICONO QUE ABRE EL INPUT */}
-      <span onClick={() => inputRef.current.click()}>
-        <i className="fa-regular fa-image"></i>
-      </span>
     </>
   );
 }

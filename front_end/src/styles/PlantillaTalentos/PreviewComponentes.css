@@ -1,0 +1,47 @@
+.prevc-outer {
+    width: 100%;
+    /* height set dynamically by JS */
+    overflow: hidden;
+    position: relative;
+    background: #f8fafc;
+}
+
+.prevc-inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: top left;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+}
+
+.prevc-empty {
+    width: 100%;
+    min-height: 400px;
+    background-color: #f8fafc;
+}
+
+/* hide the delete button that ComponentePortafolio renders */
+.prevc-inner .componente-eliminar {
+    display: none;
+}
+
+/* strip editor chrome: borders, outlines, hover highlights, cursors */
+.prevc-inner .editable-block {
+    box-shadow: none !important;
+    outline: none !important;
+    cursor: default !important;
+    border-radius: 0 !important;
+}
+
+.prevc-inner .editable-block:hover {
+    box-shadow: none !important;
+}
+
+.prevc-inner .est1,
+.prevc-inner [class*="grilla"],
+.prevc-inner [class*="estructura"] {
+    cursor: default !important;
+}
+

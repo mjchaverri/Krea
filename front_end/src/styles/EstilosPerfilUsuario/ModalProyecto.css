@@ -1,192 +1,406 @@
+/* ══════════════════════════════════════
+   MODAL PROYECTO — Estilo Krea
+══════════════════════════════════════ */
+
 .modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(10px); /* Glassmorphism */
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(6px);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999;
-    animation: fadeInModalOverlay 0.3s ease-out;
+    animation: mp-fade-in 0.2s ease;
+}
+
+@keyframes mp-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
 
 .modal-content {
-    background: white;
-    width: 90vw;
-    height: 85vh;
-    border-radius: 24px; /* Más moderno */
+    background: #ffffff;
+    width: 92vw;
+    max-width: 1200px;
+    height: 88vh;
+    border-radius: 20px;
     position: relative;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    animation: slideUpModalContent 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+    animation: mp-slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes fadeInModalOverlay {
-    from { opacity: 0; }
-    to { opacity: 1; }
+@keyframes mp-slide-up {
+    from { transform: translateY(32px) scale(0.98); opacity: 0; }
+    to   { transform: translateY(0)    scale(1);    opacity: 1; }
 }
 
-@keyframes slideUpModalContent {
-    from { transform: translateY(40px) scale(0.98); opacity: 0; }
-    to { transform: translateY(0) scale(1); opacity: 1; }
-}
-
+/* ── Botón cerrar ── */
 .modal-close {
     position: absolute;
-    top: 24px;
-    right: 24px;
-    background: rgba(255, 255, 255, 0.9);
+    top: 16px;
+    right: 16px;
+    background: #ffffff;
     border: 1px solid #e2e8f0;
-    width: 44px;
-    height: 44px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
-    font-size: 24px;
+    font-size: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     z-index: 100;
-    color: #4a5568;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    color: #64748b;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    line-height: 1;
 }
 
 .modal-close:hover {
-    background: #fff;
-    transform: rotate(90deg) scale(1.1);
-    color: #1a202c;
-    border-color: #cbd5e0;
+    background: #f8fafc;
+    color: #0f172a;
+    transform: rotate(90deg);
 }
 
+/* ── Layout dividido ── */
 .modal-split {
     display: flex;
     width: 100%;
     height: 100%;
+    overflow: hidden;
 }
 
+/* ── Panel izquierdo: portafolio ── */
 .modal-left {
     flex: 1.5;
-    background: #f7fafc;
-    border-right: 1px solid #edf2f7;
+    background: #ffffff;
+    border-right: 1px solid #e2e8f0;
     overflow-y: auto;
     overflow-x: hidden;
+    padding: 0;
     position: relative;
-    padding: 40px;
+    scrollbar-width: thin;
+    scrollbar-color: #e2e8f0 transparent;
 }
+
+.modal-left::-webkit-scrollbar { width: 5px; }
+.modal-left::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+
+.modal-edit-bar {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+}
+
+.modal-btn-edit {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #0ea5e9;
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.2s ease;
+}
+
+.modal-btn-edit:hover { background: #0284c7; }
 
 .lienzo-modal-container {
     width: 100%;
 }
 
+/* Ocultar categorías dentro del modal */
+.lienzo-modal-container .lienzo__categoria-row {
+    display: none !important;
+}
+
+/* Sin contornos de bloques editables */
+.lienzo-modal-container .editable-block {
+    box-shadow: none !important;
+    outline: none !important;
+    cursor: default !important;
+    border-radius: 0 !important;
+}
+
+.lienzo-modal-container .editable-block:hover {
+    box-shadow: none !important;
+}
+
+.lienzo-modal-container .componente-eliminar {
+    display: none !important;
+}
+
+/* El Lienzo ocupa todo el ancho disponible sin margen lateral */
+.lienzo-modal-container .lienzo {
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+/* ── Panel derecho: reseñas ── */
 .modal-right {
     flex: 1;
-    padding: 40px;
+    min-width: 320px;
+    max-width: 380px;
+    padding: 28px 24px;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    background: #fff;
+    background: #ffffff;
+    scrollbar-width: thin;
+    scrollbar-color: #e2e8f0 transparent;
 }
 
-.modal-right h3 {
-    margin-bottom: 24px;
-    font-size: 24px;
+.modal-right::-webkit-scrollbar { width: 5px; }
+.modal-right::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+
+/* Encabezado derecho */
+.modal-right-header {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.modal-right-title {
+    font-size: 1.1rem;
     font-weight: 800;
-    color: #1a202c;
+    color: #0f172a;
+    margin: 0 0 8px;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: -0.02em;
+}
+
+.modal-right-rating {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 6px;
 }
 
+.modal-rating-stars { display: flex; gap: 2px; }
+.modal-rating-stars i        { font-size: 0.85rem; color: #f59e0b; }
+.modal-rating-stars i.empty  { color: #e2e8f0; }
+
+.modal-rating-num   { font-size: 0.9rem; font-weight: 700; color: #0f172a; }
+.modal-rating-count { font-size: 0.78rem; color: #94a3b8; }
+
+/* ── Lista de reseñas ── */
 .resenas-lista {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
     overflow-y: auto;
-    margin-bottom: 24px;
-    padding-right: 8px;
+    min-height: 0;
+    scrollbar-width: thin;
+    scrollbar-color: #e2e8f0 transparent;
 }
 
-/* Custom Scrollbar for Reviews */
-.resenas-lista::-webkit-scrollbar { width: 6px; }
-.resenas-lista::-webkit-scrollbar-track { background: #f7fafc; }
+.resenas-lista::-webkit-scrollbar { width: 4px; }
 .resenas-lista::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
 
+.resenas-vacio {
+    padding: 24px 0;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
 .resena-item {
-    padding: 20px;
-    background: #fff;
-    border: 1px solid #edf2f7;
-    border-radius: 16px;
-    margin-bottom: 16px;
-    transition: all 0.2s;
+    background: #f8fafc;
+    border: 1px solid #f1f5f9;
+    border-radius: 12px;
+    padding: 14px 16px;
+    transition: border-color 0.2s ease;
 }
 
-.resena-item:hover {
-    border-color: #cbd5e0;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-}
+.resena-item:hover { border-color: #e2e8f0; }
 
-.resena-stars {
-    color: #f6e05e;
-    font-size: 18px;
+.resena-autor {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     margin-bottom: 8px;
 }
 
+.resena-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #e0f2fe;
+    color: #0ea5e9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.resena-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.resena-nombre {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.resena-fecha {
+    display: block;
+    font-size: 0.72rem;
+    color: #94a3b8;
+}
+
+.resena-stars { display: flex; gap: 2px; margin-bottom: 6px; }
+.resena-stars i       { font-size: 0.8rem; color: #f59e0b; }
+.resena-stars i.empty { color: #e2e8f0; }
+
+.resena-comentario {
+    font-size: 0.85rem;
+    color: #475569;
+    line-height: 1.55;
+    margin: 0;
+}
+
+/* ── Formulario de reseña ── */
 .resena-form {
-    border-top: 1px solid #edf2f7;
-    padding-top: 24px;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 18px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
+    flex-shrink: 0;
 }
 
-.resena-form select,
+.resena-form-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Estrellas clicables */
+.resena-star-picker {
+    display: flex;
+    gap: 4px;
+}
+
+.resena-star-picker button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 1.4rem;
+    color: #e2e8f0;
+    transition: color 0.15s ease, transform 0.15s ease;
+    line-height: 1;
+}
+
+.resena-star-picker button.filled { color: #f59e0b; }
+.resena-star-picker button:hover  { transform: scale(1.2); }
+
 .resena-form textarea {
-    padding: 14px;
+    padding: 12px 14px;
     border: 1px solid #e2e8f0;
-    border-radius: 12px;
+    border-radius: 10px;
     background: #f8fafc;
-    font-size: 15px;
-    transition: all 0.2s;
+    font-size: 0.85rem;
+    font-family: 'Inter', sans-serif;
+    color: #0f172a;
+    resize: none;
+    height: 90px;
+    transition: all 0.2s ease;
 }
 
-.resena-form select:focus,
+.resena-form textarea::placeholder { color: #94a3b8; }
+
 .resena-form textarea:focus {
     outline: none;
-    border-color: #0db9f2;
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(13, 185, 242, 0.1);
+    border-color: #0ea5e9;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
 }
 
-.resena-form button {
-    background: #0db9f2;
+.resena-form-btn {
+    background: #0ea5e9;
     color: white;
     border: none;
-    padding: 16px;
-    border-radius: 12px;
+    padding: 11px;
+    border-radius: 10px;
+    font-size: 0.875rem;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s ease;
 }
 
-.resena-form button:hover:not(:disabled) {
-    background: #09a1d3;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(13, 185, 242, 0.3);
+.resena-form-btn:hover:not(:disabled) {
+    background: #0284c7;
+    transform: translateY(-1px);
 }
 
-.resena-form button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
+.resena-form-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* Contacto Section UX */
-.contacto-modal {
+/* ── Contactar ── */
+.modal-contacto {
     margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #f1f5f9;
+    flex-shrink: 0;
 }
 
-.contacto-info-panel {
-    animation: fadeInModalOverlay 0.3s ease-out;
+.modal-btn-contactar {
+    width: 100%;
+    background: transparent;
+    border: 1.5px solid #e2e8f0;
+    color: #0f172a;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s ease;
+}
+
+.modal-btn-contactar:hover { border-color: #0ea5e9; color: #0ea5e9; }
+
+.modal-contacto-info {
+    margin-top: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.modal-contacto-info p { margin: 0; font-size: 0.83rem; color: #475569; }
+.modal-contacto-info strong { color: #0f172a; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .modal-content { width: 100vw; height: 100dvh; border-radius: 0; }
+    .modal-split   { flex-direction: column; }
+    .modal-left    { flex: none; height: 50%; border-right: none; border-bottom: 1px solid #e2e8f0; }
+    .modal-right   { max-width: 100%; }
 }

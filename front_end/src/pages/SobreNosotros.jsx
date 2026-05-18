@@ -1,7 +1,7 @@
 import React from 'react'
 import Navbar from '../components/Navbar/Navbar'
 import MainSobreNosotros from '../components/SobreNosotros/MainSobreNosotros'
-import Footer from '../components/Footer/Footer'
+import Footer from '../components/ApartadoPaginaPrincipal/Footer'
 
 function SobreNosotros() {
     return (

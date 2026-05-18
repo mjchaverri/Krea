@@ -1,7 +1,7 @@
 import React from 'react'
 import Navbar from '../components/navbar/Navbar'
 import FormularioQuejas from '../components/Contactos/CompContactos'
-import Footer from '../components/Footer/Footer'
+import Footer from '../components/ApartadoPaginaPrincipal/Footer'
 
 
 function PaginaContacto() {

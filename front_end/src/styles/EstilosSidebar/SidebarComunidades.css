@@ -1,0 +1,286 @@
+/* ============================================================
+   SIDEBAR COMUNIDADES — Estilos propios
+   Responsivo: ancho fluido con clamp(), siempre visible
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* ---- Variables locales ---- */
+.sidebar-com {
+    --sb-bg: #ffffff;
+    --sb-border: #e8eaf0;
+    --sb-text: #1a1d2e;
+    --sb-muted: #64748b;
+    --sb-primary: #4f46e5;
+    --sb-primary-light: #f0f4ff;
+    --sb-radius: 14px;
+    --sb-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --sb-shadow: 2px 0 20px rgba(30, 41, 59, 0.08);
+}
+
+/* ============================================================
+   CONTENEDOR PRINCIPAL
+   ============================================================ */
+.sidebar-com {
+    /* Ancho fluido: mín 260px, ideal 22vw, máx 380px */
+    width: clamp(260px, 22vw, 380px);
+    min-width: clamp(260px, 22vw, 380px);
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--sb-bg);
+    border-right: 1.5px solid var(--sb-border);
+    box-shadow: var(--sb-shadow);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    box-sizing: border-box;
+    z-index: 200;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.sidebar-com__header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.4rem 1.4rem 1rem;
+    border-bottom: 1.5px solid var(--sb-border);
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 100%);
+}
+
+.sidebar-com__header-icon {
+    font-size: 1.6rem;
+    line-height: 1;
+}
+
+.sidebar-com__titulo {
+    font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar-com__subtitulo {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.6);
+    font-weight: 500;
+    margin: 0;
+    white-space: nowrap;
+}
+
+/* ============================================================
+   ESTADO VACÍO / SIN SESIÓN
+   ============================================================ */
+.sidebar-com__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 2.5rem 1.2rem;
+    text-align: center;
+    color: var(--sb-muted);
+    flex: 1;
+}
+
+.sidebar-com__empty-icon {
+    font-size: 2.8rem;
+    display: block;
+}
+
+.sidebar-com__empty p {
+    font-size: 0.83rem;
+    line-height: 1.55;
+    margin: 0;
+}
+
+/* ============================================================
+   LISTA DE COMUNIDADES
+   ============================================================ */
+.sidebar-com__label {
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: var(--sb-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 1rem 1.2rem 0.4rem;
+    margin: 0;
+}
+
+.sidebar-com__lista {
+    list-style: none;
+    padding: 0.4rem 0.7rem;
+    margin: 0;
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    scrollbar-width: thin;
+    scrollbar-color: #e2e8f0 transparent;
+}
+
+.sidebar-com__lista::-webkit-scrollbar { width: 4px; }
+.sidebar-com__lista::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+
+/* ---- Item de comunidad ---- */
+.sidebar-com__item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: clamp(0.6rem, 1vw, 1rem);
+    padding: clamp(0.7rem, 1vw, 1rem) clamp(0.8rem, 1.2vw, 1.1rem);
+    border-radius: var(--sb-radius);
+    border: none;
+    border-left: 4px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    transition: var(--sb-transition);
+    text-align: left;
+    position: relative;
+}
+
+.sidebar-com__item:hover {
+    background: var(--sb-primary-light);
+}
+
+.sidebar-com__item--activo {
+    background: var(--sb-primary-light);
+}
+
+.sidebar-com__item-badge {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    width: 8px;
+    height: 8px;
+    background: #10b981;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+/* Ícono de la comunidad */
+.sidebar-com__item-icono {
+    width: clamp(40px, 4vw, 52px);
+    height: clamp(40px, 4vw, 52px);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(1.3rem, 1.8vw, 1.7rem);
+    flex-shrink: 0;
+    transition: var(--sb-transition);
+}
+
+.sidebar-com__item:hover .sidebar-com__item-icono,
+.sidebar-com__item--activo .sidebar-com__item-icono {
+    transform: scale(1.1);
+}
+
+/* Textos */
+.sidebar-com__item-texto {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+    gap: 0.15rem;
+}
+
+.sidebar-com__item-nombre {
+    font-size: clamp(0.82rem, 1vw, 0.96rem);
+    font-weight: 700;
+    color: var(--sb-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar-com__item-cat {
+    font-size: clamp(0.68rem, 0.8vw, 0.78rem);
+    color: var(--sb-muted);
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.sidebar-com__item-arrow {
+    font-size: 1.1rem;
+    color: var(--sb-muted);
+    flex-shrink: 0;
+    transition: transform var(--sb-transition);
+}
+
+.sidebar-com__item--activo .sidebar-com__item-arrow {
+    transform: translateX(3px);
+    color: var(--sb-primary);
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.sidebar-com__footer {
+    padding: 0.9rem 1rem;
+    border-top: 1.5px solid var(--sb-border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sidebar-com__btn-explorar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border-radius: 12px;
+    border: 1.5px solid var(--sb-border);
+    background: transparent;
+    color: var(--sb-primary);
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--sb-transition);
+    font-family: 'Inter', sans-serif;
+}
+
+.sidebar-com__btn-explorar:hover {
+    background: var(--sb-primary-light);
+    border-color: #c7d2fe;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+/* Tablet: sidebar más angosto */
+@media (max-width: 1024px) {
+    .sidebar-com {
+        width: clamp(220px, 26vw, 300px);
+        min-width: clamp(220px, 26vw, 300px);
+    }
+}
+
+/* Móvil: sidebar se convierte en panel tipo drawer */
+@media (max-width: 640px) {
+    .sidebar-com {
+        width: 100%;
+        min-width: 100%;
+        height: auto;
+        max-height: 45vh;
+        position: relative;
+        border-right: none;
+        border-bottom: 2px solid var(--sb-border);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+
+    .sidebar-com__lista {
+        max-height: 180px;
+    }
+}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/navbar/Navbar';
-import Footer from '../components/Footer/Footer';
+import Footer from '../components/ApartadoPaginaPrincipal/Footer';
 import Fetch from '../services/Fetch';
 import CardProyecto from '../components/PerfilUsuario/CardProyecto';
 import ModalProyecto from '../components/PerfilUsuario/ModalProyecto';

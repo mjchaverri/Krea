@@ -1,67 +1,37 @@
-/* GRID PRINCIPAL */
+/* ── GRILLA 1:2 IZQUIERDA ── */
 .grilla1_2_izda__grid {
-  
-    height: 600px;
-    min-height: 600px;
+    min-height: 400px;
+    width: 100%;
     display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 10px;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+    padding: 20px;
 }
 
-/* BLOQUE IMAGEN */
+/* Bloque imagen izquierda */
 .grilla1_2_izda__image {
     height: 100%;
-    position: relative; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1.5px rgba(0, 0, 0, 0.10);
+    transition: box-shadow 0.15s ease;
 }
 
-/* CONTENIDO (TEXTO) */
+.grilla1_2_izda__image:hover {
+    box-shadow: inset 0 0 0 1.5px rgba(59, 130, 246, 0.45);
+}
+
+/* Columna de contenido derecha */
 .grilla1_2_izda__content {
-    display: grid;
-    grid-template-rows: 90px 1fr; /* header fijo + resto flexible */
-    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
     height: 100%;
 }
 
-/* TITULO */
 .grilla1_2_izda__title {
-    width: 100%;
-    height: 100%;
-    text-align: center;
-}
-
-/* DESCRIPCIÓN */
-.grilla1_2_izda__description {
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    resize: none;
-}
-
-/* ===== FIX IMPORTANTE (tenías esto mal) ===== */
-/* ❌ .textbox-grilla1_2_izda input-textbox */
-/* ✅ corregido abajo */
-
-/* INPUTS GENERALES (pueden ser globales) */
-.input-titulo,
-.input-textbox {
-    border: 1px dashed rgba(0, 0, 0, 0.2);
-    background: transparent;
-    outline: none;
-    transition: border 0.2s ease;
-}
-
-/* Cuando el usuario escribe */
-.input-titulo:not(:placeholder-shown),
-.input-textbox:not(:placeholder-shown) {
-    border: none;
-}
-
-/* Al enfocar */
-.input-titulo:focus,
-.input-textbox:focus {
-    border: 1px dashed rgba(0, 0, 0, 0.4);
+    flex: 1;
+    min-height: 0;
 }

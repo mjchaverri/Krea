@@ -35,11 +35,23 @@
       "Roles": "Usuario",
       "Contrasena": "12345678",
       "img": "https://via.placeholder.com/150"
+    },
+    {
+      "id": "e263",
+      "Nombre": "hola",
+      "Correo": "hola@gmail.com",
+      "email": "hola@gmail.com",
+      "telefono": "88173512",
+      "Provincias": "San José",
+      "Canton": "si",
+      "Distrito": "si",
+      "Roles": "Usuario",
+      "Contrasena": "12345678",
+      "img": "https://via.placeholder.com/150"
     }
   ],
   "portafolios": [
     {
-
       "id": "5cc9",
       "usuarioId": null,
       "componentes": [
@@ -162,46 +174,17 @@
       "nombreUsuario": "María Jesús Chaverri"
     },
     {
-      "id": "d115",
-      "usuarioId": null,
+      "id": "af4f",
+      "usuarioId": "f898",
       "componentes": [
         {
-          "id": "51c0db97-78e1-4037-bfff-8c8d78a97c7e",
+          "id": "097df3c7-4410-4335-b441-ab7219da168c",
           "type": "Estructura1",
           "data": {
-            "texto": "Fresh Market",
+            "texto": "Tattoo Portfolio",
             "colorTexto": "#ffffff",
             "colorFondo": "",
-            "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1774888113/oi6et3rnrovwn74qhry2.jpg",
-            "fontSize": "16px",
-            "bold": false,
-            "italic": false,
-            "align": "left",
-            "childColorFondo": "",
-            "childImageUrl": ""
-          }
-        }
-      ],
-      "titulo": "FreshMarket",
-      "descripcion": "Pagina Web de supermercado",
-      "pdf": "https://res.cloudinary.com/dyy1yqvbv/raw/upload/v1774888161/wjts6lcuupdsvrxe4vvo",
-      "imgPortada": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1774888160/nzmvlllaotx5osh63a3t.jpg",
-      "nombreUsuario": "Pepe Viyuela Gomez"
-    },
-    {
-
-      "id": "5f6e",
-      "usuarioId": "2fa4",
-
-      "componentes": [
-        {
-          "id": "5af1d2dd-cc32-4720-b0aa-cca37f9d5502",
-          "type": "Estructura1",
-          "data": {
-            "texto": "Prototipo de Modelado 3D",
-            "colorTexto": "#000000",
-            "colorFondo": "#ababab",
-            "imageUrl": "",
+            "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778275166/orqvxcd1thjzeb7nsp6o.jpg",
             "fontSize": "16px",
             "bold": false,
             "italic": false,
@@ -211,51 +194,7 @@
           }
         },
         {
-          "id": "6297e3a6-3dde-4b7d-b954-f0c8fca99bd7",
-          "type": "Estructura1_2",
-          "data": {
-            "texto": "",
-            "colorTexto": "#1a202c",
-            "colorFondo": "",
-            "imageUrl": "",
-            "fontSize": "16px",
-            "bold": false,
-            "italic": false,
-            "align": "left",
-            "childColorFondo": "",
-            "childImageUrl": "",
-            "bloqueTop": {
-              "id": "editable-1245",
-              "texto": "BOCETO DE PROTOTIPO",
-              "colorTexto": "#ffffff",
-              "colorFondo": "",
-              "imageUrl": ""
-            },
-            "bloqueMid": {
-              "id": "editable-1246",
-              "texto": " ",
-              "colorTexto": "#1a202c",
-              "colorFondo": "",
-              "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1774891568/ogtfnpqtpuphfrqbn0rr.jpg"
-            },
-            "bloqueBottom": {
-              "id": "editable-1247",
-              "texto": " ",
-              "colorTexto": "#1a202c",
-              "colorFondo": "",
-              "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1774891577/qhgq8oaaxnbifg4or8pj.jpg"
-            },
-            "fondo": {
-              "id": "editable-1244",
-              "texto": "",
-              "colorTexto": "#1a202c",
-              "colorFondo": "#ababab",
-              "imageUrl": ""
-            }
-          }
-        },
-        {
-          "id": "ff32514c-c1e3-48b5-ac31-e4d4009d3214",
+          "id": "b3c15cb7-525b-482c-87a6-886acd9cef5f",
           "type": "GrillaDoble",
           "data": {
             "texto": "",
@@ -269,34 +208,78 @@
             "childColorFondo": "",
             "childImageUrl": "",
             "bloque1": {
-              "id": "editable-3035",
+              "id": "editable-1629",
               "texto": " ",
               "colorTexto": "#1a202c",
               "colorFondo": "",
-              "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1774891650/s93jhwyn80wwutaujuvf.jpg"
+              "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778275212/zdgieaimrvc571vwh9o4.jpg"
             },
             "bloque2": {
-              "id": "editable-3036",
+              "id": "editable-1630",
+              "texto": "",
+              "colorTexto": "#1a202c",
+              "colorFondo": "",
+              "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778275221/sjee8gwv7v0x8c5o7nd3.jpg"
+            },
+            "fondo": {
+              "id": "editable-1628",
+              "texto": "",
+              "colorTexto": "#1a202c",
+              "colorFondo": "#212121",
+              "imageUrl": ""
+            }
+          }
+        },
+        {
+          "id": "5f6897fd-195b-4b0f-876e-42d0c3a2596b",
+          "type": "GrillaTriple",
+          "data": {
+            "texto": "",
+            "colorTexto": "#1a202c",
+            "colorFondo": "",
+            "imageUrl": "",
+            "fontSize": "16px",
+            "bold": false,
+            "italic": false,
+            "align": "left",
+            "childColorFondo": "",
+            "childImageUrl": "",
+            "bloque1": {
+              "id": "editable-1643",
               "texto": " ",
               "colorTexto": "#1a202c",
               "colorFondo": "",
-              "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1774891658/zpcz0oybscofkqmaqpdg.jpg"
+              "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778275233/xugqwf2cnbhzjxbf9evd.jpg"
+            },
+            "bloque2": {
+              "id": "editable-1644",
+              "texto": " ",
+              "colorTexto": "#1a202c",
+              "colorFondo": "",
+              "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778275349/ewtftukmg4w64gfarwbt.jpg"
+            },
+            "bloque3": {
+              "id": "editable-1645",
+              "texto": " ",
+              "colorTexto": "#1a202c",
+              "colorFondo": "",
+              "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778275262/tvikp3vd15wpcbjerzob.jpg"
             },
             "fondo": {
-              "id": "editable-3034",
+              "id": "editable-1642",
               "texto": "",
               "colorTexto": "#1a202c",
-              "colorFondo": "#ababab",
+              "colorFondo": "#212121",
               "imageUrl": ""
             }
           }
         }
       ],
-      "titulo": "Prototipo de Modelado 3D",
-      "descripcion": "Modelado de personaje para videojuego",
-      "pdf": "https://res.cloudinary.com/dyy1yqvbv/raw/upload/v1774891689/imotsgcmdou0k2uqftqv",
-      "imgPortada": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1774891688/fxjzhf9kisqkx9ewpppm.jpg",
-      "nombreUsuario": "Maria Jesus chavarria"
+      "titulo": "Tattoo Portfolio",
+      "descripcion": "Tattoo studio",
+      "pdf": "https://res.cloudinary.com/dyy1yqvbv/raw/upload/v1778275462/uzz9igpmrjagro6pihuk",
+      "imgPortada": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778275460/upydycyhqbyybotsjzyt.jpg",
+      "nombreUsuario": "Alejandro"
     },
     {
       "id": "af4f",
@@ -405,6 +388,318 @@
       "pdf": "https://res.cloudinary.com/dyy1yqvbv/raw/upload/v1778275462/uzz9igpmrjagro6pihuk",
       "imgPortada": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778275460/upydycyhqbyybotsjzyt.jpg",
       "nombreUsuario": "Alejandro"
+    },
+    {
+      "id": "af4f",
+      "usuarioId": "f898",
+      "componentes": [
+        {
+          "id": "097df3c7-4410-4335-b441-ab7219da168c",
+          "type": "Estructura1",
+          "data": {
+            "texto": "Tattoo Portfolio",
+            "colorTexto": "#ffffff",
+            "colorFondo": "",
+            "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778275166/orqvxcd1thjzeb7nsp6o.jpg",
+            "fontSize": "16px",
+            "bold": false,
+            "italic": false,
+            "align": "left",
+            "childColorFondo": "",
+            "childImageUrl": ""
+          }
+        },
+        {
+          "id": "b3c15cb7-525b-482c-87a6-886acd9cef5f",
+          "type": "GrillaDoble",
+          "data": {
+            "texto": "",
+            "colorTexto": "#1a202c",
+            "colorFondo": "",
+            "imageUrl": "",
+            "fontSize": "16px",
+            "bold": false,
+            "italic": false,
+            "align": "left",
+            "childColorFondo": "",
+            "childImageUrl": "",
+            "bloque1": {
+              "id": "editable-1629",
+              "texto": " ",
+              "colorTexto": "#1a202c",
+              "colorFondo": "",
+              "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778275212/zdgieaimrvc571vwh9o4.jpg"
+            },
+            "bloque2": {
+              "id": "editable-1630",
+              "texto": "",
+              "colorTexto": "#1a202c",
+              "colorFondo": "",
+              "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778275221/sjee8gwv7v0x8c5o7nd3.jpg"
+            },
+            "fondo": {
+              "id": "editable-1628",
+              "texto": "",
+              "colorTexto": "#1a202c",
+              "colorFondo": "#212121",
+              "imageUrl": ""
+            }
+          }
+        },
+        {
+          "id": "5f6897fd-195b-4b0f-876e-42d0c3a2596b",
+          "type": "GrillaTriple",
+          "data": {
+            "texto": "",
+            "colorTexto": "#1a202c",
+            "colorFondo": "",
+            "imageUrl": "",
+            "fontSize": "16px",
+            "bold": false,
+            "italic": false,
+            "align": "left",
+            "childColorFondo": "",
+            "childImageUrl": "",
+            "bloque1": {
+              "id": "editable-1643",
+              "texto": " ",
+              "colorTexto": "#1a202c",
+              "colorFondo": "",
+              "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778275233/xugqwf2cnbhzjxbf9evd.jpg"
+            },
+            "bloque2": {
+              "id": "editable-1644",
+              "texto": " ",
+              "colorTexto": "#1a202c",
+              "colorFondo": "",
+              "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778275349/ewtftukmg4w64gfarwbt.jpg"
+            },
+            "bloque3": {
+              "id": "editable-1645",
+              "texto": " ",
+              "colorTexto": "#1a202c",
+              "colorFondo": "",
+              "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778275262/tvikp3vd15wpcbjerzob.jpg"
+            },
+            "fondo": {
+              "id": "editable-1642",
+              "texto": "",
+              "colorTexto": "#1a202c",
+              "colorFondo": "#212121",
+              "imageUrl": ""
+            }
+          }
+        }
+      ],
+      "titulo": "Tattoo Portfolio",
+      "descripcion": "Tattoo studio",
+      "pdf": "https://res.cloudinary.com/dyy1yqvbv/raw/upload/v1778275462/uzz9igpmrjagro6pihuk",
+      "imgPortada": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778275460/upydycyhqbyybotsjzyt.jpg",
+      "nombreUsuario": "Alejandro"
+    },
+    {
+      "id": "af4f",
+      "usuarioId": "f898",
+      "componentes": [
+        {
+          "id": "097df3c7-4410-4335-b441-ab7219da168c",
+          "type": "Estructura1",
+          "data": {
+            "texto": "Tattoo Portfolio",
+            "colorTexto": "#ffffff",
+            "colorFondo": "",
+            "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778275166/orqvxcd1thjzeb7nsp6o.jpg",
+            "fontSize": "16px",
+            "bold": false,
+            "italic": false,
+            "align": "left",
+            "childColorFondo": "",
+            "childImageUrl": ""
+          }
+        },
+        {
+          "id": "b3c15cb7-525b-482c-87a6-886acd9cef5f",
+          "type": "GrillaDoble",
+          "data": {
+            "texto": "",
+            "colorTexto": "#1a202c",
+            "colorFondo": "",
+            "imageUrl": "",
+            "fontSize": "16px",
+            "bold": false,
+            "italic": false,
+            "align": "left",
+            "childColorFondo": "",
+            "childImageUrl": "",
+            "bloque1": {
+              "id": "editable-1629",
+              "texto": " ",
+              "colorTexto": "#1a202c",
+              "colorFondo": "",
+              "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778275212/zdgieaimrvc571vwh9o4.jpg"
+            },
+            "bloque2": {
+              "id": "editable-1630",
+              "texto": "",
+              "colorTexto": "#1a202c",
+              "colorFondo": "",
+              "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778275221/sjee8gwv7v0x8c5o7nd3.jpg"
+            },
+            "fondo": {
+              "id": "editable-1628",
+              "texto": "",
+              "colorTexto": "#1a202c",
+              "colorFondo": "#212121",
+              "imageUrl": ""
+            }
+          }
+        },
+        {
+          "id": "5f6897fd-195b-4b0f-876e-42d0c3a2596b",
+          "type": "GrillaTriple",
+          "data": {
+            "texto": "",
+            "colorTexto": "#1a202c",
+            "colorFondo": "",
+            "imageUrl": "",
+            "fontSize": "16px",
+            "bold": false,
+            "italic": false,
+            "align": "left",
+            "childColorFondo": "",
+            "childImageUrl": "",
+            "bloque1": {
+              "id": "editable-1643",
+              "texto": " ",
+              "colorTexto": "#1a202c",
+              "colorFondo": "",
+              "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778275233/xugqwf2cnbhzjxbf9evd.jpg"
+            },
+            "bloque2": {
+              "id": "editable-1644",
+              "texto": " ",
+              "colorTexto": "#1a202c",
+              "colorFondo": "",
+              "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778275349/ewtftukmg4w64gfarwbt.jpg"
+            },
+            "bloque3": {
+              "id": "editable-1645",
+              "texto": " ",
+              "colorTexto": "#1a202c",
+              "colorFondo": "",
+              "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778275262/tvikp3vd15wpcbjerzob.jpg"
+            },
+            "fondo": {
+              "id": "editable-1642",
+              "texto": "",
+              "colorTexto": "#1a202c",
+              "colorFondo": "#212121",
+              "imageUrl": ""
+            }
+          }
+        }
+      ],
+      "titulo": "Tattoo Portfolio",
+      "descripcion": "Tattoo studio",
+      "pdf": "https://res.cloudinary.com/dyy1yqvbv/raw/upload/v1778275462/uzz9igpmrjagro6pihuk",
+      "imgPortada": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778275460/upydycyhqbyybotsjzyt.jpg",
+      "nombreUsuario": "Alejandro"
+    },
+    {
+      "id": "1b74",
+      "usuarioId": "f898",
+      "componentes": [],
+      "titulo": "gggg",
+      "descripcion": "",
+      "pdf": "https://res.cloudinary.com/dyy1yqvbv/raw/upload/v1778872173/ltqiz2tdlkucps3jsg5v",
+      "imgPortada": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778872172/vlc7kcevbarogcd82suz.jpg",
+      "nombreUsuario": "Alejandro"
+    },
+    {
+      "id": "594d",
+      "usuarioId": "f898",
+      "componentes": [
+        {
+          "id": "3cd8fc84-d85b-4214-9f84-d2f70743bd61",
+          "type": "Estructura1_3",
+          "data": {
+            "texto": "",
+            "colorTexto": "#1a202c",
+            "colorFondo": "",
+            "imageUrl": "",
+            "fontSize": "16px",
+            "bold": false,
+            "italic": false,
+            "align": "left",
+            "textPosition": "center",
+            "childColorFondo": "",
+            "childImageUrl": "",
+            "bloqueMid": {
+              "texto": "",
+              "colorTexto": "#1a202c",
+              "colorFondo": "#3e1e1e",
+              "imageUrl": "",
+              "fontSize": "16px",
+              "bold": false,
+              "italic": false,
+              "align": "left",
+              "textPosition": "center",
+              "childColorFondo": "",
+              "childImageUrl": ""
+            },
+            "bloqueBottom1": {
+              "texto": "",
+              "colorTexto": "#1a202c",
+              "colorFondo": "#b33232",
+              "imageUrl": "",
+              "fontSize": "16px",
+              "bold": false,
+              "italic": false,
+              "align": "left",
+              "textPosition": "center",
+              "childColorFondo": "",
+              "childImageUrl": ""
+            },
+            "bloqueBottom2": {
+              "texto": "",
+              "colorTexto": "#1a202c",
+              "colorFondo": "#aa2222",
+              "imageUrl": "",
+              "fontSize": "16px",
+              "bold": false,
+              "italic": false,
+              "align": "left",
+              "textPosition": "center",
+              "childColorFondo": "",
+              "childImageUrl": ""
+            },
+            "bloqueTop": {
+              "texto": "",
+              "colorTexto": "#1a202c",
+              "colorFondo": "#d57272",
+              "imageUrl": "",
+              "fontSize": "16px",
+              "bold": false,
+              "italic": false,
+              "align": "left",
+              "textPosition": "center",
+              "childColorFondo": "",
+              "childImageUrl": ""
+            }
+          }
+        }
+      ],
+      "titulo": "tgrt4grt",
+      "descripcion": "tg4egt4t",
+      "pdf": "https://res.cloudinary.com/dyy1yqvbv/raw/upload/v1778897682/iqzs76xphe55qru1chns",
+      "imgPortada": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1778897681/ekgszfs9ek3cenqq61yx.jpg",
+      "nombreUsuario": "Alejandro",
+      "categorias": [
+        "Diseño y creatividad visual",
+        "UX/UI",
+        "Desarrollo y tecnología creativa",
+        "Multimedia y animación"
+      ]
     }
   ],
   "resenas": [
@@ -471,6 +766,14 @@
       "comentario": "Increíble",
       "rating": 5,
       "fecha": "2026-05-08T21:25:33.363Z"
+    },
+    {
+      "id": "1b1d",
+      "usuarioId": "f898",
+      "portafolioId": "af4f",
+      "comentario": "Muy buenos diseños",
+      "rating": 5,
+      "fecha": "2026-05-16T05:05:40.609Z"
     }
   ],
   "convocatorias": [
@@ -487,7 +790,6 @@
       "descripcion": "mango",
       "tipo_talento": "educacion",
       "fecha": "2026-03-30T15:28:33.416Z"
-
     },
     {
       "id": "3bd7",
@@ -495,7 +797,6 @@
       "descripcion": "Desarrollo en wed",
       "tipo_talento": "tecnologias",
       "fecha": "2026-03-30T17:33:13.730Z"
-
     },
     {
       "id": "62d5",
@@ -503,7 +804,219 @@
       "descripcion": "nnnnn",
       "tipo_talento": "arte-entretenimiento",
       "fecha": "2026-05-11T21:33:29.347Z"
-
+    },
+    {
+      "id": "3209",
+      "nombre": "mortadela",
+      "descripcion": "pan con mortadela",
+      "comunidadId": "com-arte",
+      "comunidadNombre": "Arte Visual",
+      "fecha": "2026-05-13T22:01:32.386Z"
+    },
+    {
+      "id": "28ec",
+      "nombre": "Diseñador grafico",
+      "descripcion": "Diseñador grafico",
+      "comunidadId": "com-disenio",
+      "comunidadNombre": "Diseño Gráfico",
+      "fecha": "2026-05-18T16:00:24.227Z",
+      "fechaLimite": "2026-06-25"
+    }
+  ],
+  "comunidades": [
+    {
+      "id": "com-arte",
+      "nombre": "Arte Visual",
+      "descripcion": "Comunidad para pintores, ilustradores, escultores y artistas visuales que quieren compartir su obra y crecer juntos.",
+      "categoria": "Arte",
+      "icono": "🎨",
+      "color": "#e040fb",
+      "colorClaro": "#f3e5f5",
+      "miembros": 0,
+      "banner": "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=600&q=80"
+    },
+    {
+      "id": "com-musica",
+      "nombre": "Música & Sonido",
+      "descripcion": "Espacio para músicos, productores, compositores y amantes del sonido. Comparte tus creaciones y colabora.",
+      "categoria": "Música",
+      "icono": "🎵",
+      "color": "#ff6d00",
+      "colorClaro": "#fff3e0",
+      "miembros": 0,
+      "banner": "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=600&q=80"
+    },
+    {
+      "id": "com-tech",
+      "nombre": "Tecnología & Dev",
+      "descripcion": "Para programadores, diseñadores UX/UI y entusiastas de la tecnología. Proyectos, recursos y networking.",
+      "categoria": "Tecnología",
+      "icono": "💻",
+      "color": "#0288d1",
+      "colorClaro": "#e1f5fe",
+      "miembros": 0,
+      "banner": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&q=80"
+    },
+    {
+      "id": "com-fotografia",
+      "nombre": "Fotografía",
+      "descripcion": "Comunidad para fotógrafos de todos los niveles. Comparte tus fotos, aprende técnicas y participa en retos.",
+      "categoria": "Fotografía",
+      "icono": "📷",
+      "color": "#00796b",
+      "colorClaro": "#e0f2f1",
+      "miembros": 0,
+      "banner": "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=600&q=80"
+    },
+    {
+      "id": "com-escritura",
+      "nombre": "Escritura Creativa",
+      "descripcion": "Para escritores, poetas y narradores. Comparte tus textos, recibe feedback y conecta con otros creadores.",
+      "categoria": "Literatura",
+      "icono": "✍️",
+      "color": "#c62828",
+      "colorClaro": "#ffebee",
+      "miembros": 0,
+      "banner": "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&q=80"
+    },
+    {
+      "id": "com-disenio",
+      "nombre": "Diseño Gráfico",
+      "descripcion": "Comunidad de diseñadores gráficos, tipógrafos y creadores de identidad visual. Muestra tu trabajo y colabora.",
+      "categoria": "Diseño",
+      "icono": "🖌️",
+      "color": "#6a1b9a",
+      "colorClaro": "#f3e5f5",
+      "miembros": 0,
+      "banner": "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&q=80"
+    },
+    {
+      "id": "com-danza",
+      "nombre": "Danza & Movimiento",
+      "descripcion": "Para bailarines, coreógrafos y amantes del movimiento. Comparte videos, encuentra compañeros y aprende.",
+      "categoria": "Danza",
+      "icono": "💃",
+      "color": "#f9a825",
+      "colorClaro": "#fffde7",
+      "miembros": 0,
+      "banner": "https://images.unsplash.com/photo-1518834107812-67b0b7c58434?w=600&q=80"
+    },
+    {
+      "id": "com-moda",
+      "nombre": "Moda & Estilo",
+      "descripcion": "Diseñadores de moda, estilistas y amantes del estilo. Inspírate, comparte looks y descubre tendencias.",
+      "categoria": "Moda",
+      "icono": "👗",
+      "color": "#ad1457",
+      "colorClaro": "#fce4ec",
+      "miembros": 0,
+      "banner": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80"
+    }
+  ],
+  "miembros_comunidades": [
+    {
+      "id": "e63f",
+      "comunidadId": "com-arte",
+      "usuarioId": "c098",
+      "usuarioNombre": "Adrian Mora Castillo",
+      "fecha": "2026-05-13T19:48:30.216Z"
+    },
+    {
+      "id": "e786",
+      "comunidadId": "com-arte",
+      "usuarioId": "2fa4",
+      "usuarioNombre": "María Jesús Chaverri",
+      "fecha": "2026-05-13T19:51:28.460Z"
+    },
+    {
+      "id": "6d99",
+      "comunidadId": "com-danza",
+      "usuarioId": "2fa4",
+      "usuarioNombre": "María Jesús Chaverri",
+      "fecha": "2026-05-13T20:17:14.747Z"
+    },
+    {
+      "id": "a745",
+      "comunidadId": "com-danza",
+      "usuarioId": "e263",
+      "usuarioNombre": "hola",
+      "fecha": "2026-05-13T21:01:39.305Z"
+    },
+    {
+      "id": "3f19",
+      "comunidadId": "com-arte",
+      "usuarioId": "e263",
+      "usuarioNombre": "hola",
+      "fecha": "2026-05-13T21:01:54.931Z"
+    },
+    {
+      "id": "1322",
+      "comunidadId": "com-disenio",
+      "usuarioId": "e263",
+      "usuarioNombre": "hola",
+      "fecha": "2026-05-18T16:00:52.400Z"
+    }
+  ],
+  "mensajes_comunidad": [
+    {
+      "id": "810e",
+      "comunidadId": "com-arte",
+      "usuarioId": "c098",
+      "usuarioNombre": "Adrian Mora Castillo",
+      "texto": "Hola a todos!",
+      "fecha": "2026-05-13T19:48:59.390Z"
+    },
+    {
+      "id": "6f52",
+      "comunidadId": "com-arte",
+      "usuarioId": "c098",
+      "usuarioNombre": "Adrian Mora Castillo",
+      "texto": "Hola a todos!",
+      "fecha": "2026-05-13T19:49:07.742Z"
+    },
+    {
+      "id": "b73e",
+      "comunidadId": "com-arte",
+      "usuarioId": "2fa4",
+      "usuarioNombre": "María Jesús Chaverri",
+      "texto": "Hola",
+      "fecha": "2026-05-13T19:51:42.142Z"
+    },
+    {
+      "id": "9c5e",
+      "comunidadId": "com-arte",
+      "usuarioId": "e263",
+      "usuarioNombre": "📢 Anuncio de Convocatoria",
+      "texto": "¡Atención! Nueva convocatoria abierta:\n\n**mortadela**\npan con mortadela",
+      "fecha": "2026-05-13T22:01:32.512Z",
+      "esConvocatoria": true
+    },
+    {
+      "id": "6eb6",
+      "comunidadId": "com-arte",
+      "usuarioId": "e263",
+      "usuarioNombre": "hola",
+      "texto": "t7gtft6ggtuy",
+      "fecha": "2026-05-13T22:06:02.006Z"
+    },
+    {
+      "id": "2344",
+      "comunidadId": "com-arte",
+      "usuarioId": "e263",
+      "usuarioNombre": "hola",
+      "texto": "¡Atención! Nueva convocatoria abierta:  **mortadela** pan con mortadela",
+      "fecha": "2026-05-13T22:10:04.240Z"
+    },
+    {
+      "id": "80d8",
+      "comunidadId": "com-disenio",
+      "usuarioId": "e263",
+      "usuarioNombre": "📢 Sistema KREA",
+      "texto": "¡Nueva convocatoria disponible!\n\n**Diseñador grafico**\nDiseñador grafico\n\n**Fecha límite:** 2026-06-25",
+      "fecha": "2026-05-18T16:00:24.443Z",
+      "esConvocatoria": true,
+      "convocatoriaId": "28ec",
+      "convocatoriaNombre": "Diseñador grafico"
     }
   ],
   "respuestas_convocatorias": [
@@ -562,6 +1075,15 @@
       "convocatoriaNombre": "Programador",
       "respuesta": "No participar",
       "fecha": "5/8/2026, 3:05:32 PM"
+    },
+    {
+      "id": "09e1",
+      "idConvocatoria": "28ec",
+      "usuarioNombre": "hola",
+      "convocatoriaNombre": "Diseñador grafico",
+      "respuesta": "Participar",
+      "fecha": "18/5/2026, 10:01:03 a. m."
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

@@ -1,0 +1,85 @@
+/* ── BLOQUE EDITABLE BASE ── */
+.editable-block {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    border-radius: 8px;
+    box-shadow: inset 0 0 0 1.5px rgba(0, 0, 0, 0.10);
+    transition: box-shadow 0.15s ease;
+}
+
+.editable-block:hover {
+    box-shadow: inset 0 0 0 1.5px rgba(59, 130, 246, 0.45);
+}
+
+.editable-block.editable-block--active {
+    outline: 2px solid #3b82f6;
+    outline-offset: -2px;
+    box-shadow: none;
+}
+
+/* ── TEXTAREA ── */
+/* Flujo normal (no absoluto) para que justify-content del padre controle la posición */
+.bloque-texto {
+    width: 100%;
+    padding: 14px;
+
+    border: none;
+    outline: none;
+    resize: none;
+    background: transparent;
+    overflow: hidden;
+
+    font-size: 16px;
+    font-family: inherit;
+    line-height: 1.5;
+
+    pointer-events: none;   /* no captura clics hasta modo texto */
+    cursor: pointer;
+    flex-shrink: 0;
+    z-index: 1;
+}
+
+.bloque-texto.bloque-texto--editing {
+    pointer-events: auto;
+    cursor: text;
+}
+
+/* ── LOADING OVERLAY ── */
+.loading-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+/* ── SPINNER COMPARTIDO ── */
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3b82f6;
+    border-radius: 50%;
+    animation: eb-spin 1s linear infinite;
+}
+
+@keyframes eb-spin {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ── LOADING OVERLAY PARA FONDO (componente externo) ── */
+.loading-overlay-fondo,
+.loading-overlay-child {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}

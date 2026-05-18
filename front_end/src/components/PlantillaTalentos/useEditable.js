@@ -1,30 +1,30 @@
 import { useState, useRef, useEffect } from "react";
 
-let globalId = 0;
-
 export function useEditable(initialState = null, onUpdate = null) {
-  const idRef = useRef(`editable-${globalId++}`);
-
-  const [state, setState] = useState(initialState || {
-    id: idRef.current,
+  const defaultState = {
     texto: "",
     colorTexto: "#1a202c",
     colorFondo: "",
-    imageUrl: ""
-  });
+    imageUrl: "",
+    fontSize: "16px",
+    bold: false,
+    italic: false,
+    align: "left",
+    textPosition: "center",
+    childColorFondo: "",
+    childImageUrl: ""
+  };
 
-  // Sincronizar si initialState cambia (importante para las previsualizaciones dinámicas)
+  const [state, setState] = useState(initialState || defaultState);
+  const stateRef = useRef(state);
+  stateRef.current = state;
+
   useEffect(() => {
-    if (initialState) {
-      setState(initialState);
-    }
+    if (initialState) setState(initialState);
   }, [initialState]);
 
   const update = (newData) => {
-    const newState = {
-      ...state,
-      ...newData
-    };
+    const newState = { ...stateRef.current, ...newData };
     setState(newState);
     if (onUpdate) onUpdate(newState);
   };

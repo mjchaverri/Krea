@@ -28,11 +28,6 @@ Convocatorias.init({
 
    }
 
-
-
-
-
-
 }, {
     sequelize,
     modelName: "Convocatorias",

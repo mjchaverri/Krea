@@ -1,23 +1,21 @@
-import React from 'react'
 import "../../styles/PlantillaTalentos/NavBarEditor.css"
 
-function NavBarEditor({guardar, onPreview}) {
+function NavBarEditor({ guardar, onPreview }) {
+    const usuario = JSON.parse(localStorage.getItem("UsuarioActivo") || "{}");
+    const fotoPerfil = usuario?.img || "";
+
     return (
         <nav className="navbar-editor">
 
             <div className="navbar-editor__left">
-                <i className="fa-solid fa-layer-group logo-icon"></i>
-
-                <div className="navbar-editor__title">
-                    <h1>Creador de Portafolios</h1>
-                    <p>Editando: Mi Portafolio 2026</p>
-                </div>
+                <span className="navbar-editor__logo" onClick={() => window.location.href = "/principal"}>Krea</span>
+                <div className="navbar-editor__divider" />
+                <span className="navbar-editor__subtitle">Editor de portafolios</span>
             </div>
 
             <div className="navbar-editor__center">
-                <a href="#">Mis Proyectos</a>
-                <a href="#">Explorar</a>
-                <a href="#">Ajustes</a>
+                <a href="/principal">Inicio</a>
+                <a href="/perfil-usuario">Mis proyectos</a>
             </div>
 
             <div className="navbar-editor__right">
@@ -26,10 +24,12 @@ function NavBarEditor({guardar, onPreview}) {
                 </button>
 
                 <button className="btn-save" onClick={guardar}>
-                    <i className="fa-solid fa-floppy-disk"></i> Guardar
+                    <i className="fa-solid fa-floppy-disk"></i> Guardar portafolio
                 </button>
 
-                <img src="#" alt="user" className="avatar" />
+                <a href="/perfil-usuario" className="avatar-link" title="Volver al perfil">
+                    <img src={fotoPerfil} alt="Perfil" className="avatar" />
+                </a>
             </div>
 
         </nav>

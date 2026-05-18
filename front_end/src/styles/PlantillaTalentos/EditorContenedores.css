@@ -1,45 +1,66 @@
+/* TOOLBAR FLOTANTE DEL EDITOR — misma pastilla que lienzo__toolbar */
 .editor-toolbar {
-    background: white;
-    border-radius: 12px;
-    padding: 8px 12px;
-
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 50px;
+    padding: 8px 14px;
     display: flex;
+    flex-direction: row;
     align-items: center;
-    gap: 10px;
-
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    gap: 4px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* wrappers */
+/* Cada acción es un botón circular */
 .color-wrapper,
 .image-wrapper,
-.text-color-wrapper {
+.text-color-wrapper,
+.remove-img {
     position: relative;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
     display: flex;
+    flex-shrink: 0;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    color: #6b7280;
+    font-size: 15px;
 }
 
-/* inputs ocultos */
+.color-wrapper:hover,
+.image-wrapper:hover,
+.text-color-wrapper:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+/* Color inputs ocultos debajo del ícono */
 .btnColor,
 .btnTextColor {
     position: absolute;
     inset: 0;
     opacity: 0;
     cursor: pointer;
+    border-radius: 50%;
 }
 
-/* iconos */
-.icono-texto i,
-.color-wrapper i,
-.image-wrapper span {
-    font-size: 18px;
-    cursor: pointer;
+/* Ícono de texto (doble ícono) */
+.icono-texto {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 12px;
 }
 
+/* Botón eliminar imagen */
 .remove-img {
-    cursor: pointer;
-    margin-left: 8px;
-    color: red;
-    font-size: 18px;
+    color: #ef4444;
+}
+
+.remove-img:hover {
+    background: #fef2f2;
+    color: #dc2626;
 }

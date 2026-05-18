@@ -11,8 +11,7 @@
 
 /* CONTENEDOR GENERAL */
 .portafolio-container {
-  margin-top: 60px;
-  /* espacio para navbar */
+  margin-top: 70px;
 }
 
 /* LAYOUT */
@@ -23,17 +22,17 @@
 /* LIENZO */
 .lienzo-container {
   flex: 1;
-  padding: 20px;
+  overflow-y: auto;
+  background: #ffffff;
 }
 
 /* SIDEBAR */
 .sidebar-container {
   width: 260px;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 70px);
   position: sticky;
-  top: 60px;
-  padding: 10px;
-  background: #f8f8f8;
+  top: 70px;
+  flex-shrink: 0;
 }
 
 /* BOTÓN */
@@ -48,44 +47,56 @@
   cursor: pointer;
 }
 
-/* MODAL DE VISTA PREVIA */
-.preview-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
+/* ── MODO CAPTURA: ocultar guías visuales del editor ── */
+.lienzo-container.capturando .grillaDoble__image,
+.lienzo-container.capturando .grillaTriple__image,
+.lienzo-container.capturando .grilla1_2_izda__image {
+    border: none !important;
+}
+
+.lienzo-container.capturando .editable-block {
+    box-shadow: none !important;
+}
+
+.lienzo-container.capturando .input-titulo,
+.lienzo-container.capturando .input-textbox {
+    border: none !important;
+}
+
+.lienzo-container.capturando .componente-eliminar {
+    display: none !important;
+}
+
+/* WRAPPER DE COMPONENTE */
+.componente-wrapper {
+  position: relative;
+}
+
+.componente-wrapper:hover .componente-eliminar {
+  opacity: 1;
+}
+
+.componente-eliminar {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
+  font-size: 13px;
 }
 
-.preview-modal__content {
-  background: white;
-  width: 90%;
-  max-width: 1200px;
-  height: 80%;
-  border-radius: 8px;
-  position: relative;
-  overflow: hidden;
+.componente-eliminar:hover {
+  background: #dc2626;
 }
 
-.preview-modal__close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  z-index: 10;
-}
-
-.preview-modal__body {
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
-  padding: 20px;
-}

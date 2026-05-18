@@ -1,10 +1,101 @@
+import { useState } from "react";
 import "../../styles/PlantillaTalentos/SidebarTalentos.css";
 
-function SidebarTalentos({ actEst1, actEst1_1, actEst1_2, actEst1_3, actEst1_4, actGrillaDoble, actGrillaTriple, actGrilla1_2_Izda, actGrilla1_2_Derecha }) {
+function SidebarTalentos({ actEst1, actEst1_1, actEst1_2, actEst1_3, actEst1_4, actGrillaDoble, actGrillaTriple, actGrilla1_2_Izda }) {
+  const [busqueda, setBusqueda] = useState("");
+
+  const plantillas = [
+    {
+      nombre: "Layout Centrado",
+      accion: actEst1,
+      preview: (
+        <div className="sidebartalentos__layout-preview layout-centered">
+          <div className="layout-centered__box"></div>
+        </div>
+      ),
+    },
+    {
+      nombre: "Layout 1:1",
+      accion: actEst1_1,
+      preview: (
+        <div className="sidebartalentos__layout-preview layout-header-column">
+          <div className="layout-header-column__top"></div>
+          <div className="layout-header-column__bottom"></div>
+        </div>
+      ),
+    },
+    {
+      nombre: "Layout 1:2",
+      accion: actEst1_2,
+      preview: (
+        <div className="sidebartalentos__layout-preview layout-1-2">
+          <div className="layout-1-2__top"></div>
+          <div className="layout-1-2__bottom">
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      nombre: "Layout 1:3",
+      accion: actEst1_3,
+      preview: (
+        <div className="sidebartalentos__layout-preview layout-1-3">
+          <div className="layout-1-3__top"></div>
+          <div className="layout-1-3__bottom">
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      nombre: "Layout 1:4",
+      accion: actEst1_4,
+      preview: (
+        <div className="sidebartalentos__layout-preview layout-1-4">
+          <div className="layout-1-4__top"></div>
+          <div className="layout-1-4__bottom">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      nombre: "Grilla Doble",
+      accion: actGrillaDoble,
+      preview: (
+        <div className="sidebartalentos__layout-preview layout-2-cols">
+          <div></div>
+          <div></div>
+        </div>
+      ),
+    },
+    {
+      nombre: "Grilla Triple",
+      accion: actGrillaTriple,
+      preview: (
+        <div className="sidebartalentos__layout-preview layout-3-cols">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      ),
+    },
+  ];
+
+  const filtradas = plantillas.filter((p) =>
+    p.nombre.toLowerCase().includes(busqueda.toLowerCase())
+  );
+
   return (
     <div className="sidebartalentos">
 
-      {/* HEADER */}
       <div className="sidebartalentos__header">
         <div className="sidebartalentos__title">
           <span className="sidebartalentos__icon">▦</span>
@@ -13,114 +104,33 @@ function SidebarTalentos({ actEst1, actEst1_1, actEst1_2, actEst1_3, actEst1_4, 
         <span className="sidebartalentos__badge">EDITOR</span>
       </div>
 
-      {/* SEARCH */}
       <input
         type="text"
         className="sidebartalentos__search"
         placeholder="Buscar componentes..."
+        value={busqueda}
+        onChange={(e) => setBusqueda(e.target.value)}
       />
 
-      {/* ESTRUCTURAS */}
       <p className="sidebartalentos__section-title">ESTRUCTURAS Y GRILLAS</p>
 
       <div className="sidebartalentos__grid">
-        <div className="sidebartalentos__layout" onClick={actEst1}>
-          <div className="sidebartalentos__layout-preview layout-centered">
-
-            <div className="layout-centered__box"></div>
-
-          </div>
-          <span>Layout Centrado</span>
-        </div>
-
-        <div className="sidebartalentos__layout" onClick={actEst1_1}>
-          <div className="sidebartalentos__layout-preview layout-header-column">
-
-            <div className="layout-header-column__top"></div>
-
-            <div className="layout-header-column__bottom"></div>
-
-          </div>
-          <span>Layout 1:1</span>
-        </div>
-
-        <div className="sidebartalentos__layout" onClick={actEst1_2}>
-          <div className="sidebartalentos__layout-preview layout-1-2">
-            <div className="layout-1-2__top"></div>
-            <div className="layout-1-2__bottom">
-              <div></div>
-              <div></div>
+        {filtradas.length > 0 ? (
+          filtradas.map((p) => (
+            <div key={p.nombre} className="sidebartalentos__layout" onClick={p.accion}>
+              {p.preview}
+              <span>{p.nombre}</span>
             </div>
-          </div>
-          <span>Layout 1:2</span>
-        </div>
-
-        <div className="sidebartalentos__layout" onClick={actEst1_3}>
-          <div className="sidebartalentos__layout-preview layout-1-3">
-
-            <div className="layout-1-3__top"></div>
-
-            <div className="layout-1-3__bottom">
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
-
-          </div>
-          <span>1:3</span>
-        </div>
-
-        <div className="sidebartalentos__layout" onClick={actEst1_4}>
-          <div className="sidebartalentos__layout-preview layout-1-4">
-
-            <div className="layout-1-4__top"></div>
-
-            <div className="layout-1-4__bottom">
-              <div></div>
-              <div></div>
-              <div></div>
-              <div></div>
-            </div>
-
-          </div>
-          <span>1:4</span>
-        </div>
-
-        <div className="sidebartalentos__layout" onClick={actGrillaDoble}>
-          <div className="sidebartalentos__layout-preview layout-2-cols">
-
-            <div></div>
-            <div></div>
-
-          </div>
-          <span>Grilla Doble</span>
-        </div>
-
-
-        <div className="sidebartalentos__layout" onClick={actGrillaTriple}>
-          <div className="sidebartalentos__layout-preview layout-3-cols">
-
-            <div></div>
-            <div></div>
-            <div></div>
-
-          </div>
-          <span>Grilla Triple</span>
-        </div>
-
-
-        <div className="sidebartalentos__layout" onClick={actGrilla1_2_Derecha}>
-          <div className="sidebartalentos__layout-preview layout-4"></div>
-          <span>Mosaico</span>
-        </div>
+          ))
+        ) : (
+          <p className="sidebartalentos__empty">
+            Sin resultados para "<strong>{busqueda}</strong>"
+          </p>
+        )}
       </div>
-
-      {/* BOTÓN FINAL 
-      <button className="sidebartalentos__add-btn">
-        + Añadir elemento
-      </button>*/}
 
     </div>
   );
 }
+
 export default SidebarTalentos;

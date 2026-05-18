@@ -13,11 +13,10 @@ function Estructura1_4({ onActivate, activeElement, initialData, onUpdate }) {
 
   const fondo = useEditable(initialData?.fondo, (d) => handleUpdate('fondo', d));
   const bloqueTop = useEditable(initialData?.bloqueTop, (d) => handleUpdate('bloqueTop', d));
-  const bloqueMid1 = useEditable(initialData?.bloqueMid1, (d) => handleUpdate('bloqueMid1', d));
-  const bloqueMid2 = useEditable(initialData?.bloqueMid2, (d) => handleUpdate('bloqueMid2', d));
-  const bloqueBottom1 = useEditable(initialData?.bloqueBottom1, (d) => handleUpdate('bloqueBottom1', d));
-  const bloqueBottom2 = useEditable(initialData?.bloqueBottom2, (d) => handleUpdate('bloqueBottom2', d));
-  const bloqueBottom3 = useEditable(initialData?.bloqueBottom3, (d) => handleUpdate('bloqueBottom3', d));
+  const bloque1 = useEditable(initialData?.bloque1, (d) => handleUpdate('bloque1', d));
+  const bloque2 = useEditable(initialData?.bloque2, (d) => handleUpdate('bloque2', d));
+  const bloque3 = useEditable(initialData?.bloque3, (d) => handleUpdate('bloque3', d));
+  const bloque4 = useEditable(initialData?.bloque4, (d) => handleUpdate('bloque4', d));
 
   const [loadingFondo, setLoadingFondo] = useState(false);
 
@@ -75,40 +74,32 @@ function Estructura1_4({ onActivate, activeElement, initialData, onUpdate }) {
 
         <EditableBlock
           className="est1_4__description"
-          data={bloqueMid1.state}
-          update={bloqueMid1.update}
+          data={bloque1.state}
+          update={bloque1.update}
           onActivate={onActivate}
           activeElement={activeElement}
         />
 
         <EditableBlock
           className="est1_4__description"
-          data={bloqueMid2.state}
-          update={bloqueMid2.update}
+          data={bloque2.state}
+          update={bloque2.update}
           onActivate={onActivate}
           activeElement={activeElement}
         />
 
         <EditableBlock
           className="est1_4__description"
-          data={bloqueBottom1.state}
-          update={bloqueBottom1.update}
+          data={bloque3.state}
+          update={bloque3.update}
           onActivate={onActivate}
           activeElement={activeElement}
         />
 
         <EditableBlock
           className="est1_4__description"
-          data={bloqueBottom2.state}
-          update={bloqueBottom2.update}
-          onActivate={onActivate}
-          activeElement={activeElement}
-        />
-
-        <EditableBlock
-          className="est1_4__description"
-          data={bloqueBottom3.state}
-          update={bloqueBottom3.update}
+          data={bloque4.state}
+          update={bloque4.update}
           onActivate={onActivate}
           activeElement={activeElement}
         />

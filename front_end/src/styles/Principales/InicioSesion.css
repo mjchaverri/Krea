@@ -2,7 +2,6 @@
     display: flex;
     min-height: 100vh;
     background-color: #f0f9ff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .BackgroundDecoration {
@@ -45,10 +44,10 @@
 }
 
 .TituloBienvenido {
-    font-size: 3.5rem;
+    font-size: 2.6rem;
     margin-bottom: 1rem;
     color: white;
-    line-height: 1.1;
+    line-height: 1.2;
 }
 
 .BrandName {
@@ -57,7 +56,7 @@
 }
 
 .BackgroundDecoration p {
-    font-size: 1.25rem;
+    font-size: 1rem;
     opacity: 0.9;
     max-width: 500px;
     line-height: 1.6;
@@ -84,7 +83,7 @@
 }
 
 .TituloLogo {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     color: #0369a1;
     font-weight: 800;
     margin: 0;
@@ -101,7 +100,7 @@
 .TituloPrincipal {
     text-align: center;
     color: #0c4a6e;
-    font-size: 2.25rem;
+    font-size: 1.75rem;
     margin: 0;
 }
 
@@ -110,7 +109,7 @@
     color: #64748b;
     margin-top: -0.5rem;
     margin-bottom: 1rem;
-    font-size: 1rem;
+    font-size: 0.875rem;
 }
 
 .ParrafoForm {
@@ -128,14 +127,14 @@
 .InputGroup label {
     font-weight: 600;
     color: #334155;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
 .InputGroup input {
     padding: 0.8rem 1rem;
     border: 1px solid #cbd5e1;
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: #1e293b;
     transition: all 0.2s;
     background-color: #f8fafc;
@@ -154,7 +153,7 @@
     padding: 0.9rem;
     border: none;
     border-radius: 8px;
-    font-size: 1.1rem;
+    font-size: 0.95rem;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
@@ -179,7 +178,7 @@
 
 .RegistroPrompt h6 {
     color: #64748b;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     margin: 0;
     font-weight: 500;
 }

@@ -1,89 +1,32 @@
-/* 🔥 CONTENEDOR PRINCIPAL */
+/* ── ESTRUCTURA 1-2: HEADER + DOS COLUMNAS ── */
 .est1_2 {
-    
-    height: 600px;
-    min-height: 600px;
+    min-height: 400px;
     width: 100%;
-    max-width: 100%;
+    padding: 20px;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
+    align-items: stretch;
     box-sizing: border-box;
     position: relative;
+    cursor: pointer;
 }
 
-/* 🔥 GRID DEL CONTENIDO */
 .est1_2__content {
     display: grid;
-    grid-template-rows: 80px minmax(280px, 1fr);
-    grid-template-columns: 1fr 1fr auto;
+    grid-template-rows: 80px 1fr;
+    grid-template-columns: 1fr 1fr;
     width: 100%;
-    height: 100%;
-    gap: 14px;
+    gap: 20px;
 }
 
-/* 🔥 BLOQUES EDITABLES */
-.est1_2__content > .editable-block {
-    width: 100%;
-    height: 100%;
-    min-height: 0;
-    position: relative;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.12);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.est1_2__content > .editable-block:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-
-/* 🔥 ESTILOS ESPECÍFICOS POR BLOQUE */
 .est1_2__title {
-    grid-column: 1 / 4; /* ocupa las 3 columnas */
+    grid-column: 1 / 3;
     width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    font-size: 20px;
+    height: 80px;
+    overflow: hidden;
+    flex-shrink: 0;
 }
 
 .est1_2__description {
     width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    font-size: 16px;
-}
-
-/* 🔥 LOADING OVERLAY PARA FONDO */
-.loading-overlay-fondo {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    border-radius: 8px;
-}
-
-/* 🔥 SPINNER */
-.spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3b82f6;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
 }

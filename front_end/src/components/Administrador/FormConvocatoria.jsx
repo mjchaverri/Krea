@@ -7,6 +7,7 @@ function FormConvocatoria() {
   const [descripcion, setDescripcion] = useState('')
   const [comunidadId, setComunidadId] = useState('')
   const [comunidades, setComunidades] = useState([])
+  const [fechaLimite, setFechaLimite] = useState('')
 
   useEffect(() => {
     const cargarComunidades = async () => {
@@ -22,7 +23,7 @@ function FormConvocatoria() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if(!nombre || !descripcion || !comunidadId) {
+    if(!nombre || !descripcion || !comunidadId || !fechaLimite) {
       alert("Por favor completa todos los campos")
       return
     }
@@ -35,7 +36,8 @@ function FormConvocatoria() {
       descripcion,
       comunidadId: comunidadId,
       comunidadNombre: comunidadSeleccionada ? comunidadSeleccionada.nombre : '',
-      fecha: new Date().toISOString()
+      fecha: new Date().toISOString(),
+      fechaLimite
     }
 
     try {
@@ -47,7 +49,7 @@ function FormConvocatoria() {
         comunidadId: comunidadId,
         usuarioId: usuarioActivo.id || "admin",
         usuarioNombre: "📢 Sistema KREA",
-        texto: `¡Nueva convocatoria disponible!\n\n**${nombre}**\n${descripcion}`,
+        texto: `¡Nueva convocatoria disponible!\n\n**${nombre}**\n${descripcion}\n\n**Fecha límite:** ${fechaLimite}`,
         fecha: new Date().toISOString(),
         esConvocatoria: true,
         convocatoriaId: convocatoriaCreada.id, // Referencia para el botón
@@ -59,6 +61,7 @@ function FormConvocatoria() {
       setNombre('')
       setDescripcion('')
       setComunidadId('')
+      setFechaLimite('')
     } catch (error) {
       console.error(error)
       alert("Error al enviar la convocatoria")
@@ -91,6 +94,11 @@ function FormConvocatoria() {
               </option>
             ))}
           </select>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Fecha límite de inscripción</label>
+          <input className="form-input" type="date" value={fechaLimite} onChange={(e) => setFechaLimite(e.target.value)} min={new Date().toISOString().split('T')[0]} />
         </div>
 
         <div className="form-actions">

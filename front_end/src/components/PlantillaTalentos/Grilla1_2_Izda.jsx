@@ -2,7 +2,7 @@ import "../../styles/PlantillaTalentos/Grilla1_2_Izda.css";
 import EditableBlock from "./EditableBlock";
 import { useEditable } from "./useEditable";
 
-function Grilla1_2_Izda({ onActivate, initialData, onUpdate }) {
+function Grilla1_2_Izda({ onActivate, activeElement, initialData, onUpdate }) {
     
     const handleUpdate = (key, newData) => {
         if (onUpdate) {
@@ -42,6 +42,7 @@ function Grilla1_2_Izda({ onActivate, initialData, onUpdate }) {
                     data={content.state}
                     update={content.update}
                     onActivate={onActivate}
+                    activeElement={activeElement}
                 />
             </div>
         </div>

@@ -161,141 +161,6 @@
       "nombreUsuario": "María Jesús Chaverri"
     },
     {
-      "id": "d115",
-      "usuarioId": null,
-      "componentes": [
-        {
-          "id": "51c0db97-78e1-4037-bfff-8c8d78a97c7e",
-          "type": "Estructura1",
-          "data": {
-            "texto": "Fresh Market",
-            "colorTexto": "#ffffff",
-            "colorFondo": "",
-            "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1774888113/oi6et3rnrovwn74qhry2.jpg",
-            "fontSize": "16px",
-            "bold": false,
-            "italic": false,
-            "align": "left",
-            "childColorFondo": "",
-            "childImageUrl": ""
-          }
-        }
-      ],
-      "titulo": "FreshMarket",
-      "descripcion": "Pagina Web de supermercado",
-      "pdf": "https://res.cloudinary.com/dyy1yqvbv/raw/upload/v1774888161/wjts6lcuupdsvrxe4vvo",
-      "imgPortada": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1774888160/nzmvlllaotx5osh63a3t.jpg",
-      "nombreUsuario": "Pepe Viyuela Gomez"
-    },
-    {
-      "id": "5f6e",
-      "usuarioId": "2fa4",
-      "componentes": [
-        {
-          "id": "5af1d2dd-cc32-4720-b0aa-cca37f9d5502",
-          "type": "Estructura1",
-          "data": {
-            "texto": "Prototipo de Modelado 3D",
-            "colorTexto": "#000000",
-            "colorFondo": "#ababab",
-            "imageUrl": "",
-            "fontSize": "16px",
-            "bold": false,
-            "italic": false,
-            "align": "left",
-            "childColorFondo": "",
-            "childImageUrl": ""
-          }
-        },
-        {
-          "id": "6297e3a6-3dde-4b7d-b954-f0c8fca99bd7",
-          "type": "Estructura1_2",
-          "data": {
-            "texto": "",
-            "colorTexto": "#1a202c",
-            "colorFondo": "",
-            "imageUrl": "",
-            "fontSize": "16px",
-            "bold": false,
-            "italic": false,
-            "align": "left",
-            "childColorFondo": "",
-            "childImageUrl": "",
-            "bloqueTop": {
-              "id": "editable-1245",
-              "texto": "BOCETO DE PROTOTIPO",
-              "colorTexto": "#ffffff",
-              "colorFondo": "",
-              "imageUrl": ""
-            },
-            "bloqueMid": {
-              "id": "editable-1246",
-              "texto": " ",
-              "colorTexto": "#1a202c",
-              "colorFondo": "",
-              "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1774891568/ogtfnpqtpuphfrqbn0rr.jpg"
-            },
-            "bloqueBottom": {
-              "id": "editable-1247",
-              "texto": " ",
-              "colorTexto": "#1a202c",
-              "colorFondo": "",
-              "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1774891577/qhgq8oaaxnbifg4or8pj.jpg"
-            },
-            "fondo": {
-              "id": "editable-1244",
-              "texto": "",
-              "colorTexto": "#1a202c",
-              "colorFondo": "#ababab",
-              "imageUrl": ""
-            }
-          }
-        },
-        {
-          "id": "ff32514c-c1e3-48b5-ac31-e4d4009d3214",
-          "type": "GrillaDoble",
-          "data": {
-            "texto": "",
-            "colorTexto": "#1a202c",
-            "colorFondo": "",
-            "imageUrl": "",
-            "fontSize": "16px",
-            "bold": false,
-            "italic": false,
-            "align": "left",
-            "childColorFondo": "",
-            "childImageUrl": "",
-            "bloque1": {
-              "id": "editable-3035",
-              "texto": " ",
-              "colorTexto": "#1a202c",
-              "colorFondo": "",
-              "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1774891650/s93jhwyn80wwutaujuvf.jpg"
-            },
-            "bloque2": {
-              "id": "editable-3036",
-              "texto": " ",
-              "colorTexto": "#1a202c",
-              "colorFondo": "",
-              "imageUrl": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1774891658/zpcz0oybscofkqmaqpdg.jpg"
-            },
-            "fondo": {
-              "id": "editable-3034",
-              "texto": "",
-              "colorTexto": "#1a202c",
-              "colorFondo": "#ababab",
-              "imageUrl": ""
-            }
-          }
-        }
-      ],
-      "titulo": "Prototipo de Modelado 3D",
-      "descripcion": "Modelado de personaje para videojuego, implementando las técnicas de escultura digital más avanzadas, creando personajes detallados y realistas con texturas y materiales de alta calidad.",
-      "pdf": "https://res.cloudinary.com/dyy1yqvbv/raw/upload/v1774891689/imotsgcmdou0k2uqftqv",
-      "imgPortada": "https://res.cloudinary.com/dyy1yqvbv/image/upload/v1774891688/fxjzhf9kisqkx9ewpppm.jpg",
-      "nombreUsuario": "Maria Jesus chavarria"
-    },
-    {
       "id": "af4f",
       "usuarioId": "f898",
       "componentes": [
@@ -888,6 +753,14 @@
       "comentario": "Increíble",
       "rating": 5,
       "fecha": "2026-05-08T21:25:33.363Z"
+    },
+    {
+      "id": "1b1d",
+      "usuarioId": "f898",
+      "portafolioId": "af4f",
+      "comentario": "Muy buenos diseños",
+      "rating": 5,
+      "fecha": "2026-05-16T05:05:40.609Z"
     }
   ],
   "convocatorias": [

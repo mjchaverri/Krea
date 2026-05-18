@@ -1,9 +1,9 @@
 .prevc-outer {
     width: 100%;
-    height: 330px;
+    /* height set dynamically by JS */
     overflow: hidden;
     position: relative;
-    background: #ffffff;
+    background: #f8fafc;
 }
 
 .prevc-inner {
@@ -19,7 +19,7 @@
 .prevc-empty {
     width: 100%;
     min-height: 400px;
-    background-color: #ffffff;
+    background-color: #f8fafc;
 }
 
 /* hide the delete button that ComponentePortafolio renders */

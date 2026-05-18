@@ -6,7 +6,7 @@ import '../../styles/Principales/InicioPagina.css';
 
 function ProjectShowcase({ showcaseRef }) {
     const navigate = useNavigate();
-    const carouselRef = useRef(null);
+    const filtersRef = useRef(null);
     const [datos, setDatos] = useState({ usuarios: [], portafolios: [], resenas: [] });
     const [activeCategory, setActiveCategory] = useState('Todo');
 
@@ -46,16 +46,29 @@ function ProjectShowcase({ showcaseRef }) {
         'Modelado 3D',
     ];
 
+    const scrollFilters = (dir) =>
+        filtersRef.current?.scrollBy({ left: dir * 240, behavior: 'smooth' });
+
     const portafoliosProcesados = useMemo(() => {
         if (!datos.portafolios || datos.portafolios.length === 0) return [];
-        
+
         return datos.portafolios
             .slice()
-            .sort((a, b) => Number(b.id) - Number(a.id))
             .map(p => {
                 const user = datos.usuarios.find(u => String(u.id) === String(p.usuarioId));
                 const userFinal = user || { Nombre: p.nombreUsuario || "Usuario", img: "" };
-                return { ...p, user: userFinal };
+                const resenasPf = datos.resenas.filter(r => String(r.portafolioId) === String(p.id));
+                const avgRating = resenasPf.length > 0
+                    ? resenasPf.reduce((sum, r) => sum + (r.rating || 0), 0) / resenasPf.length
+                    : null;
+                return { ...p, user: userFinal, avgRating, totalResenas: resenasPf.length };
+            })
+            .sort((a, b) => {
+                // Ordenar por promedio desc, luego por cantidad de reseñas desc
+                const ra = a.avgRating ?? -1;
+                const rb = b.avgRating ?? -1;
+                if (rb !== ra) return rb - ra;
+                return b.totalResenas - a.totalResenas;
             });
     }, [datos]);
 
@@ -66,20 +79,8 @@ function ProjectShowcase({ showcaseRef }) {
                 (p.categorias || []).includes(activeCategory)
             );
         }
-        return list.slice(0, 12);
+        return list.slice(0, 4);
     }, [portafoliosProcesados, activeCategory]);
-
-    const scrollLeft = () => {
-        if (carouselRef.current) {
-            carouselRef.current.scrollBy({ left: -carouselRef.current.offsetWidth, behavior: 'smooth' });
-        }
-    };
-
-    const scrollRight = () => {
-        if (carouselRef.current) {
-            carouselRef.current.scrollBy({ left: carouselRef.current.offsetWidth, behavior: 'smooth' });
-        }
-    };
 
     return (
         <section className='ShowcaseSection' ref={showcaseRef}>
@@ -92,34 +93,36 @@ function ProjectShowcase({ showcaseRef }) {
                 </p>
             </div>
 
-            <div className='CategoryFilters'>
-                {categories.map(cat => (
-                    <button 
-                        key={cat} 
-                        className={`FilterBtn ${activeCategory === cat ? 'active' : ''}`}
-                        onClick={() => setActiveCategory(cat)}
-                    >
-                        {cat}
-                    </button>
-                ))}
-            </div>
-
-            <div className='CarouselWrapper'>
-                <button className='NavArrow left' onClick={scrollLeft}>
+            <div className='FiltersCarouselWrapper'>
+                <button className='FilterArrow' onClick={() => scrollFilters(-1)}>
                     <i className="fa-solid fa-chevron-left"></i>
                 </button>
-
-                <div className='ProjectsCarousel' ref={carouselRef}>
-                    {filteredProjects.map((project, index) => (
-                        <div
-                            key={`${project.id}-${index}`}
-                            className='ProjectCard card-carousel'
-                            onClick={() => navigate('/Registro')}
+                <div className='CategoryFilters' ref={filtersRef}>
+                    {categories.map(cat => (
+                        <button
+                            key={cat}
+                            className={`FilterBtn ${activeCategory === cat ? 'active' : ''}`}
+                            onClick={() => setActiveCategory(cat)}
                         >
-                            <div className='ProjectMedia'>
-                                <PreviewComponentes componentes={project.componentes} />
-                            </div>
-                            <div className='ProjectContent'>
+                            {cat}
+                        </button>
+                    ))}
+                </div>
+                <button className='FilterArrow' onClick={() => scrollFilters(1)}>
+                    <i className="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+
+            <div className='ProjectsGrid'>
+                {filteredProjects.map((project, index) => (
+                    <div
+                        key={`${project.id}-${index}`}
+                        className='ProjectCard'
+                        onClick={() => navigate('/Registro')}
+                    >
+                        <div className='ProjectMedia'>
+                            <PreviewComponentes componentes={project.componentes} />
+                            <div className='ProjectOverlay'>
                                 <div className='ProjectCategories'>
                                     {(project.categorias?.length > 0 ? project.categorias : ["Proyecto"])
                                         .slice(0, 2)
@@ -132,23 +135,23 @@ function ProjectShowcase({ showcaseRef }) {
                                     )}
                                 </div>
                                 <h3 className='ProjectTitle'>{project.titulo}</h3>
-                                <div className='ProjectFooter'>
-                                    <div className='UserInfo'>
-                                        <img src={project.user?.img || "https://via.placeholder.com/50"} alt={project.user?.Nombre} />
-                                        <span>{project.user?.Nombre}</span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
-                    ))}
-                    {filteredProjects.length === 0 && (
-                        <div className="no-projects">No se encontraron proyectos en esta categoría.</div>
-                    )}
-                </div>
-
-                <button className='NavArrow right' onClick={scrollRight}>
-                    <i className="fa-solid fa-chevron-right"></i>
-                </button>
+                        <div className='ProjectAuthor'>
+                            <img src={project.user?.img || "https://via.placeholder.com/50"} alt={project.user?.Nombre} />
+                            <span className='ProjectAuthorName'>{project.user?.Nombre}</span>
+                            {project.avgRating !== null && (
+                                <span className='ProjectRating'>
+                                    <i className="fa-solid fa-star"></i>
+                                    {project.avgRating.toFixed(1)}
+                                </span>
+                            )}
+                        </div>
+                    </div>
+                ))}
+                {filteredProjects.length === 0 && (
+                    <div className="no-projects">No se encontraron proyectos en esta categoría.</div>
+                )}
             </div>
         </section>
     );

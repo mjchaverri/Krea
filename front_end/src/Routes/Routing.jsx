@@ -15,7 +15,6 @@ import RutaPrivada from "./RutaPrivada"
 import PaginaConsejos from "../pages/PaginaConsejos"
 import RutaPrivadaAdmin from "./RutaPrivadaAdmin"
 import TodosProyectos from "../pages/TodosProyectos"
-import PaginaComoFunciona from "../pages/PaginaComoFunciona"
 import FormularioConvo from "../pages/FormularioConvo"
 
 function Routing() {
@@ -37,7 +36,6 @@ function Routing() {
                 <Route path="/Funcionalidad" element={<RutaPrivada children={<Funcionalidad />} />} />
                 <Route path="/Consejos" element={<RutaPrivada children={<PaginaConsejos />} />} />
                 <Route path="/todos-proyectos" element={<TodosProyectos />} />
-                <Route path="/ComoFunciona" element={<RutaPrivada children={<PaginaComoFunciona />} />} />
                 <Route path="/perfil/:usuarioId" element={<PerfilVisitante />} />
                 <Route path="/FormularioConvo" element={<FormularioConvo />} />
             </Routes>

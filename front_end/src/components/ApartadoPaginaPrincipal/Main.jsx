@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../../styles/Principales/InicioPagina.css';
 import foto1 from '../../imagenes/foto1.png';
 import ProjectShowcase from './ProjectShowcase';
-import SeccionComunidad from './SeccionComunidad';
+import SeccionComunidad from '../PaginaPrincipal/SeccionComunidad';
 
 function Main() {
   const navigate = useNavigate();

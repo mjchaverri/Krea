@@ -11,6 +11,13 @@ const Participante_convo = require("./models/Participante_convo")
 const Convocatorias = require("./models/Convocatoria")
 const Reporte_convo = require("./models/Reporte_convo")
 const Tipo_convo = require("./models/Tipo_convo")
+const Comunidades = require("./models/Comunidades")
+const Miembros = require("./models/Miembros")
+const Categorias = require("./models/Categorias")
+const Categoria_portafolios = require("./models/Categoria_portafolios")
+const Chat_Comu = require("./models/Chat_Comu")
+const Chat_Miembros = require("./models/Chat_Miembros")
+
 
 
 
@@ -49,6 +56,17 @@ Reporte_convo.belongsTo(Usuario,{foreignKey: "id_usuario"})
 Convocatorias.hasMany(Tipo_convo,{foreignKey: "id_convocatoria"})
 Tipo_convo.belongsTo(Convocatorias,{foreignKey: "id_convocatoria"})
 
+// un portafolio puede tener muchas categorias, y una categoria pertenece a muchos portafolios
+Portafolios.belongsToMany(Categorias,{ Categoria_portafolios,foreignKey: "id_portafolio"})
+Categorias.belongsToMany(Portafolios,{ Categoria_portafolios,foreignKey: "id_categoria"})
+
+// Una comunidad puede tener muchos miembros, y un miembro puede pertenecer a muchas comunidades
+Comunidades.hasMany(Miembros,{Comunidades,foreignKey: "id_comunidad"})
+Miembros.hasMany(Comunidades,{Miembros,foreignKey: "id_comunidad"})
+
+// Un chat puede tener muchos miembros, y un miembro puede pertenecer a muchos chats
+Chat_Comu.hasMany(Chat_Miembros,{Chat_Comu,foreignKey: "id_chat_comu"})
+Chat_Miembros.hasMany(Miembros,{Chat_Comu,foreignKey: "id_chat_comu"})
 
 
 module.exports = {
@@ -64,7 +82,6 @@ module.exports = {
     Participante_convo,
     Convocatorias, 
     Reporte_convo,
-    Tipo_convo
-
-
+    Tipo_convo,
+    Portafolios
 }

@@ -35,6 +35,19 @@
       "Roles": "Usuario",
       "Contrasena": "12345678",
       "img": "https://via.placeholder.com/150"
+    },
+    {
+      "id": "e263",
+      "Nombre": "hola",
+      "Correo": "hola@gmail.com",
+      "email": "hola@gmail.com",
+      "telefono": "88173512",
+      "Provincias": "San José",
+      "Canton": "si",
+      "Distrito": "si",
+      "Roles": "Usuario",
+      "Contrasena": "12345678",
+      "img": "https://via.placeholder.com/150"
     }
   ],
   "portafolios": [
@@ -791,6 +804,236 @@
       "descripcion": "nnnnn",
       "tipo_talento": "arte-entretenimiento",
       "fecha": "2026-05-11T21:33:29.347Z"
+    },
+    {
+      "id": "3209",
+      "nombre": "mortadela",
+      "descripcion": "pan con mortadela",
+      "comunidadId": "com-arte",
+      "comunidadNombre": "Arte Visual",
+      "fecha": "2026-05-13T22:01:32.386Z"
+    },
+    {
+      "id": "28ec",
+      "nombre": "Diseñador grafico",
+      "descripcion": "Diseñador grafico",
+      "comunidadId": "com-disenio",
+      "comunidadNombre": "Diseño Gráfico",
+      "fecha": "2026-05-18T16:00:24.227Z",
+      "fechaLimite": "2026-06-25"
+    }
+  ],
+  "comunidades": [
+    {
+      "id": "com-arte",
+      "nombre": "Arte Visual",
+      "descripcion": "Comunidad para pintores, ilustradores, escultores y artistas visuales que quieren compartir su obra y crecer juntos.",
+      "categoria": "Arte",
+      "icono": "🎨",
+      "color": "#e040fb",
+      "colorClaro": "#f3e5f5",
+      "miembros": 0,
+      "banner": "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=600&q=80"
+    },
+    {
+      "id": "com-musica",
+      "nombre": "Música & Sonido",
+      "descripcion": "Espacio para músicos, productores, compositores y amantes del sonido. Comparte tus creaciones y colabora.",
+      "categoria": "Música",
+      "icono": "🎵",
+      "color": "#ff6d00",
+      "colorClaro": "#fff3e0",
+      "miembros": 0,
+      "banner": "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=600&q=80"
+    },
+    {
+      "id": "com-tech",
+      "nombre": "Tecnología & Dev",
+      "descripcion": "Para programadores, diseñadores UX/UI y entusiastas de la tecnología. Proyectos, recursos y networking.",
+      "categoria": "Tecnología",
+      "icono": "💻",
+      "color": "#0288d1",
+      "colorClaro": "#e1f5fe",
+      "miembros": 0,
+      "banner": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&q=80"
+    },
+    {
+      "id": "com-fotografia",
+      "nombre": "Fotografía",
+      "descripcion": "Comunidad para fotógrafos de todos los niveles. Comparte tus fotos, aprende técnicas y participa en retos.",
+      "categoria": "Fotografía",
+      "icono": "📷",
+      "color": "#00796b",
+      "colorClaro": "#e0f2f1",
+      "miembros": 0,
+      "banner": "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=600&q=80"
+    },
+    {
+      "id": "com-escritura",
+      "nombre": "Escritura Creativa",
+      "descripcion": "Para escritores, poetas y narradores. Comparte tus textos, recibe feedback y conecta con otros creadores.",
+      "categoria": "Literatura",
+      "icono": "✍️",
+      "color": "#c62828",
+      "colorClaro": "#ffebee",
+      "miembros": 0,
+      "banner": "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&q=80"
+    },
+    {
+      "id": "com-disenio",
+      "nombre": "Diseño Gráfico",
+      "descripcion": "Comunidad de diseñadores gráficos, tipógrafos y creadores de identidad visual. Muestra tu trabajo y colabora.",
+      "categoria": "Diseño",
+      "icono": "🖌️",
+      "color": "#6a1b9a",
+      "colorClaro": "#f3e5f5",
+      "miembros": 0,
+      "banner": "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&q=80"
+    },
+    {
+      "id": "com-danza",
+      "nombre": "Danza & Movimiento",
+      "descripcion": "Para bailarines, coreógrafos y amantes del movimiento. Comparte videos, encuentra compañeros y aprende.",
+      "categoria": "Danza",
+      "icono": "💃",
+      "color": "#f9a825",
+      "colorClaro": "#fffde7",
+      "miembros": 0,
+      "banner": "https://images.unsplash.com/photo-1518834107812-67b0b7c58434?w=600&q=80"
+    },
+    {
+      "id": "com-moda",
+      "nombre": "Moda & Estilo",
+      "descripcion": "Diseñadores de moda, estilistas y amantes del estilo. Inspírate, comparte looks y descubre tendencias.",
+      "categoria": "Moda",
+      "icono": "👗",
+      "color": "#ad1457",
+      "colorClaro": "#fce4ec",
+      "miembros": 0,
+      "banner": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80"
+    },
+    {
+      "id": "193d",
+      "nombre": "Desarrollo de video juegos",
+      "descripcion": "Desarrolladores y diseñadores de videojuegos",
+      "categoria": "Desarrollo y tecnología creativa",
+      "icono": "🎮",
+      "color": "#6366f1",
+      "colorClaro": "#6366f122",
+      "banner": ""
+    }
+  ],
+  "miembros_comunidades": [
+    {
+      "id": "e63f",
+      "comunidadId": "com-arte",
+      "usuarioId": "c098",
+      "usuarioNombre": "Adrian Mora Castillo",
+      "fecha": "2026-05-13T19:48:30.216Z"
+    },
+    {
+      "id": "e786",
+      "comunidadId": "com-arte",
+      "usuarioId": "2fa4",
+      "usuarioNombre": "María Jesús Chaverri",
+      "fecha": "2026-05-13T19:51:28.460Z"
+    },
+    {
+      "id": "6d99",
+      "comunidadId": "com-danza",
+      "usuarioId": "2fa4",
+      "usuarioNombre": "María Jesús Chaverri",
+      "fecha": "2026-05-13T20:17:14.747Z"
+    },
+    {
+      "id": "a745",
+      "comunidadId": "com-danza",
+      "usuarioId": "e263",
+      "usuarioNombre": "hola",
+      "fecha": "2026-05-13T21:01:39.305Z"
+    },
+    {
+      "id": "3f19",
+      "comunidadId": "com-arte",
+      "usuarioId": "e263",
+      "usuarioNombre": "hola",
+      "fecha": "2026-05-13T21:01:54.931Z"
+    },
+    {
+      "id": "1322",
+      "comunidadId": "com-disenio",
+      "usuarioId": "e263",
+      "usuarioNombre": "hola",
+      "fecha": "2026-05-18T16:00:52.400Z"
+    },
+    {
+      "id": "e604",
+      "comunidadId": "com-arte",
+      "usuarioId": "f898",
+      "usuarioNombre": "Alejandro",
+      "fecha": "2026-05-18T17:09:04.638Z"
+    }
+  ],
+  "mensajes_comunidad": [
+    {
+      "id": "810e",
+      "comunidadId": "com-arte",
+      "usuarioId": "c098",
+      "usuarioNombre": "Adrian Mora Castillo",
+      "texto": "Hola a todos!",
+      "fecha": "2026-05-13T19:48:59.390Z"
+    },
+    {
+      "id": "6f52",
+      "comunidadId": "com-arte",
+      "usuarioId": "c098",
+      "usuarioNombre": "Adrian Mora Castillo",
+      "texto": "Hola a todos!",
+      "fecha": "2026-05-13T19:49:07.742Z"
+    },
+    {
+      "id": "b73e",
+      "comunidadId": "com-arte",
+      "usuarioId": "2fa4",
+      "usuarioNombre": "María Jesús Chaverri",
+      "texto": "Hola",
+      "fecha": "2026-05-13T19:51:42.142Z"
+    },
+    {
+      "id": "9c5e",
+      "comunidadId": "com-arte",
+      "usuarioId": "e263",
+      "usuarioNombre": "📢 Anuncio de Convocatoria",
+      "texto": "¡Atención! Nueva convocatoria abierta:\n\n**mortadela**\npan con mortadela",
+      "fecha": "2026-05-13T22:01:32.512Z",
+      "esConvocatoria": true
+    },
+    {
+      "id": "6eb6",
+      "comunidadId": "com-arte",
+      "usuarioId": "e263",
+      "usuarioNombre": "hola",
+      "texto": "t7gtft6ggtuy",
+      "fecha": "2026-05-13T22:06:02.006Z"
+    },
+    {
+      "id": "2344",
+      "comunidadId": "com-arte",
+      "usuarioId": "e263",
+      "usuarioNombre": "hola",
+      "texto": "¡Atención! Nueva convocatoria abierta:  **mortadela** pan con mortadela",
+      "fecha": "2026-05-13T22:10:04.240Z"
+    },
+    {
+      "id": "80d8",
+      "comunidadId": "com-disenio",
+      "usuarioId": "e263",
+      "usuarioNombre": "📢 Sistema KREA",
+      "texto": "¡Nueva convocatoria disponible!\n\n**Diseñador grafico**\nDiseñador grafico\n\n**Fecha límite:** 2026-06-25",
+      "fecha": "2026-05-18T16:00:24.443Z",
+      "esConvocatoria": true,
+      "convocatoriaId": "28ec",
+      "convocatoriaNombre": "Diseñador grafico"
     }
   ],
   "respuestas_convocatorias": [
@@ -849,6 +1092,15 @@
       "convocatoriaNombre": "Programador",
       "respuesta": "No participar",
       "fecha": "5/8/2026, 3:05:32 PM"
+    },
+    {
+      "id": "09e1",
+      "idConvocatoria": "28ec",
+      "usuarioNombre": "hola",
+      "convocatoriaNombre": "Diseñador grafico",
+      "respuesta": "Participar",
+      "fecha": "18/5/2026, 10:01:03 a. m."
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

@@ -85,6 +85,7 @@ function Navbar() {
     const navLinks = [
         { to: '/principal',       label: 'Inicio' },
         { to: '/todos-proyectos', label: 'Proyectos' },
+        { to: '/comunidades',     label: 'Comunidades' },
         { to: '/pagina-contacto', label: 'Contactos' },
         { to: '/sobre-nosotros',  label: 'Sobre Nosotros' },
         { to: '/Funcionalidad',   label: 'Cómo Funciona' },

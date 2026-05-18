@@ -45,7 +45,7 @@ Convocatorias.hasMany(Participante_convo,{foreignKey: "id_convocatoria"})
 // un usuario puede hacer un reporte de convocatoria, y un reporte de convocatoria pertenece a un usuario
 Usuario.belongsTo(Reporte_convo,{foreignKey: "id_usuario"})
 Reporte_convo.belongsTo(Usuario,{foreignKey: "id_usuario"})
-
+// una convocatoria puede tener muchos tipos de convocatoria, y un tipo de convocatoria pertenece a una convocatoria
 Convocatorias.hasMany(Tipo_convo,{foreignKey: "id_convocatoria"})
 Tipo_convo.belongsTo(Convocatorias,{foreignKey: "id_convocatoria"})
 

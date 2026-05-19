@@ -1,57 +1,60 @@
-const {Roles} = require("../index")
+const { Roles } = require("../index")
+const { validationResult } = require("express-validator")
 
-const jwt = require("jsonwebtoken")
-
-const crearRol = async (req , res ) => {
-      try {
-        const {nombre} = req.body
-        const nuevoRol = await Roles.create({
-          nombre
-        })
-            res.status(201).json( {"rol creado": nuevoRol})
-      } catch (error) {
-        res.status(500).json({"no se pudo crear el rol": error.message})
-      
-      }
+const crearRol = async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ status: 400, message: "Datos inválidos", data: errors.array() })
+    }
+    try {
+        const { nombre } = req.body
+        const nuevoRol = await Roles.create({ nombre })
+        res.status(201).json({ status: 201, message: "Rol creado correctamente", data: nuevoRol })
+    } catch (error) {
+        res.status(500).json({ status: 500, message: error.message })
+    }
 }
 
-const obtnerRoles = async (req , res ) => {
+const obtnerRoles = async (req, res) => {
     try {
         const roles = await Roles.findAll()
-        res.status(200).json({"se han encontrado los siguientes roles": roles})
+        res.status(200).json({ status: 200, message: "OK", data: roles })
     } catch (error) {
-        res.status(500).json({"no se pudo obtener los roles": error.message})
+        res.status(500).json({ status: 500, message: error.message })
     }
 }
-const eliminarRol = async (req , res ) => {
-    try {        const {id_rol} = req.params 
+
+const eliminarRol = async (req, res) => {
+    try {
+        const { id_rol } = req.params
         const rolEncontrado = await Roles.findByPk(id_rol)
-        if(!rolEncontrado) {
-          return res.status(404).json({"no se encontro el rol": error.message})
+        if (!rolEncontrado) {
+            return res.status(404).json({ status: 404, message: "Rol no encontrado" })
         }
         await rolEncontrado.destroy()
-        res.status(200).json({"rol eliminado correctamente": rolEncontrado})
-} catch (error) {
-    res.status(500).json({"no se pudo eliminar el rol": error.message})
-}
-}
-   const editarRol = async (req, res) => {
-    try {
-      const {id_rol} = req.params
-      const {nombre} = req.body
-      const rolEncontrado = await Roles.findByPk(id_rol)
-        if(!rolEncontrado) {
-          return res.status(404).json({"no se encontro el rol": error.message})
-        }
-        await rolEncontrado.update({nombre})
-        res.status(200).json({"rol actualizado correctamente": rolEncontrado})
+        res.status(200).json({ status: 200, message: "Rol eliminado correctamente" })
     } catch (error) {
-        res.status(500).json({"no se pudo actualizar el rol": error.message})
+        res.status(500).json({ status: 500, message: error.message })
     }
 }
-module.exports = {
-    crearRol,
-    obtnerRoles,
-    eliminarRol,
-    editarRol
+
+const editarRol = async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ status: 400, message: "Datos inválidos", data: errors.array() })
+    }
+    try {
+        const { id_rol } = req.params
+        const { nombre } = req.body
+        const rolEncontrado = await Roles.findByPk(id_rol)
+        if (!rolEncontrado) {
+            return res.status(404).json({ status: 404, message: "Rol no encontrado" })
+        }
+        await rolEncontrado.update({ nombre })
+        res.status(200).json({ status: 200, message: "Rol actualizado correctamente", data: rolEncontrado })
+    } catch (error) {
+        res.status(500).json({ status: 500, message: error.message })
+    }
 }
+
+module.exports = { crearRol, obtnerRoles, eliminarRol, editarRol }

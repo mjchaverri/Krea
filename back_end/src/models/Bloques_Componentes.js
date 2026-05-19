@@ -6,7 +6,7 @@ const sequelize = require("../config/db")
 class Bloques_Componentes extends Model {}
 
 
-Bloques_componentes.init ({
+Bloques_Componentes.init ({
      id_bloque_componente : {
         type : DataTypes.INTEGER,
         primaryKey : true,

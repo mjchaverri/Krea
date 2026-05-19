@@ -1,6 +1,5 @@
 'use strict';
 
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('chat_comu', {
@@ -8,18 +7,26 @@ module.exports = {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-      },
-      usuario_nombre: {
-        type: Sequelize.STRING,
         allowNull: false
       },
-      fecha: {
+      usuario_nombre: {
+        type: Sequelize.STRING(30),
+        allowNull: false
+      },
+      Fecha: {
         type: Sequelize.DATE,
         allowNull: false
       },
       texto: {
         type: Sequelize.TEXT,
         allowNull: false
+      },
+      id_comunidad: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: { model: 'comunidades', key: 'id_comunidad' },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       createdAt: {
         allowNull: false,
@@ -34,7 +41,7 @@ module.exports = {
     });
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.dropTable('chat_comu');
   }
 };

@@ -2,53 +2,50 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-
     await queryInterface.createTable('portafolios', {
-
       id_portafolio: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false
       },
-
       titulo: {
-        type: Sequelize.STRING(100),
+        type: Sequelize.STRING(60),
         allowNull: false
       },
-
       descripcion: {
         type: Sequelize.TEXT,
         allowNull: false
       },
-
-      pdf_portafolio: {
+      pdf: {
         type: Sequelize.TEXT,
-        allowNull: false
+        allowNull: true
       },
-
-      imagen_portafolio: {
+      img_portada: {
         type: Sequelize.TEXT,
-        allowNull: false
+        allowNull: true
       },
-
+      id_usuario: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: { model: 'usuarios', key: 'id_usuario' },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
+      },
       createdAt: {
         type: Sequelize.DATE,
-        allowNull: false
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
-
       updatedAt: {
         type: Sequelize.DATE,
-        allowNull: false
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
-
     });
-
   },
 
-  async down(queryInterface, Sequelize) {
-
+  async down(queryInterface) {
     await queryInterface.dropTable('portafolios');
-
   }
 };

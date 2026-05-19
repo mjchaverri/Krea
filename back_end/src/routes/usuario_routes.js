@@ -45,7 +45,7 @@ const { validarCrearUsuario, validarLogin, validarEditarUsuario } = require("../
  *       201: { description: Usuario creado }
  *       400: { description: Datos inválidos }
  */
-router.get("/",          obtenerUsuarios)
+router.get("/", obtenerUsuarios)
 router.post("/register", validarCrearUsuario, crearUsuario)
 
 /**
@@ -141,8 +141,8 @@ router.post("/logout", verificarToken, LogoutUsuario)
  *       200: { description: Usuario eliminado }
  *       403: { description: Acceso restringido }
  */
-router.get("/:id_usuario",    verificarToken,                          obtenerUsuario)
-router.put("/:id_usuario",    verificarToken, validarEditarUsuario,    editarUsuario)
+router.get("/:id_usuario", verificarToken, obtenerUsuario)
+router.put("/:id_usuario", verificarToken, validarEditarUsuario, editarUsuario)
 router.delete("/:id_usuario", verificarToken, roleMiddleware("admin"), eliminarUsuario)
 
 module.exports = router

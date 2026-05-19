@@ -27,7 +27,7 @@ const eliminarBloque_componente = async (req, res) => {
         const { id } = req.params;
         const bloque_componenteEncontrado = await Bloques_Componentes.findByPk(id);
         if (!bloque_componenteEncontrado)
-            return res.status(404).json({ "no se encontro el bloque componente": error.message });
+            return res.status(404).json({ message: "Bloque componente no encontrado" });
         await bloque_componenteEncontrado.destroy();
         res.status(200).json({ "bloque componente eliminado correctamente": bloque_componenteEncontrado });
     } catch (error) {
@@ -41,7 +41,7 @@ const editarBloque_componente = async (req, res) => {
         const { nombre, descripcion } = req.body;
         const bloque_componenteEncontrado = await Bloques_Componentes.findByPk(id);
         if (!bloque_componenteEncontrado)
-            return res.status(404).json({ "no se encontro el bloque componente": error.message });
+            return res.status(404).json({ message: "Bloque componente no encontrado" });
         await bloque_componenteEncontrado.update({ nombre, descripcion });
         res.status(200).json({ "bloque componente actualizado correctamente": bloque_componenteEncontrado });
     } catch (error) {

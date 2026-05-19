@@ -27,7 +27,7 @@ const eliminarComponente = async (req , res ) => {
         const {id_componente} = req.params
         const componenteEncontrado = await Componentes.findByPk(id_componente)
         if(!componenteEncontrado) 
-            return res.status(404).json({"no se encontro el componente": error.message})
+            return res.status(404).json({ message: "Componente no encontrado" })
         await componenteEncontrado.destroy()
         res.status(200).json({"componente eliminado correctamente": componenteEncontrado})
     } catch (error) {
@@ -41,7 +41,7 @@ const editarComponente = async (req , res ) => {
        const {tipo, orden} = req.body
          const componenteEncontrado = await Componentes.findByPk(id_componente)
          if(!componenteEncontrado)
-            return res.status(404).json({"no se encontro el componente": error.message})
+            return res.status(404).json({ message: "Componente no encontrado" })
          await componenteEncontrado.update({ tipo, orden })
          res.status(200).json({"componente actualizado correctamente": componenteEncontrado})
     } catch (error) {

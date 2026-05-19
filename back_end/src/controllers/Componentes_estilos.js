@@ -28,7 +28,7 @@ const obtenerComponentes_estilos = async (req , res ) =>{
         const {id} = req.params
         const componente_estiloEncontrado = await Componentes_estilos.findByPk(id)
         if(!componente_estiloEncontrado)
-            return res.status(404).json({"no se encontro el componente estilo": error.message})
+            return res.status(404).json({ message: "Componente estilo no encontrado" })
         await componente_estiloEncontrado.destroy()
         res.status(200).json({"componente estilo eliminado correctamente": componente_estiloEncontrado})
        } catch (error) {
@@ -47,7 +47,7 @@ const obtenerComponentes_estilos = async (req , res ) =>{
         const { imagen_fondo , color_fondo} = req.body
         const componente_estiloEncontrado = await Componentes_estilos.findByPk(id)
         if(!componente_estiloEncontrado)
-            return res.status(404).json({"no se encontro el componente estilo": error.message})
+            return res.status(404).json({ message: "Componente estilo no encontrado" })
         await componente_estiloEncontrado.update({ imagen_fondo , color_fondo})
         res.status(200).json({"componente estilo actualizado correctamente": componente_estiloEncontrado})
     } catch (error) {

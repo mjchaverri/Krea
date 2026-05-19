@@ -30,7 +30,7 @@ const eliminarTipo_para_convos = async (req, res) => {
     const {id_tipo_para_convo} = req.params
     const tipo_para_convoEncontrado = await Tipos_para_convos.findByPk(id_tipo_para_convo)
     if(!tipo_para_convoEncontrado) {
-        return res.status(404).json({"no se encontro el tipo de convocatoria": error.message})
+        return res.status(404).json({ message: "Tipo de convocatoria no encontrado" })
    }
    await tipo_para_convoEncontrado.destroy()
     res.status(200).json({"tipo de convocatoria eliminado correctamente": tipo_para_convoEncontrado})
@@ -45,7 +45,7 @@ const editarTipo_para_convos = async (req, res) => {
         const {nombre_tipo_convo} = req.body
         const tipo_para_convoEncontrado = await Tipos_para_convos.findByPk(id_tipo_para_convo)
         if(!tipo_para_convoEncontrado) {
-            return res.status(404).json({"no se encontro el tipo de convocatoria": error.message})
+            return res.status(404).json({ message: "Tipo de convocatoria no encontrado" })
         }
         await tipo_para_convoEncontrado.update({nombre_tipo_convo})
         res.status(200).json({"tipo de convocatoria actualizado correctamente": tipo_para_convoEncontrado})

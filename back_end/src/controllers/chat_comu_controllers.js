@@ -1,4 +1,4 @@
-const { Chat_Comu } = require("../index");
+   const { Chat_Comu } = require("../index");
 
 // Crear un chat de comunidad
 const crearChat = async (req, res) => {

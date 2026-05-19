@@ -25,6 +25,8 @@ const comunidadesRoutes        = require("./routes/comunidades_routes")
 const categoriasRoutes         = require("./routes/categorias_routes")
 const portafoliosRoutes        = require("./routes/Portafolios_routes")
 const reporte_convoRoutes      = require("./routes/Reportes_convo_routes")
+const miembrosRoutes           = require("./routes/miembros_routes")
+const seguidosRoutes           = require("./routes/seguidos_routes")
 
 // ── Rutas ───────────────────────────────────────────────────────
 app.use("/usuarios",            usuarioRoutes)
@@ -41,6 +43,8 @@ app.use("/comunidades",         comunidadesRoutes)
 app.use("/categorias",          categoriasRoutes)
 app.use("/portafolios",         portafoliosRoutes)
 app.use("/reporte-convo",       reporte_convoRoutes)
+app.use("/miembros",            miembrosRoutes)
+app.use("/seguidos",            seguidosRoutes)
 
 setupSwagger(app)
 

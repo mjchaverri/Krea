@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Fetch from '../../services/Fetch'
+import { normalizarPortafolio, normalizarUsuario } from '../../utils/normalizers'
 import Lienzo from './Lienzo'
 import Estructura1 from './Estructura1'
 import Estructura1_1 from './Estructura1_1'
@@ -233,15 +234,14 @@ const TabladePortafolios = () => {
   const [portafolioSeleccionado, setPortafolioSeleccionado] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  // Mismo patrón de carga que TablaUsuariosAdmin
   useEffect(() => {
     async function cargarDatos() {
-      const [listaPortafolios, listaUsuarios] = await Promise.all([
-        Fetch.getData('portafolios'),
-        Fetch.getData('usuarios')
+      const [resP, resU] = await Promise.all([
+        Fetch.getData('portafolios?limit=100'),
+        Fetch.getData('usuarios?limit=100'),
       ])
-      setPortafolios(listaPortafolios || [])
-      setUsuarios(listaUsuarios || [])
+      setPortafolios((resP || []).map(normalizarPortafolio))
+      setUsuarios((resU || []).map(normalizarUsuario))
     }
     cargarDatos()
   }, [])
@@ -256,13 +256,12 @@ const TabladePortafolios = () => {
   // Determinar estado: si tiene pdf → Publicado, si no → Pendiente
   const getEstado = (portafolio) => portafolio.pdf ? 'Publicado' : 'Pendiente'
 
-  // Eliminación — mismo patrón que TablaUsuariosAdmin.eliminarUsuario
   const eliminarPortafolio = async (id) => {
     if (window.confirm('¿Estás seguro de que deseas eliminar este portafolio?')) {
-      const exito = await Fetch.deleteData('portafolios', id)
-      if (exito) {
+      try {
+        await Fetch.deleteData(`portafolios/${id}`)
         setPortafolios(prev => prev.filter(p => p.id !== id))
-      } else {
+      } catch {
         alert('No se pudo eliminar el portafolio. Revisa la conexión al servidor.')
       }
     }

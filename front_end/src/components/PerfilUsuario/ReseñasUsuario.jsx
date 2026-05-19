@@ -1,6 +1,7 @@
 import "../../styles/EstilosPerfilUsuario/ResenasUsuario.css";
 import { useEffect, useState, useMemo } from "react";
 import Fetch from "../../services/Fetch";
+import { normalizarPortafolio, normalizarResena } from "../../utils/normalizers";
 import { calcularPromedio } from "../../utils/calcularPromedio";
 
 function ResenasUsuario() {
@@ -12,20 +13,18 @@ function ResenasUsuario() {
         const usuario = JSON.parse(localStorage.getItem("UsuarioActivo"));
         if (!usuario?.id) return;
 
-        const [dataResenas, dataPortafolios] = await Promise.all([
-          Fetch.getData("resenas"),
-          Fetch.getData("portafolios")
+        const [resP, resR] = await Promise.all([
+          Fetch.getData(`portafolios/usuario/${usuario.id}?limit=50`),
+          Fetch.getData('resenas?limit=100'),
         ]);
 
-        // 1. Obtener IDs de mis portafolios
-        const misPortafoliosIds = (dataPortafolios || [])
-          .filter(p => String(p.usuarioId) === String(usuario.id))
-          .map(p => String(p.id));
-
-        // 2. Filtrar reseñas recibidas en esos portafolios
-        const filtradas = (dataResenas || []).filter(
-          (r) => misPortafoliosIds.includes(String(r.portafolioId))
+        const misPortafoliosIds = new Set(
+          (resP || []).map(p => String(p.id_portafolio))
         );
+
+        const filtradas = (resR || [])
+          .filter(r => misPortafoliosIds.has(String(r.id_portafolio)))
+          .map(normalizarResena);
 
         setResenas(filtradas);
       } catch (error) {

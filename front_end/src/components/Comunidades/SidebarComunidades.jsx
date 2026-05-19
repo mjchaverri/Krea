@@ -44,19 +44,35 @@ function SidebarComunidades({
         if (!form.nombre.trim() || !form.descripcion.trim()) return
         setGuardando(true)
         try {
-            const nueva = await Fetch.postData({
-                ...form,
-                nombre: form.nombre.trim(),
+            const nueva = await Fetch.postData('comunidades', {
+                nombre:      form.nombre.trim(),
                 descripcion: form.descripcion.trim(),
-                colorClaro: form.color + '22',
-                creadoPor: usuario?.id ?? null,
-            }, 'comunidades')
-            onComunidadCreada?.(nueva)
+                icono:       form.icono,
+                Color:       form.color,
+                ColorClaro:  form.color + '22',
+                banner:      form.banner || null,
+            })
+            // Normalizar para el frontend
+            const normalizada = {
+                id:          nueva.id_comunidad,
+                nombre:      nueva.nombre,
+                descripcion: nueva.descripcion,
+                icono:       nueva.icono || form.icono,
+                color:       nueva.Color || form.color,
+                colorClaro:  nueva.ColorClaro || form.color + '22',
+                banner:      nueva.banner || '',
+                categoria:   form.categoria,
+            }
+            onComunidadCreada?.(normalizada)
             setModalAbierto(false)
             setBannerPreview('')
             setForm({ nombre: '', descripcion: '', categoria: CATEGORIAS_MODAL[0], icono: ICONOS[0], color: COLORES[0], banner: '' })
-        } catch (err) { console.error(err) }
-        finally { setGuardando(false) }
+        } catch (err) {
+            console.error(err)
+            alert(err.message || 'Error al crear la comunidad')
+        } finally {
+            setGuardando(false)
+        }
     }
 
     return (

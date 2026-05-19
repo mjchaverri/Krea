@@ -12,6 +12,7 @@ import GrillaTriple from "../PlantillaTalentos/GrillaTriple";
 import Grilla1_2_Izda from "../PlantillaTalentos/Grilla1_2_Izda";
 import Grilla1_2_Derecha from "../PlantillaTalentos/Grilla1_2_Derecha";
 import Fetch from "../../services/Fetch";
+import { normalizarUsuario } from "../../utils/normalizers";
 import { calcularPromedio } from "../../utils/calcularPromedio";
 
 const CONTENEDORES = {
@@ -71,8 +72,8 @@ function ModalProyecto({ proyecto, resenas = [], onClose, onReviewAdded }) {
     }, [onClose]);
 
     useEffect(() => {
-        Fetch.getData('usuarios').then(data => {
-            const lista = data || [];
+        Fetch.getData('usuarios?limit=100').then(data => {
+            const lista = (data || []).map(normalizarUsuario);
             setUsuarios(lista);
             if (proyecto?.usuarioId) {
                 const u = lista.find(u => String(u.id) === String(proyecto.usuarioId));
@@ -94,18 +95,21 @@ function ModalProyecto({ proyecto, resenas = [], onClose, onReviewAdded }) {
 
     const promedio = calcularPromedio(resenasFiltradas);
     const isOwner  = String(usuarioActivo.id) === String(proyecto.usuarioId);
+    const yaReseno = usuarioActivo.id
+        ? resenasFiltradas.some(r => String(r.usuarioId) === String(usuarioActivo.id))
+        : false;
 
     const handleEnviarResena = async () => {
         if (!nuevaResena.comentario.trim()) return;
+        if (yaReseno) { alert('Ya dejaste una reseña en este proyecto.'); return; }
         setLoading(true);
         try {
-            await Fetch.postData({
-                usuarioId:    usuarioActivo.id || 'desconocido',
-                portafolioId: proyecto.id,
-                comentario:   nuevaResena.comentario,
-                rating:       nuevaResena.rating,
-                fecha:        new Date().toISOString(),
-            }, 'resenas');
+            await Fetch.postData('resenas', {
+                id_usuario:    usuarioActivo.id,
+                id_portafolio: proyecto.id,
+                comentarios:   nuevaResena.comentario,
+                calificacion:  nuevaResena.rating,
+            });
             if (onReviewAdded) await onReviewAdded();
             setNuevaResena({ comentario: '', rating: 5 });
         } catch (e) { console.error(e); }
@@ -143,13 +147,23 @@ function ModalProyecto({ proyecto, resenas = [], onClose, onReviewAdded }) {
                             </div>
                         )}
                         <div className="lienzo-modal-container">
-                            <div style={{ pointerEvents: 'none' }}>
-                                <Lienzo
-                                    tituloProyecto={proyecto.titulo}
-                                    descripcionProyecto={proyecto.descripcion}
-                                    childrenEstructura={<>{renderComponentes()}</>}
-                                />
-                            </div>
+                            {proyecto.imgPortada && (!proyecto.componentes || proyecto.componentes.length === 0) ? (
+                                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', borderRadius: 8, overflow: 'hidden' }}>
+                                    <img
+                                        src={proyecto.imgPortada}
+                                        alt={proyecto.titulo}
+                                        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                                    />
+                                </div>
+                            ) : (
+                                <div style={{ pointerEvents: 'none' }}>
+                                    <Lienzo
+                                        tituloProyecto={proyecto.titulo}
+                                        descripcionProyecto={proyecto.descripcion}
+                                        childrenEstructura={<>{renderComponentes()}</>}
+                                    />
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -201,23 +215,29 @@ function ModalProyecto({ proyecto, resenas = [], onClose, onReviewAdded }) {
 
                         <div className="resena-form">
                             <p className="resena-form-title">Dejar una reseña</p>
-                            <StarPicker
-                                value={nuevaResena.rating}
-                                onChange={rating => setNuevaResena(prev => ({ ...prev, rating }))}
-                            />
-                            <textarea
-                                placeholder="Escribe tu opinión sobre este proyecto..."
-                                value={nuevaResena.comentario}
-                                onChange={e => setNuevaResena(prev => ({ ...prev, comentario: e.target.value }))}
-                                disabled={loading}
-                            />
-                            <button
-                                className="resena-form-btn"
-                                disabled={loading || !nuevaResena.comentario.trim()}
-                                onClick={handleEnviarResena}
-                            >
-                                {loading ? 'Enviando...' : 'Publicar reseña'}
-                            </button>
+                            {yaReseno ? (
+                                <p style={{ color: '#64748b', fontSize: '0.85rem', margin: '8px 0' }}>Ya dejaste una reseña en este proyecto.</p>
+                            ) : (
+                                <>
+                                    <StarPicker
+                                        value={nuevaResena.rating}
+                                        onChange={rating => setNuevaResena(prev => ({ ...prev, rating }))}
+                                    />
+                                    <textarea
+                                        placeholder="Escribe tu opinión sobre este proyecto..."
+                                        value={nuevaResena.comentario}
+                                        onChange={e => setNuevaResena(prev => ({ ...prev, comentario: e.target.value }))}
+                                        disabled={loading}
+                                    />
+                                    <button
+                                        className="resena-form-btn"
+                                        disabled={loading || !nuevaResena.comentario.trim()}
+                                        onClick={handleEnviarResena}
+                                    >
+                                        {loading ? 'Enviando...' : 'Publicar reseña'}
+                                    </button>
+                                </>
+                            )}
                         </div>
 
                         <div className="modal-contacto">

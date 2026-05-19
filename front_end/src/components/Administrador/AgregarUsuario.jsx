@@ -1,43 +1,41 @@
 import React from 'react'
 import { useState } from 'react'
-import '../../styles/EstilosAdmin/AgregarUsuario.css' 
+import '../../styles/EstilosAdmin/AgregarUsuario.css'
 import Fetch from '../../services/Fetch'
 
 function AgregarUsuario() {
 const [Nombre , setNombre] = useState("")
-const [ Correo , setCorreo] = useState("")
-const [Email, setEmail] = useState("")
+const [Correo , setCorreo] = useState("")
 const [Telefono, setTelefono] = useState("")
 const [Provincias , setProvincia] =useState("")
 const [Canton,setCanton] = useState("")
 const [Distrito,setDistrito] = useState("")
 const [Roles , setRol] = useState("")
 const [Contrasena , setContraseña] = useState("")
-async function RegistroUsuarios () { 
-    if ( Nombre === "" || Correo === "" || Email === "" || Telefono === "" || Provincias === "" || Canton === "" || Distrito === "" || Roles =="" || Contrasena ==="" ){
-
-
+async function RegistroUsuarios () {
+    if ( Nombre === "" || Correo === "" || Telefono === "" || Provincias === "" || Canton === "" || Distrito === "" || Roles =="" || Contrasena ==="" ){
      alert("Debe de llenar todo los campos");
      return;
-
-
-    }else{
-
-        alert("Registro exitoso")
     }
-  const objUsuarios = {
-    Nombre : Nombre,
-    Correo : Correo,
-    email: Email,
-    telefono: Telefono,
-    Provincias : Provincias,
-    Canton : Canton,
-    Distrito : Distrito,
-    Roles : Roles,
-    Contrasena : Contrasena
+  const nombre_usuario = Nombre.toLowerCase().replace(/\s+/g, '_')
+  const id_rol = Roles === 'Admin' ? 1 : Roles === 'Empresa' ? 3 : 2
+  try {
+    await Fetch.postData('usuarios/register', {
+      nombre_usuario,
+      nombre_completo: Nombre,
+      correo:          Correo,
+      contrasena:      Contrasena,
+      telefono:        Telefono,
+      provincia:       Provincias,
+      canton:          Canton,
+      distrito:        Distrito,
+      id_rol,
+    })
+    alert("Registro exitoso")
+  } catch (err) {
+    console.error('Error al registrar usuario:', err)
+    alert(err.message || 'Error al registrar usuario')
   }
-  const UsuarioAlmacenado = await Fetch.postData(objUsuarios,"usuarios")
-  console.log(UsuarioAlmacenado)
   
    
         
@@ -80,7 +78,8 @@ async function RegistroUsuarios () {
         <select className="agregar-usuario-input icon-users select-icon" value={Roles} onChange={(e) => setRol(e.target.value)}>
             <option value=" ">Seleccionar un rol</option>
             <option value="Admin">Admin</option>
-            <option value="Usuario">Usuario</option>
+            <option value="Personal">Personal</option>
+            <option value="Empresa">Empresa</option>
         </select>
         
         <h4 className="agregar-usuario-label">Contraseña</h4>

@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../components/navbar/Navbar';
+import Footer from '../components/ApartadoPaginaPrincipal/Footer';
 import InfoUsuario from '../components/PerfilUsuario/InfoUsuario';
 import SeccionesPerfil from '../components/PerfilUsuario/SeccionesPerfil';
 import CardProyecto from '../components/PerfilUsuario/CardProyecto';
 import ModalProyecto from '../components/PerfilUsuario/ModalProyecto';
 import Fetch from '../services/Fetch';
+import { normalizarPortafolio, normalizarResena, normalizarUsuario } from '../utils/normalizers';
 import { calcularPromedio } from '../utils/calcularPromedio';
 
 // Reutilizamos exactamente los mismos estilos del perfil personal
@@ -40,23 +42,15 @@ function PerfilVisitante() {
     const cargarDatos = async () => {
         setCargando(true);
         try {
-            const [usuarios, todosPortafolios, resenas] = await Promise.all([
-                Fetch.getData('usuarios'),
-                Fetch.getData('portafolios'),
-                Fetch.getData('resenas'),
+            const [resU, resP, resR] = await Promise.all([
+                Fetch.getData(`usuarios/${usuarioId}`),
+                Fetch.getData(`portafolios/usuario/${usuarioId}?limit=50`),
+                Fetch.getData('resenas?limit=100'),
             ]);
 
-            const usuarioEncontrado = (usuarios || []).find(
-                (u) => String(u.id) === String(usuarioId)
-            );
-            setUsuario(usuarioEncontrado || null);
-
-            const portafoliosUsuario = (todosPortafolios || []).filter(
-                (p) => String(p.usuarioId) === String(usuarioId)
-            );
-            setPortafolios(portafoliosUsuario);
-
-            setTodasResenas(resenas || []);
+            setUsuario(resU ? normalizarUsuario(resU) : null);
+            setPortafolios((resP || []).map(normalizarPortafolio));
+            setTodasResenas((resR || []).map(normalizarResena));
         } catch (error) {
             console.error('PerfilVisitante — error cargando datos:', error);
         } finally {
@@ -124,41 +118,14 @@ function PerfilVisitante() {
 
     return (
         <div className="perfil-page">
-            {/* NAVBAR — misma que usa el perfil personal */}
             <Navbar />
 
-            {/* Barra de navegación de vuelta — only in visitor mode */}
-            <div style={{
-                maxWidth: '1100px',
-                margin: '0 auto',
-                padding: '16px 20px 0',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-            }}>
-                <button
-                    onClick={() => navigate(-1)}
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        background: 'none',
-                        border: '1px solid #e2e8f0',
-                        borderRadius: '8px',
-                        padding: '7px 14px',
-                        fontSize: '13px',
-                        fontWeight: '600',
-                        color: '#4a5568',
-                        cursor: 'pointer',
-                        transition: 'all .2s',
-                    }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = '#f7fafc'; e.currentTarget.style.borderColor = '#cbd5e0'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; e.currentTarget.style.borderColor = '#e2e8f0'; }}
-                >
+            <div className="perfil-volver-bar">
+                <button className="perfil-volver-btn" onClick={() => navigate(-1)}>
                     ← Volver
                 </button>
-                <span style={{ fontSize: '13px', color: '#94a3b8' }}>
-                    Perfil de <strong style={{ color: '#4a5568' }}>{usuario.Nombre}</strong>
+                <span className="perfil-volver-txt">
+                    Perfil de <strong>{usuario.Nombre}</strong>
                 </span>
             </div>
 
@@ -284,6 +251,8 @@ function PerfilVisitante() {
                     onReviewAdded={cargarDatos}
                 />
             </div>
+
+            <Footer />
         </div>
     );
 }

@@ -47,6 +47,10 @@ Usuario.init({
         type: DataTypes.TEXT,
         allowNull: true
     },
+    descripcion: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
     id_rol: {
         type: DataTypes.INTEGER,
         allowNull: true,

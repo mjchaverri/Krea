@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Fetch from '../../services/Fetch';
+import { normalizarPortafolio, normalizarResena, normalizarUsuario } from '../../utils/normalizers';
 import PreviewComponentes from '../PlantillaTalentos/PreviewComponentes';
 import ModalProyecto from '../PerfilUsuario/ModalProyecto';
 import SeccionComoFunciona from './SeccionComoFunciona';
@@ -40,12 +41,16 @@ function CompPrincipal() {
     useEffect(() => {
         const cargar = async () => {
             try {
-                const [u, p, r] = await Promise.all([
-                    Fetch.getData('usuarios'),
-                    Fetch.getData('portafolios'),
-                    Fetch.getData('resenas'),
+                const [resU, resP, resR] = await Promise.all([
+                    Fetch.getData('usuarios?limit=100'),
+                    Fetch.getData('portafolios?limit=50'),
+                    Fetch.getData('resenas?limit=100'),
                 ]);
-                setDatos({ usuarios: u || [], portafolios: p || [], resenas: r || [] });
+                setDatos({
+                    usuarios:    (resU || []).map(normalizarUsuario),
+                    portafolios: (resP || []).map(normalizarPortafolio),
+                    resenas:     (resR || []).map(normalizarResena),
+                });
             } catch (e) {
                 console.error('Error cargando datos:', e);
             }
@@ -245,8 +250,8 @@ function CompPrincipal() {
                     resenas={datos.resenas}
                     onClose={() => setProyectoSeleccionado(null)}
                     onReviewAdded={async () => {
-                        const r = await Fetch.getData('resenas');
-                        setDatos(prev => ({ ...prev, resenas: r || [] }));
+                        const res = await Fetch.getData('resenas?limit=100');
+                        setDatos(prev => ({ ...prev, resenas: (res || []).map(normalizarResena) }));
                     }}
                 />
             )}

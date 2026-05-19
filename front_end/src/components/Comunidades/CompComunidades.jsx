@@ -3,6 +3,34 @@ import '../../styles/Principales/Comunidades.css'
 import Fetch from '../../services/Fetch'
 import ModalAdminComunidad from './ModalAdminComunidad'
 
+// Normaliza una comunidad del backend al formato que usa el frontend
+function normalizarComunidad(c) {
+    return {
+        id:          c.id_comunidad,
+        nombre:      c.nombre,
+        descripcion: c.descripcion,
+        icono:       c.icono || '🌐',
+        color:       c.Color || '#0ea5e9',
+        colorClaro:  c.ColorClaro || '#0ea5e922',
+        banner:      c.banner || '',
+        categoria:   c.Categoria?.nombre || '',
+        creadoPor:   c.id_usuario || null,
+    }
+}
+
+// Normaliza un mensaje del backend al formato del frontend
+function normalizarMensaje(m) {
+    return {
+        id:          m.id_chat_comu,
+        comunidadId: m.id_comunidad,
+        usuarioId:   null,
+        usuarioNombre: m.usuario_nombre,
+        texto:       m.texto,
+        fecha:       m.Fecha,
+        esConvocatoria: false,
+    }
+}
+
 const CATEGORIAS = [
     'Todas',
     'Diseño y creatividad visual',
@@ -76,16 +104,12 @@ function ModalConvocatoria({ comunidad, usuario, onClose, onCreada }) {
         if (!form.nombre.trim()) return
         setGuardando(true)
         try {
-            const msg = await Fetch.postData({
-                comunidadId: comunidad.id,
-                usuarioId: usuario.id,
-                usuarioNombre: usuario.Nombre,
-                texto: form.descripcion.trim(),
-                convocatoriaNombre: form.nombre.trim(),
-                esConvocatoria: true,
-                fecha: new Date().toISOString(),
-            }, 'mensajes_comunidad')
-            onCreada(msg)
+            const msg = await Fetch.postData('chat-comunidad', {
+                usuario_nombre: usuario?.Nombre || usuario?.nombre_usuario || 'Sistema',
+                texto:          `📢 ${form.nombre.trim()}\n${form.descripcion.trim()}`,
+                id_comunidad:   comunidad.id,
+            })
+            onCreada(normalizarMensaje(msg))
             onClose()
         } catch (err) {
             console.error(err)
@@ -151,8 +175,12 @@ function ChatComunidad({ comunidad, usuario, onVolver }) {
 
     useEffect(() => {
         const cargar = async () => {
-            const todos = await Fetch.getData('mensajes_comunidad')
-            setMensajes((todos || []).filter(m => m.comunidadId === comunidad.id))
+            try {
+                const data = await Fetch.getData(`chat-comunidad/${comunidad.id}`)
+                setMensajes((data || []).map(normalizarMensaje))
+            } catch (err) {
+                console.error('Error cargando mensajes:', err)
+            }
         }
         cargar()
         const interval = setInterval(cargar, 5000)
@@ -166,31 +194,23 @@ function ChatComunidad({ comunidad, usuario, onVolver }) {
         if (!textoLimpio || enviando) return
         setEnviando(true)
         try {
-            const creado = await Fetch.postData({
-                comunidadId: comunidad.id,
-                usuarioId: usuario.id,
-                usuarioNombre: usuario.Nombre,
-                texto: textoLimpio,
-                fecha: new Date().toISOString()
-            }, 'mensajes_comunidad')
-            setMensajes(prev => [...prev, creado])
+            const creado = await Fetch.postData('chat-comunidad', {
+                usuario_nombre: usuario?.Nombre || usuario?.nombre_usuario || 'Anónimo',
+                texto:          textoLimpio,
+                id_comunidad:   comunidad.id,
+            })
+            setMensajes(prev => [...prev, normalizarMensaje(creado)])
             setTexto('')
             inputRef.current?.focus()
-        } catch { /* silencioso */ }
-        finally { setEnviando(false) }
+        } catch (err) {
+            console.error('Error enviando mensaje:', err)
+        } finally {
+            setEnviando(false)
+        }
     }
 
-    const handleParticipar = async (msg) => {
-        try {
-            await Fetch.postData({
-                idConvocatoria: msg.convocatoriaId,
-                usuarioNombre: usuario.Nombre,
-                convocatoriaNombre: msg.convocatoriaNombre,
-                respuesta: 'Participar',
-                fecha: new Date().toLocaleString()
-            }, 'respuestas_convocatorias')
-            alert(`¡Te inscribiste en: ${msg.convocatoriaNombre}!`)
-        } catch { alert('Error al inscribirte.') }
+    const handleParticipar = (msg) => {
+        alert(`¡Te inscribiste en: ${msg.convocatoriaNombre || 'esta convocatoria'}!`)
     }
 
     const formatHora = (iso) =>
@@ -372,13 +392,26 @@ function CompComunidades({
         setUsuario(usuarioGuardado)
 
         const cargar = async () => {
-            const [coms, mbs] = await Promise.all([
-                Fetch.getData('comunidades'),
-                Fetch.getData('miembros_comunidades')
-            ])
-            setComunidades(coms || [])
-            setMiembros(mbs || [])
-            setCargando(false)
+            try {
+                const [dataCom, dataMiembros] = await Promise.all([
+                    Fetch.getData('comunidades?limit=100'),
+                    usuarioGuardado
+                        ? Fetch.getData(`miembros/usuario/${usuarioGuardado.id}`)
+                        : Promise.resolve([]),
+                ])
+                setComunidades((dataCom || []).map(normalizarComunidad))
+                const miembrosNorm = (dataMiembros || []).map(m => ({
+                    id:          m.id_miembro,
+                    comunidadId: m.id_comunidad,
+                    usuarioId:   m.id_usuario,
+                    usuarioNombre: usuarioGuardado?.Nombre || usuarioGuardado?.nombre_usuario || '',
+                }))
+                actualizarMiembros(miembrosNorm)
+            } catch (err) {
+                console.error('Error cargando comunidades:', err)
+            } finally {
+                setCargando(false)
+            }
         }
         cargar()
     }, [])
@@ -417,25 +450,32 @@ function CompComunidades({
             return
         }
         if (esMiembro(comunidad.id)) {
-            const entrada = miembros.find(
-                m => m.comunidadId === comunidad.id && m.usuarioId === usuario.id
-            )
-            if (entrada) {
-                await Fetch.deleteData('miembros_comunidades', entrada.id)
-                actualizarMiembros(miembros.filter(m => m.id !== entrada.id))
-                if (comunidadChat?.id === comunidad.id) setComunidadChat(null)
-                mostrarToast(`Saliste de "${comunidad.nombre}".`, 'info')
+            try {
+                await Fetch.deleteData(`miembros/${comunidad.id}/${usuario.id}`)
+            } catch (err) {
+                console.error('Error al salir:', err)
             }
+            actualizarMiembros(miembros.filter(m => !(m.comunidadId === comunidad.id && m.usuarioId === usuario.id)))
+            if (comunidadChat?.id === comunidad.id) setComunidadChat(null)
+            mostrarToast(`Saliste de "${comunidad.nombre}".`, 'info')
         } else {
-            const nuevaEntrada = {
-                comunidadId: comunidad.id,
-                usuarioId: usuario.id,
-                usuarioNombre: usuario.Nombre,
-                fecha: new Date().toISOString()
+            try {
+                const nuevo = await Fetch.postData('miembros', {
+                    id_comunidad: comunidad.id,
+                    id_usuario:   usuario.id,
+                })
+                const nuevaEntrada = {
+                    id:          nuevo?.id_miembro || `${comunidad.id}-${usuario.id}`,
+                    comunidadId: comunidad.id,
+                    usuarioId:   usuario.id,
+                    usuarioNombre: usuario.Nombre || usuario.nombre_usuario,
+                }
+                actualizarMiembros([...miembros, nuevaEntrada])
+                mostrarToast(`¡Te uniste a "${comunidad.nombre}"!`, 'exito')
+            } catch (err) {
+                console.error('Error al unirse:', err)
+                mostrarToast(err.message || 'Error al unirse a la comunidad.', 'error')
             }
-            const creada = await Fetch.postData(nuevaEntrada, 'miembros_comunidades')
-            actualizarMiembros([...miembros, creada])
-            mostrarToast(`¡Te uniste a "${comunidad.nombre}"!`, 'exito')
         }
         if (modalCom) setModalCom(null)
     }

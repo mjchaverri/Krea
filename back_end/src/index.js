@@ -18,6 +18,7 @@ const Comunidades         = require("./models/Comunidades")
 const Miembros            = require("./models/Miembros")
 const Chat_Comu           = require("./models/Chat_Comu")
 const Chat_Miembros       = require("./models/Chat_Miembros")
+const Seguidos            = require("./models/Seguidos")
 
 // ── Usuarios ────────────────────────────────────────────────────
 // Un usuario tiene un rol
@@ -104,6 +105,12 @@ Miembros.belongsTo(Comunidades, { foreignKey: "id_comunidad" })
 Usuario.hasMany(Miembros, { foreignKey: "id_usuario" })
 Miembros.belongsTo(Usuario, { foreignKey: "id_usuario" })
 
+// ── Seguidos (N:M entre usuarios) ────────────────────────────────
+Usuario.hasMany(Seguidos, { foreignKey: "id_seguidor", as: "siguiendo" })
+Seguidos.belongsTo(Usuario, { foreignKey: "id_seguidor", as: "seguidor" })
+Usuario.hasMany(Seguidos, { foreignKey: "id_seguido",   as: "seguidores" })
+Seguidos.belongsTo(Usuario, { foreignKey: "id_seguido",  as: "seguido" })
+
 // ── Chat ──────────────────────────────────────────────────────────
 // Una comunidad tiene muchos mensajes de chat
 Comunidades.hasMany(Chat_Comu, { foreignKey: "id_comunidad" })
@@ -134,5 +141,6 @@ module.exports = {
     Comunidades,
     Miembros,
     Chat_Comu,
-    Chat_Miembros
+    Chat_Miembros,
+    Seguidos
 }

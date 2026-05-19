@@ -18,6 +18,7 @@ import InfoUsuario from "./InfoUsuario";
 import CardProyecto from "./CardProyecto";
 import ModalProyecto from "./ModalProyecto";
 import Fetch from "../../services/Fetch";
+import { normalizarPortafolio, normalizarResena, normalizarUsuario } from "../../utils/normalizers";
 import { calcularPromedio } from "../../utils/calcularPromedio";
 
 // Reutilizamos los estilos existentes — sin duplicar ni crear nuevos
@@ -60,28 +61,22 @@ function PerfilVisitanteModal({ usuarioId, onClose }) {
     async function cargarDatos() {
       setCargando(true);
       try {
-        const [usuarios, todosPortafolios, todasResenas] = await Promise.all([
-          Fetch.getData("usuarios"),
-          Fetch.getData("portafolios"),
-          Fetch.getData("resenas"),
+        const [resU, resP, resR] = await Promise.all([
+          Fetch.getData(`usuarios/${usuarioId}`),
+          Fetch.getData(`portafolios/usuario/${usuarioId}?limit=50`),
+          Fetch.getData('resenas?limit=100'),
         ]);
 
-        const usuarioEncontrado = (usuarios || []).find(
-          (u) => String(u.id) === String(usuarioId)
-        );
-        setUsuario(usuarioEncontrado || null);
+        setUsuario(resU ? normalizarUsuario(resU) : null);
 
-        const portafoliosUsuario = (todosPortafolios || []).filter(
-          (p) => String(p.usuarioId) === String(usuarioId)
-        );
-        setPortafolios(portafoliosUsuario);
+        const portafoliosNorm = (resP || []).map(normalizarPortafolio);
+        setPortafolios(portafoliosNorm);
 
-        // Reseñas recibidas en los portafolios de este usuario
-        const idsPortafolios = new Set(portafoliosUsuario.map((p) => p.id));
-        const resenasUsuario = (todasResenas || []).filter((r) =>
-          idsPortafolios.has(r.portafolioId)
-        );
-        setResenas(resenasUsuario);
+        const idsPortafolios = new Set(portafoliosNorm.map((p) => p.id));
+        const resenasNorm = (resR || [])
+          .map(normalizarResena)
+          .filter((r) => idsPortafolios.has(r.portafolioId));
+        setResenas(resenasNorm);
       } catch (error) {
         console.error("PerfilVisitanteModal — error cargando datos:", error);
       } finally {

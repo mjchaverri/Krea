@@ -30,7 +30,7 @@ const obtenerUsuarios = async (req, res) => {
 
 const crearUsuario = async (req, res) => {
     try {
-        const { nombre_usuario, nombre_completo, correo, contrasena, telefono, img_perfil, id_rol } = req.body
+        const { nombre_usuario, nombre_completo, correo, contrasena, telefono, img_perfil, descripcion, id_rol } = req.body
 
         const contrasenaEncriptada = await bcrypt.hash(contrasena, 10)
 
@@ -40,7 +40,8 @@ const crearUsuario = async (req, res) => {
             correo,
             contrasena: contrasenaEncriptada,
             telefono,
-            img_perfil,
+            img_perfil: img_perfil || null,
+            descripcion: descripcion || null,
             id_rol: id_rol || null
         })
 
@@ -106,14 +107,17 @@ const LogoutUsuario = (req, res) => {
 const editarUsuario = async (req, res) => {
     try {
         const { id_usuario } = req.params
-        const { nombre_usuario, nombre_completo, correo, telefono, provincia, canton, distrito, img_perfil } = req.body
+        const { nombre_usuario, nombre_completo, correo, telefono, provincia, canton, distrito, img_perfil, descripcion } = req.body
 
         const usuarioEncontrado = await Usuario.findByPk(id_usuario)
         if (!usuarioEncontrado) {
             return res.status(404).json({ status: 404, message: "Usuario no encontrado" })
         }
 
-        await usuarioEncontrado.update({ nombre_usuario, nombre_completo, correo, telefono, provincia, canton, distrito, img_perfil })
+        // img_perfil puede llegar como "" para borrarla — convertir a null
+        const imgFinal = img_perfil === "" ? null : img_perfil
+
+        await usuarioEncontrado.update({ nombre_usuario, nombre_completo, correo, telefono, provincia, canton, distrito, img_perfil: imgFinal, descripcion: descripcion ?? null })
 
         const { contrasena: _, ...usuarioSinClave } = usuarioEncontrado.toJSON()
         res.status(200).json({ status: 200, message: "Usuario actualizado", data: usuarioSinClave })

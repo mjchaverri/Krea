@@ -39,10 +39,11 @@ function TabEditar({ comunidad, onGuardado }) {
         e.preventDefault()
         setGuardando(true)
         try {
-            const actualizada = await Fetch.patchData('comunidades', {
+            const id = comunidad.id_comunidad || comunidad.id
+            const actualizada = await Fetch.putData(`comunidades/${id}`, {
                 ...form,
                 colorClaro: form.color + '22',
-            }, comunidad.id)
+            })
             setOk(true)
             setTimeout(() => setOk(false), 2500)
             onGuardado?.(actualizada)
@@ -121,7 +122,6 @@ function TabMiembros({ comunidad, miembros, onExpulsar }) {
     const handleExpulsar = async (m) => {
         setExpulsando(m.id)
         try {
-            await Fetch.deleteData('miembros_comunidades', m.id)
             onExpulsar?.(m.id)
         } catch (err) { console.error(err) }
         finally { setExpulsando(null) }
@@ -169,15 +169,12 @@ function TabConvocatoria({ comunidad, usuario, onCreada }) {
         if (!form.nombre.trim()) return
         setGuardando(true)
         try {
-            const msg = await Fetch.postData({
-                comunidadId: comunidad.id,
-                usuarioId: usuario.id,
-                usuarioNombre: usuario.Nombre,
-                texto: form.descripcion.trim(),
-                convocatoriaNombre: form.nombre.trim(),
-                esConvocatoria: true,
-                fecha: new Date().toISOString(),
-            }, 'mensajes_comunidad')
+            const id = comunidad.id_comunidad || comunidad.id
+            const msg = await Fetch.postData('chat-comunidad', {
+                id_comunidad:   id,
+                usuario_nombre: usuario.Nombre || usuario.nombre_completo || 'Usuario',
+                texto:          `[${form.nombre.trim()}] ${form.descripcion.trim()}`,
+            })
             onCreada?.(msg)
             setOk(true)
             setForm({ nombre: '', descripcion: '' })

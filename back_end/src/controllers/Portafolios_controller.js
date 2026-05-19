@@ -18,8 +18,8 @@ const crearPortafolio = async (req, res) => {
 
 const obtenerPortafolios = async (req, res) => {
     try {
-        const page   = Math.max(parseInt(req.query.page)  || 1, 1)
-        const limit  = Math.min(parseInt(req.query.limit) || 10, 100)
+        const page = Math.max(parseInt(req.query.page) || 1, 1)
+        const limit = Math.min(parseInt(req.query.limit) || 10, 100)
         const offset = (page - 1) * limit
         const { buscar } = req.query
 
@@ -42,7 +42,7 @@ const obtenerPortafolios = async (req, res) => {
 const obtenerPortafoliosPorUsuario = async (req, res) => {
     try {
         const { id_usuario } = req.params
-        const page  = Math.max(parseInt(req.query.page)  || 1, 1)
+        const page = Math.max(parseInt(req.query.page) || 1, 1)
         const limit = Math.min(parseInt(req.query.limit) || 10, 100)
         const offset = (page - 1) * limit
 

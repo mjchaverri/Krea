@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import NavBarUsuario from '../components/PerfilUsuario/NavBarUsuario';
+import Navbar from '../components/navbar/Navbar';
+import Footer from '../components/ApartadoPaginaPrincipal/Footer';
 import InfoUsuario from '../components/PerfilUsuario/InfoUsuario';
 import SeccionesPerfil from '../components/PerfilUsuario/SeccionesPerfil';
 import ProyectosRecientes from '../components/PerfilUsuario/ProyectosRecientes';
 import "../styles/EstilosPerfilUsuario/PerfilUsuario.css";
 import Fetch from '../services/Fetch';
+import { normalizarUsuario } from '../utils/normalizers';
 import ResenasUsuario from '../components/PerfilUsuario/ReseñasUsuario';
 
 function PerfilUsuario() {
@@ -12,16 +14,11 @@ function PerfilUsuario() {
 
     const cargarUsuario = async () => {
         try {
-            const data = await Fetch.getData("usuarios");
-
             const usuarioActivo = JSON.parse(localStorage.getItem("UsuarioActivo"));
+            if (!usuarioActivo?.id) return;
 
-            const user = data.find(
-                (u) => String(u.id) === String(usuarioActivo?.id)
-            );
-
-            setUsuarioPerfil(user || null);
-
+            const data = await Fetch.getData(`usuarios/${usuarioActivo.id}`);
+            setUsuarioPerfil(data ? normalizarUsuario(data) : null);
         } catch (error) {
             console.error("Error cargando usuario:", error);
         }
@@ -36,10 +33,8 @@ function PerfilUsuario() {
     return (
         <div className="perfil-page">
 
-            {/* NAVBAR */}
-            <NavBarUsuario />
+            <Navbar />
 
-            {/* PERFIL */}
             <div className="perfil-content">
                 <InfoUsuario
                     usuario={usuarioPerfil}
@@ -63,6 +58,8 @@ function PerfilUsuario() {
             <div className="perfil-resenas">
                 <ResenasUsuario />
             </div>
+
+            <Footer />
         </div>
     );
 }

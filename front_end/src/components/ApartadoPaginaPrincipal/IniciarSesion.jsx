@@ -1,43 +1,49 @@
 import React, { useState } from 'react'
-import { useEffect } from 'react'
+import { useNavigate } from "react-router-dom"
 import Fetch from '../../services/Fetch'
-import { useNavigate } from "react-router-dom";
 import '../../styles/Principales/InicioSesion.css'
 
-
-
 function IniciarSesion() {
-    const [Correo, setCorreo] = useState("")
+    const [correo, setCorreo]       = useState("")
     const [contrasena, setContrasena] = useState("")
-    const [Rol, setRol] = useState("")
+    const [cargando, setCargando]   = useState(false)
     const navigate = useNavigate()
-    const [usuarios, setUsuarios] = useState([])
-    useEffect(() => {
 
-        async function traerUsuarios() {
-            const lista = await Fetch.getData("usuarios")
-            setUsuarios(lista)
-
-
+    async function validarInicio() {
+        if (!correo || !contrasena) {
+            alert("Debes ingresar correo y contraseña")
+            return
         }
-        traerUsuarios()
-    }, [])
-    function validarInicio() {
-        const usuarioValido = usuarios.find((usuario) => usuario.Correo == Correo && usuario.Contrasena == contrasena)
-        if (usuarioValido) {
+        setCargando(true)
+        try {
+            const data = await Fetch.postData('usuarios/login', { correo, contrasena })
+
+            localStorage.setItem('token', data.token)
+            localStorage.setItem('UsuarioActivo', JSON.stringify({
+                id:             data.usuario.id_usuario,
+                nombre_usuario: data.usuario.nombre_usuario,
+                Nombre:         data.usuario.nombre_completo,
+                Correo:         data.usuario.correo,
+                img:            data.usuario.img_perfil,
+                id_rol:         data.usuario.id_rol,
+                Roles:          data.usuario.id_rol === 1 ? 'Admin' : 'Usuario'
+            }))
+            localStorage.setItem('idUsuario', data.usuario.id_usuario)
+
             alert("Ingreso Exitoso")
-            localStorage.setItem("UsuarioActivo", JSON.stringify(usuarioValido));
-            localStorage.setItem("idUsuario", usuarioValido.id);
-            if (usuarioValido.Roles === "Admin") {
+            if (data.usuario.id_rol === 1) {
+                localStorage.setItem('rol', 'Admin')
                 navigate("/Admin")
-                localStorage.setItem("rol", usuarioValido.Roles);
             } else {
                 navigate("/principal")
             }
-        } else {
-            alert("El usuario no existe")
+        } catch (error) {
+            alert(error.message || "Correo o contraseña incorrectos")
+        } finally {
+            setCargando(false)
         }
     }
+
     return (
         <div className='MainLoginContainer'>
             <div className='BackgroundDecoration'>
@@ -51,27 +57,38 @@ function IniciarSesion() {
             </div>
 
             <div className='CardLogin'>
-
                 <div className='DivForm'>
-                    <h2 className='TituloPrincipal'> <strong>Iniciar sesión</strong> </h2>
+                    <h2 className='TituloPrincipal'><strong>Iniciar sesión</strong></h2>
                     <div className='ParrafoForm'>
                         <h6 className='SubtituloForm'>Inicia sesión para mostrar tu talento</h6>
 
                         <div className='InputGroup'>
                             <label>Correo electrónico</label>
-                            <input type="email" value={Correo} onChange={(evento) => setCorreo(evento.target.value)} placeholder="tu@correo.com" />
+                            <input
+                                type="email"
+                                value={correo}
+                                onChange={e => setCorreo(e.target.value)}
+                                placeholder="tu@correo.com"
+                            />
                         </div>
 
                         <div className='InputGroup'>
                             <label>Contraseña</label>
-                            <input type="password" value={contrasena} onChange={(evento) => setContrasena(evento.target.value)} placeholder="********" />
+                            <input
+                                type="password"
+                                value={contrasena}
+                                onChange={e => setContrasena(e.target.value)}
+                                placeholder="********"
+                            />
                         </div>
 
-                        <button className='BotonEntrar' onClick={validarInicio}>Entrar ahora </button>
+                        <button className='BotonEntrar' onClick={validarInicio} disabled={cargando}>
+                            {cargando ? 'Entrando...' : 'Entrar ahora'}
+                        </button>
 
                         <div className='RegistroPrompt'>
                             <h6>¿No tienes cuenta?
-                                <a className='link_registro' href="/Registro">Regístrate Aquí</a>
+                                <a className='link_registro' href="/Registro"> Regístrate Aquí</a>
                             </h6>
                         </div>
                     </div>

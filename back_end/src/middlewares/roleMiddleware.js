@@ -8,12 +8,12 @@ const roleMiddleware = (...rolesPermitidos) => {
                 include: [{ model: Roles, attributes: ["nombre"] }]
             })
 
-            if (!usuario || !usuario.Rol) {
+            if (!usuario || !usuario.Roles) {
                 return res.status(403).json({ status: 403, message: "No tienes un rol asignado." })
             }
 
-            const rolUsuario = usuario.Rol.nombre
-            if (!rolesPermitidos.includes(rolUsuario)) {
+            const rolUsuario = usuario.Roles.nombre.toLowerCase()
+            if (!rolesPermitidos.map(r => r.toLowerCase()).includes(rolUsuario)) {
                 return res.status(403).json({
                     status: 403,
                     message: `Acceso restringido. Se requiere rol: ${rolesPermitidos.join(" o ")}.`

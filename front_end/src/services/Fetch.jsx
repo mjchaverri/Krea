@@ -1,56 +1,73 @@
-async function postData(obj, endpoint) {
-    const res = await fetch(`http://localhost:3001/${endpoint}`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(obj)
-    });
+const BASE_URL = 'http://localhost:3000'
 
-    return await res.json();
+function getToken() {
+    return localStorage.getItem('token')
+}
+
+function buildHeaders() {
+    const headers = { 'Content-Type': 'application/json' }
+    const token = getToken()
+    if (token) headers['Authorization'] = `Bearer ${token}`
+    return headers
 }
 
 async function getData(endpoint) {
-    try {
-        const peticion = await fetch(`http://localhost:3001/${endpoint}`)
-        const data = await peticion.json()
-        return data
-    } catch (error) {
-        console.error(error);
+    const res = await fetch(`${BASE_URL}/${endpoint}`, { headers: buildHeaders() })
+    const json = await res.json()
+    if (!res.ok) {
+        const err = new Error(json.message || `Error ${res.status}`)
+        err.status = res.status
+        err.errors = json.data || null
+        throw err
     }
+    return json.data !== undefined ? json.data : json
 }
 
-async function patchData(endpoint, obj, id) {
-    try {
-        const peticion = await fetch(`http://localhost:3001/${endpoint}/${id}`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(obj)
-        })
-        const data = await peticion.json()
-        return data
-    } catch (error) {
-        console.error(error);
+async function postData(endpoint, obj) {
+    const res = await fetch(`${BASE_URL}/${endpoint}`, {
+        method: 'POST',
+        headers: buildHeaders(),
+        body: JSON.stringify(obj),
+    })
+    const json = await res.json()
+    if (!res.ok) {
+        const err = new Error(json.message || `Error ${res.status}`)
+        err.status = res.status
+        err.errors = json.data || null
+        throw err
     }
+    return json.data !== undefined ? json.data : json
 }
 
-async function deleteData(endpoint, id) {
-    try {
-        const peticion = await fetch(`http://localhost:3001/${endpoint}/${id}`, {
-            method: "DELETE",
-        });
-
-        if (!peticion.ok) {
-            throw new Error(`Error al eliminar: ${peticion.statusText}`);
-        }
-
-        return true;
-    } catch (error) {
-        console.error("Error al eliminar:", error);
-        return false;
+async function putData(endpoint, obj) {
+    const res = await fetch(`${BASE_URL}/${endpoint}`, {
+        method: 'PUT',
+        headers: buildHeaders(),
+        body: JSON.stringify(obj),
+    })
+    const json = await res.json()
+    if (!res.ok) {
+        const err = new Error(json.message || `Error ${res.status}`)
+        err.status = res.status
+        err.errors = json.data || null
+        throw err
     }
+    return json.data !== undefined ? json.data : json
 }
 
-export default { postData, getData, patchData, deleteData }
+async function deleteData(endpoint) {
+    const res = await fetch(`${BASE_URL}/${endpoint}`, {
+        method: 'DELETE',
+        headers: buildHeaders(),
+    })
+    const json = await res.json()
+    if (!res.ok) {
+        const err = new Error(json.message || `Error ${res.status}`)
+        err.status = res.status
+        err.errors = json.data || null
+        throw err
+    }
+    return json.data !== undefined ? json.data : json
+}
+
+export default { getData, postData, putData, deleteData }

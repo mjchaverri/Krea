@@ -30,6 +30,7 @@ describe('Pruebas de tipo_para_convos_controllers', () => {
     jest.clearAllMocks();
   });
 
+  //Al crear un tipo de convocatoria debe devolver 201 y el tipo de convocatoria creado si los datos son correctos
   describe('crearTipo_para_convos', () => {
     it('debe crear un tipo de convocatoria y retornar 201', async () => {
       req.body = { nombre_tipo_convo: 'Arte' };
@@ -42,6 +43,7 @@ describe('Pruebas de tipo_para_convos_controllers', () => {
       expect(res.json).toHaveBeenCalledWith(mockTipo);
     });
 
+    //Al crear un tipo de convocatoria debe devolver 500 si ocurre un error
     it('debe retornar 500 si ocurre un error', async () => {
       req.body = { nombre_tipo_convo: 'Arte' };
       Tipos_para_convos.create.mockRejectedValue(new Error('DB error'));
@@ -52,6 +54,7 @@ describe('Pruebas de tipo_para_convos_controllers', () => {
     });
   });
 
+  //Al obtener los tipos de convocatoria debe devolver 200 y todos los tipos de convocatoria
   describe('obtenerTipos_para_convos', () => {
     it('debe retornar todos los tipos de convocatoria y retornar 200', async () => {
       const mockTipos = [{ id_tipo_para_convo: 1, nombre_tipo_convo: 'Arte' }];
@@ -66,6 +69,7 @@ describe('Pruebas de tipo_para_convos_controllers', () => {
     });
   });
 
+  //Al eliminar un tipo de convocatoria debe devolver 200 y el tipo de convocatoria eliminado si existe, si no 404
   describe('eliminarTipo_para_convos', () => {
     it('debe eliminar un tipo de convocatoria y retornar 200', async () => {
       req.params = { id_tipo_para_convo: 1 };
@@ -81,6 +85,7 @@ describe('Pruebas de tipo_para_convos_controllers', () => {
       expect(mockTipo.destroy).toHaveBeenCalled();
     });
 
+    //Al eliminar un tipo de convocatoria debe devolver 404 si el tipo de convocatoria no existe
     it('debe retornar 404 si el tipo de convocatoria no existe', async () => {
       req.params = { id_tipo_para_convo: 999 };
       Tipos_para_convos.findByPk.mockResolvedValue(null);
@@ -92,6 +97,7 @@ describe('Pruebas de tipo_para_convos_controllers', () => {
     });
   });
 
+  //Al editar un tipo de convocatoria debe devolver 200 y el tipo de convocatoria editado si existe, si no 404
   describe('editarTipo_para_convos', () => {
     it('debe actualizar un tipo de convocatoria y retornar 200', async () => {
       req.params = { id_tipo_para_convo: 1 };
@@ -108,6 +114,7 @@ describe('Pruebas de tipo_para_convos_controllers', () => {
       expect(mockTipo.update).toHaveBeenCalledWith({ nombre_tipo_convo: 'Cine' });
     });
 
+    //Al editar un tipo de convocatoria debe devolver 404 si el tipo de convocatoria no existe
     it('debe retornar 404 si el tipo de convocatoria no existe al editar', async () => {
       req.params = { id_tipo_para_convo: 999 };
       Tipos_para_convos.findByPk.mockResolvedValue(null);

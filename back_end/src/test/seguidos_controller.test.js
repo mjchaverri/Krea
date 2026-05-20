@@ -139,6 +139,7 @@ describe('Pruebas de seguidos_controller', () => {
       });
     });
 
+    //Al obtener los portafolios de los seguidos debe devolver 200 y arreglo vacío si no sigue a nadie
     it('debe retornar arreglo vacío si no sigue a nadie', async () => {
       Seguidos.findAll.mockResolvedValue([]);
 

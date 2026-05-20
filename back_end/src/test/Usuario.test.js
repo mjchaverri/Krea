@@ -51,6 +51,7 @@ describe('Pruebas de UsuarioController - Estados y Errores (201, 400, 401, 404)'
         });
     });
 
+    //Al crear un usuario debe devolver 201 y el usuario creado si los datos son correctos
     describe('crearUsuario (Registrar Usuario)', () => {
         it('debe responder con estado 201 cuando el usuario se crea correctamente', async () => {
             req.body = {
@@ -87,6 +88,7 @@ describe('Pruebas de UsuarioController - Estados y Errores (201, 400, 401, 404)'
             );
         });
 
+        //Al crear un usuario debe devolver 400 si los datos son incorrectos
         it('debe responder con estado 400 cuando los datos de entrada son inválidos (Error de Validación)', async () => {
             // Simular error de validación (por ejemplo, correo faltante)
             validationResult.mockReturnValueOnce({
@@ -116,6 +118,7 @@ describe('Pruebas de UsuarioController - Estados y Errores (201, 400, 401, 404)'
         });
     });
 
+    //Al iniciar sesion debe devolver 400 si los campos del login fallan la validación
     describe('LoginUsuario (Inicio de Sesión)', () => {
         it('debe responder con estado 400 si los campos del login fallan la validación', async () => {
             validationResult.mockReturnValueOnce({
@@ -141,6 +144,7 @@ describe('Pruebas de UsuarioController - Estados y Errores (201, 400, 401, 404)'
             );
         });
 
+        //Al iniciar sesion debe devolver 401 cuando la contraseña es incorrecta
         it('debe responder con estado 401 cuando la contraseña es incorrecta (Credenciales Inválidas)', async () => {
             req.body = {
                 correo: 'test@example.com',
@@ -168,6 +172,7 @@ describe('Pruebas de UsuarioController - Estados y Errores (201, 400, 401, 404)'
             });
         });
 
+        //Al iniciar sesion debe devolver 404 cuando el correo no está registrado
         it('debe responder con estado 404 cuando el correo no está registrado', async () => {
             req.body = {
                 correo: 'no_registrado@example.com',
@@ -187,6 +192,7 @@ describe('Pruebas de UsuarioController - Estados y Errores (201, 400, 401, 404)'
         });
     });
 
+    //Al editar un usuario debe devolver 400 si los datos son incorrectos
     describe('editarUsuario (Modificar Perfil)', () => {
         it('debe responder con estado 400 si los datos provistos para editar fallan la validación', async () => {
             validationResult.mockReturnValueOnce({
@@ -212,6 +218,7 @@ describe('Pruebas de UsuarioController - Estados y Errores (201, 400, 401, 404)'
             );
         });
 
+        //Al editar un usuario debe devolver 404 si el usuario no existe
         it('debe responder con estado 404 si se intenta editar un usuario que no existe', async () => {
             req.params = { id_usuario: 999 };
             req.body = {

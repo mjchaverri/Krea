@@ -34,6 +34,7 @@ describe('Pruebas de Talentos_controllers', () => {
     });
   });
 
+  //Al crear un talento debe devolver 201 y el talento creado si no existe
   describe('crearTalento', () => {
     it('debe crear un talento y retornar 201', async () => {
       req.body = { nombre: 'Pintura' };
@@ -50,6 +51,7 @@ describe('Pruebas de Talentos_controllers', () => {
       });
     });
 
+    //Al crear un talento que ya existe debe devolver 400
     it('debe retornar 400 si los datos de talento son inválidos', async () => {
       validationResult.mockReturnValueOnce({
         isEmpty: () => false,
@@ -62,6 +64,7 @@ describe('Pruebas de Talentos_controllers', () => {
     });
   });
 
+  //Al obtener los talentos debe devolver 200 y todos los talentos
   describe('obtenerTalentos', () => {
     it('debe retornar todos los talentos y retornar 200', async () => {
       const mockTalentos = [{ id_talento: 1, nombre: 'Pintura' }];
@@ -74,6 +77,7 @@ describe('Pruebas de Talentos_controllers', () => {
     });
   });
 
+  //Al eliminar un talento debe devolver 200 y el talento eliminado si existe, si no 404
   describe('eliminarTalento', () => {
     it('debe eliminar un talento y retornar 200', async () => {
       req.params = { id_talento: 1 };
@@ -85,7 +89,7 @@ describe('Pruebas de Talentos_controllers', () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(mockTalento.destroy).toHaveBeenCalled();
     });
-
+    //Al eliminar un talento que no existe debe devolver 404
     it('debe retornar 404 si el talento no existe al eliminar', async () => {
       req.params = { id_talento: 999 };
       Talentos.findByPk.mockResolvedValue(null);
@@ -96,6 +100,7 @@ describe('Pruebas de Talentos_controllers', () => {
     });
   });
 
+  //Al editar un talento debe devolver 200 y el talento editado si existe, si no 404
   describe('editarTalento', () => {
     it('debe editar un talento y retornar 200', async () => {
       req.params = { id_talento: 1 };

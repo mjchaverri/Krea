@@ -30,7 +30,7 @@ const obtenerUsuarios = async (req, res) => {
 
 const crearUsuario = async (req, res) => {
     try {
-        const { nombre_usuario, nombre_completo, correo, contrasena, telefono, img_perfil, descripcion, id_rol } = req.body
+        const { nombre_usuario, nombre_completo, correo, contrasena, telefono, provincia, canton, distrito, img_perfil, descripcion, id_rol } = req.body
 
         const contrasenaEncriptada = await bcrypt.hash(contrasena, 10)
 
@@ -40,9 +40,12 @@ const crearUsuario = async (req, res) => {
             correo,
             contrasena: contrasenaEncriptada,
             telefono,
-            img_perfil: img_perfil || null,
+            provincia:   provincia  || null,
+            canton:      canton     || null,
+            distrito:    distrito   || null,
+            img_perfil:  img_perfil || null,
             descripcion: descripcion || null,
-            id_rol: id_rol || null
+            id_rol:      id_rol || null
         })
 
         const { contrasena: _, ...usuarioSinClave } = nuevoUsuario.toJSON()

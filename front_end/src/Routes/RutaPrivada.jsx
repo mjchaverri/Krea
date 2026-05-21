@@ -1,12 +1,9 @@
 import { Navigate } from "react-router-dom"
 
 const RutaPrivada = ({ children }) => {
-    const idUsuario = localStorage.getItem("idUsuario")
+    const token = localStorage.getItem("token")
 
-    return (
-        <>
-            {idUsuario ? children : <Navigate to={"/"} />}
-        </>
-    )
+    if (!token) return <Navigate to="/" replace />
+    return children
 }
 export default RutaPrivada

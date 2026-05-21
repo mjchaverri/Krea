@@ -7,6 +7,7 @@ function Navbar() {
     const [menuOpen, setMenuOpen]           = useState(false);
     const [userImg, setUserImg]             = useState(null);
     const [userName, setUserName]           = useState(null);
+    const [isAdmin, setIsAdmin]             = useState(false);
     const [bellOpen, setBellOpen]           = useState(false);
     const [convocatorias, setConvocatorias] = useState([]);
     const bellRef                           = useRef(null);
@@ -21,6 +22,7 @@ function Navbar() {
                 const user = JSON.parse(raw);
                 setUserImg(user.img || null);
                 setUserName(user.Nombre || user.nombre_usuario || null);
+                setIsAdmin(user.id_rol === 1);
             }
         } catch {}
     }, []);
@@ -86,6 +88,15 @@ function Navbar() {
 
                 {/* Derecha */}
                 <div className="pn-right">
+                    {isAdmin && (
+                        <button
+                            className="pn-btn-crear"
+                            onClick={() => navigate('/Admin')}
+                            style={{ background: '#7c3aed', borderColor: '#7c3aed' }}
+                        >
+                            <span className="material-symbols-outlined" style={{ fontSize: '15px', verticalAlign: 'middle' }}>shield_person</span> Panel Admin
+                        </button>
+                    )}
                     <button className="pn-btn-crear" onClick={() => navigate('/portafolio')}>
                         <span>+</span> Crear proyecto
                     </button>

@@ -6,7 +6,6 @@ import PerfilVisitante from "../pages/PerfilVisitante"
 import PaginaContacto from "../pages/PaginaContacto"
 import SobreNosotros from "../pages/SobreNosotros"
 import PaguinaIniciar from "../pages/PaguinaIniciar"
-import AgregarUsuario from '../pages/AgregarUsuarios'
 import PaginaRegistro from "../pages/PaginaRegistro"
 import Portafolio from "../pages/Portafolio"
 import Admin from "../pages/Admin"
@@ -25,7 +24,6 @@ function Routing() {
                 <Route path="/" element={<Inicio />} />
                 <Route path="/Iniciar" element={<PaguinaIniciar />} />
                 <Route path="/Registro" element={<PaginaRegistro />} />
-                <Route path="/AgregarUsuario" element={<AgregarUsuario />} />
                 <Route path="/principal" element={<RutaPrivada children={<Principal />} />} />
                 <Route path="/perfil-usuario" element={<RutaPrivada children={<PerfilUsuario />} />} />
                 <Route path="/pagina-contacto" element={<PaginaContacto />} />
@@ -38,7 +36,7 @@ function Routing() {
                 <Route path="/Consejos" element={<RutaPrivada children={<PaginaConsejos />} />} />
                 <Route path="/todos-proyectos" element={<TodosProyectos />} />
                 <Route path="/perfil/:usuarioId" element={<PerfilVisitante />} />
-                <Route path="/FormularioConvo" element={<FormularioConvo />} />
+                <Route path="/FormularioConvo" element={<RutaPrivadaAdmin children={<FormularioConvo />} />} />
                 <Route path="/comunidades" element={<RutaPrivada children={<PaginaComunidades />} />} />
             </Routes>
         </Router>

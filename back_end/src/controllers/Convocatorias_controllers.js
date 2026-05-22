@@ -1,4 +1,4 @@
-const { Convocatorias } = require("../index")
+const { Convocatorias, Participante_convo, Usuario } = require("../index")
 const { validationResult } = require("express-validator")
 const { Op } = require("sequelize")
 
@@ -77,4 +77,17 @@ const editarConvocatoria = async (req, res) => {
     }
 }
 
-module.exports = { crearConvocatoria, obtenerConvocatorias, eliminarConvocatoria, editarConvocatoria }
+const obtenerParticipantesDeConvocatoria = async (req, res) => {
+    try {
+        const { id_convocatoria } = req.params
+        const participantes = await Participante_convo.findAll({
+            where: { id_convocatoria },
+            include: [{ model: Usuario, attributes: ['id_usuario', 'nombre_completo', 'nombre_usuario', 'img_perfil'] }]
+        })
+        res.status(200).json({ status: 200, message: "OK", data: participantes })
+    } catch (error) {
+        res.status(500).json({ status: 500, message: error.message })
+    }
+}
+
+module.exports = { crearConvocatoria, obtenerConvocatorias, eliminarConvocatoria, editarConvocatoria, obtenerParticipantesDeConvocatoria }

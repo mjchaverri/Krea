@@ -1,5 +1,5 @@
 import "../../styles/EstilosPerfilUsuario/ModalProyecto.css";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Lienzo from "../PlantillaTalentos/Lienzo";
 import Estructura1 from "../PlantillaTalentos/Estructura1";
@@ -61,6 +61,7 @@ function ModalProyecto({ proyecto, resenas = [], onClose, onReviewAdded }) {
     const [contactarVisible, setContactarVisible] = useState(false);
     const [usuarios, setUsuarios]               = useState([]);
     const navigate = useNavigate();
+    const modalLeftRef = useRef(null);
 
     let usuarioActivo = {};
     try { usuarioActivo = JSON.parse(localStorage.getItem('UsuarioActivo')) || {}; } catch {}
@@ -70,6 +71,10 @@ function ModalProyecto({ proyecto, resenas = [], onClose, onReviewAdded }) {
         window.addEventListener('keydown', handleEsc);
         return () => window.removeEventListener('keydown', handleEsc);
     }, [onClose]);
+
+    useEffect(() => {
+        if (modalLeftRef.current) modalLeftRef.current.scrollTop = 0;
+    }, [proyecto]);
 
     useEffect(() => {
         Fetch.getData('usuarios?limit=100').then(data => {
@@ -135,7 +140,7 @@ function ModalProyecto({ proyecto, resenas = [], onClose, onReviewAdded }) {
                 <div className="modal-split">
 
                     {/* ── Izquierda: portafolio ── */}
-                    <div className="modal-left">
+                    <div className="modal-left" ref={modalLeftRef}>
                         {isOwner && (
                             <div className="modal-edit-bar">
                                 <button

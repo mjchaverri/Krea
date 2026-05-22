@@ -65,6 +65,11 @@ const eliminarPortafolio = async (req, res) => {
         if (!portafolioEncontrado) {
             return res.status(404).json({ status: 404, message: "Portafolio no encontrado" })
         }
+        const esAdmin = req.usuario.id_rol === 1
+        const esPropietario = String(portafolioEncontrado.id_usuario) === String(req.usuario.id)
+        if (!esAdmin && !esPropietario) {
+            return res.status(403).json({ status: 403, message: "No tienes permiso para eliminar este portafolio." })
+        }
         await portafolioEncontrado.destroy()
         res.status(200).json({ status: 200, message: "Portafolio eliminado correctamente" })
     } catch (error) {

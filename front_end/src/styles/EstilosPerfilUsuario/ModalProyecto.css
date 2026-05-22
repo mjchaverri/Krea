@@ -87,6 +87,14 @@
     scrollbar-color: #e2e8f0 transparent;
 }
 
+.modal-left .lienzo-modal-container {
+    padding-top: 32px;
+}
+
+.modal-left .lienzo-modal-container .lienzo__titulo {
+    padding-top: 16px;
+}
+
 .modal-left::-webkit-scrollbar { width: 5px; }
 .modal-left::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
 
@@ -144,9 +152,12 @@
 .lienzo-modal-container .lienzo {
     max-width: 100% !important;
     margin: 0 !important;
+    padding: 0 32px 48px !important;
+    min-height: 0 !important;
     border-radius: 0 !important;
     box-shadow: none !important;
 }
+
 
 /* ── Panel derecho: reseñas ── */
 .modal-right {

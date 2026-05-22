@@ -1,13 +1,10 @@
 import { Navigate } from "react-router-dom"
 
 const RutaPrivadaAdmin = ({ children }) => {
-    const idUsuario = localStorage.getItem("idUsuario")
-    const rol = localStorage.getItem("rol")
+    const token   = localStorage.getItem("token")
+    const rol     = localStorage.getItem("rol")
 
-    return (
-        <>
-            {idUsuario && rol === "Admin" ? children : <Navigate to={"/"} />}
-        </>
-    )
+    if (!token || rol !== "Admin") return <Navigate to="/" replace />
+    return children
 }
 export default RutaPrivadaAdmin

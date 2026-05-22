@@ -10,11 +10,11 @@ Comunidades.init({
         autoIncrement: true,
     },
     nombre: {
-        type: DataTypes.STRING(40),
+        type: DataTypes.STRING(60),
         allowNull: false
     },
     descripcion: {
-        type: DataTypes.STRING(60),
+        type: DataTypes.TEXT,
         allowNull: false
     },
     icono: {

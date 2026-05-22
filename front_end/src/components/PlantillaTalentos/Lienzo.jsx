@@ -39,22 +39,30 @@ function Lienzo({
     return (
         <div className="lienzo">
             <div className="lienzo__header">
-                <input
-                    type="text"
-                    placeholder="Título del Proyecto"
-                    className="lienzo__titulo"
-                    value={tituloProyecto}
-                    onChange={onTituloChange}
-                    onClick={(e) => e.stopPropagation()}
-                />
-                <input
-                    type="text"
-                    placeholder="Haz clic aquí para añadir una breve descripción o subtítulo que cautive a tu audiencia."
-                    className="lienzo__descripcion"
-                    value={descripcionProyecto}
-                    onChange={onDescripcionChange}
-                    onClick={(e) => e.stopPropagation()}
-                />
+                {onTituloChange ? (
+                    <input
+                        type="text"
+                        placeholder="Título del Proyecto"
+                        className="lienzo__titulo"
+                        value={tituloProyecto}
+                        onChange={onTituloChange}
+                        onClick={(e) => e.stopPropagation()}
+                    />
+                ) : (
+                    <div className="lienzo__titulo">{tituloProyecto || ''}</div>
+                )}
+                {onDescripcionChange ? (
+                    <input
+                        type="text"
+                        placeholder="Haz clic aquí para añadir una breve descripción o subtítulo que cautive a tu audiencia."
+                        className="lienzo__descripcion"
+                        value={descripcionProyecto}
+                        onChange={onDescripcionChange}
+                        onClick={(e) => e.stopPropagation()}
+                    />
+                ) : (
+                    <div className="lienzo__descripcion">{descripcionProyecto || ''}</div>
+                )}
                 <div className="lienzo__categoria-row" onClick={(e) => e.stopPropagation()}>
                     <span className="lienzo__categoria-label">Categorías</span>
                     <div className="lienzo__categoria-carousel">

@@ -5,7 +5,7 @@ import '../../styles/Principales/Contactos.css'
 const FormularioQuejas = () => {
   const [formData, setFormData] = useState({
     nombre: "",
-    email: "",
+    email: "infokreacr@gmail.com",
     telefono: "",
     ubicacion: "",
     tipo: "",
@@ -45,7 +45,7 @@ const FormularioQuejas = () => {
       setStatus("Mensaje enviado correctamente ✅");
       setFormData({
         nombre: "",
-        email: "",
+        email: "infokreacr@gmail.com",
         telefono: "",
         ubicacion: "",
         tipo: "",
@@ -75,7 +75,7 @@ const FormularioQuejas = () => {
             </div>
             <div className="info-item">
               <span className="info-icon">✉️</span>
-              <span>[ALGUN CORREO@gmail.com]</span>
+              <span>infokreacr@gmail.com</span>
             </div>
             <div className="info-item">
               <span className="info-icon">📞</span>
@@ -115,7 +115,7 @@ const FormularioQuejas = () => {
               name="email"
               placeholder="Correo electrónico"
               value={formData.email}
-              onChange={handleChange}
+              readOnly
               required
               className="contactos-input"
             />

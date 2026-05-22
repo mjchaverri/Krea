@@ -18,6 +18,21 @@ const obtenerComponentes = async (req, res) => {
     try {
         const componentes = await Componentes.findAll()
         res.status(200).json(componentes)
+<<<<<<< HEAD
+=======
+     } catch (error) {
+        res.status(500).json({"no se pudieron obtener los componentes": error.message})
+     }
+}
+const eliminarComponente = async (req , res ) => {
+    try {
+        const {id_componente} = req.params
+        const componenteEncontrado = await Componentes.findByPk(id_componente)
+        if(!componenteEncontrado) 
+            return res.status(404).json({ message: "Componente no encontrado" })
+        await componenteEncontrado.destroy()
+        res.status(200).json({"componente eliminado correctamente": componenteEncontrado})
+>>>>>>> b3fd861996c50deaea98242b727c70b792f142ca
     } catch (error) {
         res.status(500).json({ "no se pudieron obtener los componentes": error.message })
     }
@@ -37,6 +52,7 @@ const eliminarComponente = async (req, res) => {
 
 const editarComponente = async (req, res) => {
     try {
+<<<<<<< HEAD
         const { id_componente } = req.params
         const { tipo, orden } = req.body
         const componenteEncontrado = await Componentes.findByPk(id_componente)
@@ -44,6 +60,15 @@ const editarComponente = async (req, res) => {
             return res.status(404).json({ "no se encontro el componente": error.message })
         await componenteEncontrado.update({ tipo, orden })
         res.status(200).json({ "componente actualizado correctamente": componenteEncontrado })
+=======
+       const {id_componente} = req.params
+       const {tipo, orden} = req.body
+         const componenteEncontrado = await Componentes.findByPk(id_componente)
+         if(!componenteEncontrado)
+            return res.status(404).json({ message: "Componente no encontrado" })
+         await componenteEncontrado.update({ tipo, orden })
+         res.status(200).json({"componente actualizado correctamente": componenteEncontrado})
+>>>>>>> b3fd861996c50deaea98242b727c70b792f142ca
     } catch (error) {
         res.status(500).json({ "no se pudo actualizar el componente": error.message })
     }

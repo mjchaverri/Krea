@@ -23,14 +23,43 @@ const obtenerComponentes_estilos = async (req, res) => {
         res.status(500).json({ "no se pudieron obtener los componentes estilo": error.message })
     }
 }
+<<<<<<< HEAD
 const eliminarComponente_estilo = async (req, res) => {
+=======
+ const eliminarComponente_estilo = async (req , res ) => {
+       try {
+        const {id} = req.params
+        const componente_estiloEncontrado = await Componentes_estilos.findByPk(id)
+        if(!componente_estiloEncontrado)
+            return res.status(404).json({ message: "Componente estilo no encontrado" })
+        await componente_estiloEncontrado.destroy()
+        res.status(200).json({"componente estilo eliminado correctamente": componente_estiloEncontrado})
+       } catch (error) {
+        res.status(500).json({"no se pudo eliminar el componente estilo": error.message})
+       }
+
+
+
+
+
+ }
+
+ const editarComponente_estilo = async (req , res ) => {
+>>>>>>> b3fd861996c50deaea98242b727c70b792f142ca
     try {
         const { id } = req.params
         const componente_estiloEncontrado = await Componentes_estilos.findByPk(id)
+<<<<<<< HEAD
         if (!componente_estiloEncontrado)
             return res.status(404).json({ "no se encontro el componente estilo": error.message })
         await componente_estiloEncontrado.destroy()
         res.status(200).json({ "componente estilo eliminado correctamente": componente_estiloEncontrado })
+=======
+        if(!componente_estiloEncontrado)
+            return res.status(404).json({ message: "Componente estilo no encontrado" })
+        await componente_estiloEncontrado.update({ imagen_fondo , color_fondo})
+        res.status(200).json({"componente estilo actualizado correctamente": componente_estiloEncontrado})
+>>>>>>> b3fd861996c50deaea98242b727c70b792f142ca
     } catch (error) {
         res.status(500).json({ "no se pudo eliminar el componente estilo": error.message })
     }

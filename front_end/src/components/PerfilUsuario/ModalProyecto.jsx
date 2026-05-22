@@ -161,7 +161,7 @@ function ModalProyecto({ proyecto, resenas = [], onClose, onReviewAdded }) {
                                     />
                                 </div>
                             ) : (
-                                <div style={{ pointerEvents: 'none' }}>
+                                <div style={{ pointerEvents: 'none' }} inert="">
                                     <Lienzo
                                         tituloProyecto={proyecto.titulo}
                                         descripcionProyecto={proyecto.descripcion}

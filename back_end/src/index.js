@@ -19,6 +19,7 @@ const Miembros = require("./models/Miembros")
 const Chat_Comu = require("./models/Chat_Comu")
 const Chat_Miembros = require("./models/Chat_Miembros")
 const Seguidos = require("./models/Seguidos")
+const Configuracion = require("./models/Configuracion")
 
 // ── Usuarios ────────────────────────────────────────────────────
 // Un usuario tiene un rol
@@ -98,6 +99,9 @@ Tipo_convo.belongsTo(Convocatorias, { foreignKey: "id_convocatoria" })
 // Una comunidad pertenece a una categoría
 Categorias.hasMany(Comunidades, { foreignKey: "id_categoria" })
 Comunidades.belongsTo(Categorias, { foreignKey: "id_categoria" })
+// Una convocatoria puede estar asociada a una comunidad (opcional)
+Convocatorias.belongsTo(Comunidades, { foreignKey: "id_comunidad", as: "Comunidad" })
+Comunidades.hasMany(Convocatorias, { foreignKey: "id_comunidad", as: "Convocatorias" })
 // Una comunidad tiene muchos miembros
 Comunidades.hasMany(Miembros, { foreignKey: "id_comunidad" })
 Miembros.belongsTo(Comunidades, { foreignKey: "id_comunidad" })
@@ -142,5 +146,6 @@ module.exports = {
     Miembros,
     Chat_Comu,
     Chat_Miembros,
-    Seguidos
+    Seguidos,
+    Configuracion
 }

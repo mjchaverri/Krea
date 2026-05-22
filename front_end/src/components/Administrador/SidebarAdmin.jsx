@@ -1,23 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const NAV_ITEMS = [
-    { id: 'dashboard',     icon: 'dashboard',       label: 'Dashboard' },
-    { id: 'usuarios',      icon: 'group',            label: 'Gestión de Usuarios' },
-    { id: 'portafolio',    icon: 'folder_special',   label: 'Gestión de Portafolios' },
-    { id: 'convocatorias', icon: 'campaign',         label: 'Convocatorias' },
-    { id: 'comunidades',   icon: 'groups',           label: 'Comunidades' },
+    { id: 'dashboard',     icon: 'dashboard',      label: 'Dashboard' },
+    { id: 'usuarios',      icon: 'group',           label: 'Usuarios' },
+    { id: 'portafolio',    icon: 'folder_special',  label: 'Portafolios' },
+    { id: 'comunidades',   icon: 'groups',          label: 'Comunidades' },
+    { id: 'convocatorias', icon: 'campaign',        label: 'Convocatorias' },
 ]
 
 function SidebarAdmin({ vistaActual, mostrandoDashboard, mostrandoUsuarios, mostrandoPortafolio, mostrandoConvocatorias, mostrandoComunidades }) {
-    const [admin, setAdmin] = useState({ Nombre: 'Admin User', Correo: 'admin@proshowcase.com' })
+    const [admin, setAdmin] = useState({ Nombre: 'Admin', correo: 'admin@krea.com' })
     const navigate = useNavigate()
 
     useEffect(() => {
-        const userString = localStorage.getItem("UsuarioActivo")
-        if (userString) {
-            try { setAdmin(JSON.parse(userString)) } catch {}
-        }
+        const s = localStorage.getItem('UsuarioActivo')
+        if (s) try { setAdmin(JSON.parse(s)) } catch {}
     }, [])
 
     const handlers = {
@@ -28,78 +26,101 @@ function SidebarAdmin({ vistaActual, mostrandoDashboard, mostrandoUsuarios, most
         comunidades:   mostrandoComunidades,
     }
 
-    const handleLogout = () => {
-        localStorage.removeItem("UsuarioActivo")
-        localStorage.removeItem("idUsuario")
-        window.location.href = "/"
-    }
+    const nombreCorto = (admin.Nombre || admin.nombre_completo || 'Admin').split(' ')[0]
 
     return (
-        <aside className="w-72 bg-white border-r border-slate-200 flex flex-col shrink-0 h-screen sticky top-0">
-            <div className="p-6">
-                <div className="flex items-center gap-3">
-                    <div className="bg-primary size-10 rounded-lg flex items-center justify-center text-white">
-                        <span className="material-symbols-outlined">auto_awesome_motion</span>
-                    </div>
-                    <div className="flex flex-col">
-                        <h1 className="text-slate-900 text-lg font-bold leading-tight">ProShowcase</h1>
-                        <p className="text-slate-500 text-xs font-medium uppercase tracking-wider">Admin Panel</p>
-                    </div>
+        <aside style={{
+            width: 240,
+            background: '#fff',
+            borderRight: '1px solid #e8edf2',
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100vh',
+            flexShrink: 0,
+        }}>
+            {/* Logo */}
+            <div style={{ padding: '24px 20px 16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 26, fontWeight: 900, color: '#0ea5e9', letterSpacing: '-1px' }}>Krea</span>
+                    <span style={{
+                        fontSize: 10, fontWeight: 700, color: '#0ea5e9',
+                        background: '#e0f2fe', borderRadius: 4, padding: '2px 7px',
+                        letterSpacing: 1,
+                    }}>ADMIN</span>
                 </div>
             </div>
 
-            <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
-                {NAV_ITEMS.map(item => (
-                    <button
-                        key={item.id}
-                        onClick={handlers[item.id]}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left text-sm font-semibold
-                            ${vistaActual === item.id
-                                ? 'bg-sky-50 text-sky-700'
-                                : 'text-slate-600 hover:bg-slate-50'
-                            }`}
-                    >
-                        <span className="material-symbols-outlined">{item.icon}</span>
-                        {item.label}
-                    </button>
-                ))}
+            {/* Nav */}
+            <nav style={{ flex: 1, padding: '8px 12px', display: 'flex', flexDirection: 'column', gap: 2, overflowY: 'auto' }}>
+                {NAV_ITEMS.map(item => {
+                    const activo = vistaActual === item.id
+                    return (
+                        <button
+                            key={item.id}
+                            onClick={handlers[item.id]}
+                            style={{
+                                display: 'flex', alignItems: 'center', gap: 12,
+                                padding: '10px 14px', borderRadius: 10,
+                                border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left',
+                                fontSize: 14, fontWeight: 600, transition: 'all 0.15s',
+                                background: activo ? '#0ea5e9' : 'transparent',
+                                color: activo ? '#fff' : '#64748b',
+                            }}
+                            onMouseEnter={e => { if (!activo) e.currentTarget.style.background = '#f1f5f9' }}
+                            onMouseLeave={e => { if (!activo) e.currentTarget.style.background = 'transparent' }}
+                        >
+                            <span className="material-symbols-outlined" style={{ fontSize: 20 }}>{item.icon}</span>
+                            {item.label}
+                        </button>
+                    )
+                })}
 
-                <div style={{ borderTop: '1px solid #e2e8f0', margin: '12px 0' }} />
+                <div style={{ borderTop: '1px solid #f1f5f9', margin: '8px 0' }} />
 
                 <button
                     onClick={() => navigate('/principal')}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left text-sm font-semibold text-emerald-600 hover:bg-emerald-50"
+                    style={{
+                        display: 'flex', alignItems: 'center', gap: 12,
+                        padding: '10px 14px', borderRadius: 10,
+                        border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left',
+                        fontSize: 14, fontWeight: 600, background: 'transparent', color: '#10b981',
+                        transition: 'all 0.15s',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = '#f0fdf4' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
                 >
-                    <span className="material-symbols-outlined">open_in_new</span>
+                    <span className="material-symbols-outlined" style={{ fontSize: 20 }}>open_in_new</span>
                     Ir a la plataforma
                 </button>
             </nav>
 
-            <div className="p-4 border-t border-slate-200">
-                <div className="flex items-center gap-3 p-2">
-                    <div className="size-10 rounded-full bg-slate-200 overflow-hidden shrink-0">
-                        {admin.img_perfil ? (
-                            <img src={admin.img_perfil} alt={admin.Nombre} className="w-full h-full object-cover" />
-                        ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-sky-100 text-sky-600 font-bold text-sm">
-                                {admin.Nombre?.charAt(0) || admin.nombre_completo?.charAt(0)}
-                            </div>
-                        )}
+            {/* User */}
+            <div style={{ padding: '12px 16px', borderTop: '1px solid #f1f5f9' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div style={{
+                        width: 36, height: 36, borderRadius: '50%',
+                        background: '#e0f2fe', display: 'flex', alignItems: 'center',
+                        justifyContent: 'center', flexShrink: 0, overflow: 'hidden',
+                    }}>
+                        {admin.img || admin.img_perfil
+                            ? <img src={admin.img || admin.img_perfil} alt={nombreCorto} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            : <span style={{ color: '#0ea5e9', fontWeight: 800, fontSize: 14 }}>{nombreCorto.charAt(0)}</span>
+                        }
                     </div>
-                    <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold truncate text-slate-900">
-                            {admin.Nombre || admin.nombre_completo}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ fontSize: 13, fontWeight: 700, color: '#0f172a', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {admin.Nombre || admin.nombre_completo || 'Admin'}
                         </p>
-                        <p className="text-xs text-slate-500 truncate">
-                            {admin.Correo || admin.correo}
+                        <p style={{ fontSize: 10, fontWeight: 700, color: '#0ea5e9', margin: 0, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                            Super Admin
                         </p>
                     </div>
                     <button
-                        onClick={handleLogout}
-                        className="flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors bg-transparent border-none cursor-pointer"
+                        onClick={() => { localStorage.clear(); window.location.href = '/' }}
                         title="Cerrar sesión"
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 4 }}
                     >
-                        <span className="material-symbols-outlined">logout</span>
+                        <span className="material-symbols-outlined" style={{ fontSize: 18 }}>logout</span>
                     </button>
                 </div>
             </div>

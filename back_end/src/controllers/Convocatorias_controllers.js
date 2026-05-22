@@ -8,8 +8,8 @@ const crearConvocatoria = async (req, res) => {
         return res.status(400).json({ status: 400, message: "Datos inválidos", data: errors.array() })
     }
     try {
-        const { nombre, descripcion, fecha_cierre, id_usuario } = req.body
-        const nuevaConvocatoria = await Convocatorias.create({ nombre, descripcion, fecha_cierre, id_usuario })
+        const { nombre, descripcion, fecha_cierre, id_usuario, id_comunidad } = req.body
+        const nuevaConvocatoria = await Convocatorias.create({ nombre, descripcion, fecha_cierre, id_usuario, id_comunidad: id_comunidad || null })
         res.status(201).json({ status: 201, message: "Convocatoria creada correctamente", data: nuevaConvocatoria })
     } catch (error) {
         res.status(500).json({ status: 500, message: error.message })
@@ -31,7 +31,7 @@ const obtenerConvocatorias = async (req, res) => {
             where,
             limit,
             offset,
-            order: [["createdAt", "DESC"]]
+            order: [["createdAt", "DESC"]],
         })
         res.status(200).json({
             status: 200,
@@ -65,12 +65,14 @@ const editarConvocatoria = async (req, res) => {
     }
     try {
         const { id_convocatoria } = req.params
-        const { nombre, descripcion, fecha_cierre } = req.body
+        const { nombre, descripcion, fecha_cierre, id_comunidad } = req.body
         const convocatoriaEncontrada = await Convocatorias.findByPk(id_convocatoria)
         if (!convocatoriaEncontrada) {
             return res.status(404).json({ status: 404, message: "Convocatoria no encontrada" })
         }
-        await convocatoriaEncontrada.update({ nombre, descripcion, fecha_cierre })
+        const updates = { nombre, descripcion, fecha_cierre }
+        if (id_comunidad !== undefined) updates.id_comunidad = id_comunidad || null
+        await convocatoriaEncontrada.update(updates)
         res.status(200).json({ status: 200, message: "Convocatoria actualizada correctamente", data: convocatoriaEncontrada })
     } catch (error) {
         res.status(500).json({ status: 500, message: error.message })
@@ -90,4 +92,20 @@ const obtenerParticipantesDeConvocatoria = async (req, res) => {
     }
 }
 
-module.exports = { crearConvocatoria, obtenerConvocatorias, eliminarConvocatoria, editarConvocatoria, obtenerParticipantesDeConvocatoria }
+const eliminarParticipante = async (req, res) => {
+    try {
+        const { id_convocatoria, id_usuario } = req.params
+        const participante = await Participante_convo.findOne({
+            where: { id_convocatoria, id_usuario }
+        })
+        if (!participante) {
+            return res.status(404).json({ status: 404, message: "Participante no encontrado" })
+        }
+        await participante.destroy()
+        res.status(200).json({ status: 200, message: "Participante eliminado correctamente" })
+    } catch (error) {
+        res.status(500).json({ status: 500, message: error.message })
+    }
+}
+
+module.exports = { crearConvocatoria, obtenerConvocatorias, eliminarConvocatoria, editarConvocatoria, obtenerParticipantesDeConvocatoria, eliminarParticipante }

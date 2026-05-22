@@ -1,249 +1,361 @@
 import React, { useState, useEffect } from 'react'
 import Fetch from '../../services/Fetch'
 import Swal from 'sweetalert2'
-import { normalizarPortafolio, normalizarUsuario } from '../../utils/normalizers'
+import { normalizarPortafolio, normalizarUsuario, normalizarResena } from '../../utils/normalizers'
 import Paginacion from '../Administrador/Paginacion'
 import ModalProyecto from '../PerfilUsuario/ModalProyecto'
 
-const POR_PAGINA = 8
+const POR_PAGINA = 9
+
+function StatCard({ label, value, sub, icon, iconColor, badge, badgeText, badgeColor }) {
+    return (
+        <div style={{
+            background: '#fff', borderRadius: 16, padding: '20px 24px',
+            border: '1px solid #e8edf2', display: 'flex', alignItems: 'center',
+            gap: 16, flex: 1, boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+        }}>
+            <div style={{ width: 48, height: 48, borderRadius: 14, background: iconColor + '20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <span className="material-symbols-outlined" style={{ color: iconColor, fontSize: 24 }}>{icon}</span>
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                    <p style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.8, margin: 0 }}>{label}</p>
+                    {badge && <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 20, background: badgeColor + '20', color: badgeColor }}>{badgeText}</span>}
+                </div>
+                <p style={{ fontSize: 28, fontWeight: 900, color: '#0f172a', margin: 0, letterSpacing: '-1px', lineHeight: 1.1 }}>{value}</p>
+                {sub && <p style={{ fontSize: 12, color: '#94a3b8', margin: '4px 0 0' }}>{sub}</p>}
+            </div>
+        </div>
+    )
+}
 
 const TabladePortafolios = () => {
-  const [portafolios, setPortafolios] = useState([])
-  const [usuarios, setUsuarios] = useState([])
-  const [busqueda, setBusqueda] = useState('')
-  const [filtroEstado, setFiltroEstado] = useState('TODOS')
-  const [portafolioSeleccionado, setPortafolioSeleccionado] = useState(null)
-  const [pagina, setPagina] = useState(1)
+    const [portafolios,          setPortafolios]          = useState([])
+    const [usuarios,             setUsuarios]             = useState([])
+    const [busqueda,             setBusqueda]             = useState('')
+    const [filtroEstado,         setFiltroEstado]         = useState('TODOS')
+    const [filtroCategoria,      setFiltroCategoria]      = useState('Todas')
+    const [portafolioSeleccionado, setPortafolioSeleccionado] = useState(null)
+    const [resenas,              setResenas]              = useState([])
+    const [pagina,               setPagina]               = useState(1)
+    const [vistaGrid,            setVistaGrid]            = useState(true)
 
-  useEffect(() => {
-    async function cargarDatos() {
-      const [resP, resU] = await Promise.all([
-        Fetch.getData('portafolios?limit=100'),
-        Fetch.getData('usuarios?limit=100'),
-      ])
-      setPortafolios((resP || []).map(normalizarPortafolio))
-      setUsuarios((resU || []).map(normalizarUsuario))
+    useEffect(() => {
+        async function cargarDatos() {
+            const [resP, resU] = await Promise.all([
+                Fetch.getData('portafolios?limit=200'),
+                Fetch.getData('usuarios?limit=200'),
+            ])
+            setPortafolios((resP || []).map(normalizarPortafolio))
+            setUsuarios((resU || []).map(normalizarUsuario))
+        }
+        cargarDatos()
+    }, [])
+
+    const getNombreUsuario = (portafolio) => {
+        if (portafolio.nombreUsuario) return portafolio.nombreUsuario
+        const usuario = usuarios.find(u => String(u.id) === String(portafolio.usuarioId))
+        return usuario?.Nombre || `Usuario #${portafolio.usuarioId}`
     }
-    cargarDatos()
-  }, [])
 
-  const getNombreUsuario = (portafolio) => {
-    if (portafolio.nombreUsuario) return portafolio.nombreUsuario
-    const usuario = usuarios.find(u => String(u.id) === String(portafolio.usuarioId))
-    return usuario?.Nombre || `Usuario #${portafolio.usuarioId}`
-  }
+    const getEstado = (portafolio) => portafolio.pdf ? 'Publicado' : 'Pendiente'
 
-  const getEstado = (portafolio) => portafolio.pdf ? 'Publicado' : 'Pendiente'
+    const eliminarPortafolio = async (id) => {
+        const { isConfirmed } = await Swal.fire({
+            title: '¿Eliminar portafolio?', text: 'Esta acción no se puede deshacer.', icon: 'warning',
+            showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#64748b',
+            confirmButtonText: 'Sí, eliminar', cancelButtonText: 'Cancelar',
+        })
+        if (!isConfirmed) return
+        Swal.fire({ title: 'Eliminando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() })
+        try {
+            await Fetch.deleteData(`portafolios/${id}`)
+            setPortafolios(prev => prev.filter(p => p.id !== id))
+            Swal.fire({ icon: 'success', title: 'Portafolio eliminado', timer: 1500, showConfirmButton: false })
+        } catch {
+            Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo eliminar el portafolio.' })
+        }
+    }
 
-  const eliminarPortafolio = async (id) => {
-    const { isConfirmed } = await Swal.fire({
-      title: '¿Eliminar portafolio?',
-      text: 'Esta acción no se puede deshacer.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#ef4444',
-      cancelButtonColor: '#64748b',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar',
+    useEffect(() => {
+        if (!portafolioSeleccionado) { setResenas([]); return }
+        Fetch.getData(`resenas/portafolio/${portafolioSeleccionado.id}`)
+            .then(data => setResenas((data || []).map(normalizarResena)))
+            .catch(() => setResenas([]))
+    }, [portafolioSeleccionado])
+
+    useEffect(() => { setPagina(1) }, [busqueda, filtroEstado, filtroCategoria])
+
+    // Derivados
+    const publicados  = portafolios.filter(p => p.pdf).length
+    const pendientes  = portafolios.filter(p => !p.pdf).length
+
+    // Categorías únicas de los portafolios
+    const categoriasUnicas = ['Todas', ...Array.from(new Set(portafolios.flatMap(p => p.categorias || []))).sort()]
+
+    const portafoliosFiltrados = portafolios.filter(p => {
+        const titulo     = (p.titulo || '').toLowerCase()
+        const propietario = getNombreUsuario(p).toLowerCase()
+        const coincideBusqueda = titulo.includes(busqueda.toLowerCase()) || propietario.includes(busqueda.toLowerCase())
+        const estado = getEstado(p)
+        const coincideEstado = filtroEstado === 'TODOS' || estado === filtroEstado
+        const coincideCategoria = filtroCategoria === 'Todas' || (p.categorias || []).includes(filtroCategoria)
+        return coincideBusqueda && coincideEstado && coincideCategoria
     })
-    if (!isConfirmed) return
-    Swal.fire({ title: 'Eliminando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() })
-    try {
-      await Fetch.deleteData(`portafolios/${id}`)
-      setPortafolios(prev => prev.filter(p => p.id !== id))
-      Swal.fire({ icon: 'success', title: 'Portafolio eliminado', timer: 1500, showConfirmButton: false })
-    } catch {
-      Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo eliminar el portafolio.' })
-    }
-  }
 
-  const portafoliosFiltrados = portafolios.filter(p => {
-    const titulo = (p.titulo || '').toLowerCase()
-    const propietario = getNombreUsuario(p).toLowerCase()
-    const coincideBusqueda = titulo.includes(busqueda.toLowerCase()) || propietario.includes(busqueda.toLowerCase())
-    const estado = getEstado(p)
-    const coincideEstado = filtroEstado === 'TODOS' || estado === filtroEstado
-    return coincideBusqueda && coincideEstado
-  })
+    const totalPaginas = Math.max(1, Math.ceil(portafoliosFiltrados.length / POR_PAGINA))
+    const portafoliosPagina = portafoliosFiltrados.slice((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA)
 
-  const totalPaginas = Math.max(1, Math.ceil(portafoliosFiltrados.length / POR_PAGINA))
-  const portafoliosPagina = portafoliosFiltrados.slice((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA)
+    return (
+        <div style={{ padding: '28px 32px', minHeight: '100%' }}>
 
-  useEffect(() => { setPagina(1) }, [busqueda, filtroEstado])
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 28 }}>
+                <div>
+                    <h2 style={{ fontSize: 24, fontWeight: 900, color: '#0f172a', margin: 0, letterSpacing: '-0.5px' }}>Gestión de Portafolios</h2>
+                    <p style={{ fontSize: 13, color: '#94a3b8', margin: '6px 0 0' }}>Supervisa y modera los proyectos de la comunidad. Mantén la calidad editorial y el cumplimiento de las normas.</p>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 10, padding: '8px 16px' }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 18, color: '#10b981' }}>folder_special</span>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: '#10b981' }}>{portafolios.length} portafolios en total</span>
+                </div>
+            </div>
 
-  return (
-    <div className="max-w-7xl mx-auto p-8 font-display">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-        <div>
-          <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            Gestión de Portafolios
-          </h2>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">
-            Administra y visualiza todos los portafolios de la plataforma.
-          </p>
-        </div>
-        <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-200 dark:border-emerald-800">
-          <span className="material-symbols-outlined text-emerald-500">folder_special</span>
-          <span className="text-sm font-bold text-emerald-700 dark:text-emerald-400">
-            {portafolios.length} portafolio{portafolios.length !== 1 ? 's' : ''} en total
-          </span>
-        </div>
-      </div>
+            {/* Stat cards */}
+            <div style={{ display: 'flex', gap: 20, marginBottom: 28 }}>
+                <StatCard label="Proyectos Destacados" value={publicados.toLocaleString()} icon="star"
+                    iconColor="#0ea5e9" sub="Portafolios publicados con PDF"
+                    badge={publicados > 0} badgeText={`+${Math.round(publicados / Math.max(portafolios.length, 1) * 100)}% este mes`} badgeColor="#10b981" />
+                <StatCard label="Proyectos Pendientes" value={pendientes} icon="pending"
+                    iconColor="#f59e0b" sub="Requieren atención"
+                    badge={pendientes > 0} badgeText="Revisar" badgeColor="#f59e0b" />
+                <StatCard label="Total Activos" value={portafolios.length.toLocaleString()} icon="visibility"
+                    iconColor="#a855f7" sub="Portafolios en la plataforma"
+                    badge badgeText="Público" badgeColor="#a855f7" />
+            </div>
 
-      <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col lg:flex-row gap-4 items-center mb-6">
-        <div className="relative w-full lg:flex-1">
-          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
-          <input
-            type="text"
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-lg border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 focus:ring-primary focus:border-primary text-sm outline-none transition-all"
-            placeholder="Buscar por nombre de portafolio o propietario..."
-          />
-        </div>
-        <div className="flex gap-2">
-          {['TODOS', 'Publicado', 'Pendiente'].map((estado) => (
-            <button
-              key={estado}
-              onClick={() => setFiltroEstado(estado)}
-              className={`px-4 py-2 text-xs font-bold uppercase rounded-lg transition-colors ${filtroEstado === estado
-                  ? 'bg-primary/10 text-primary'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-primary/5'
-                }`}
-            >
-              {estado}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Proyecto</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Propietario</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Secciones</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Estado</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-right">Acciones</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-              {portafoliosPagina.map((portafolio) => {
-                const estado = getEstado(portafolio)
-                const nombrePropietario = getNombreUsuario(portafolio)
-                const iniciales = (portafolio.titulo || 'P').charAt(0).toUpperCase()
-                const numSecciones = (portafolio.componentes || []).length
-
-                return (
-                  <tr key={portafolio.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="size-10 rounded-lg bg-emerald-500/20 flex items-center justify-center shrink-0">
-                          {portafolio.pdf
-                            ? <span className="material-symbols-outlined text-emerald-600 text-[18px]">folder_special</span>
-                            : <span className="text-emerald-600 font-bold text-sm">{iniciales}</span>
-                          }
-                        </div>
-                        <div>
-                          <span className="text-sm font-semibold text-slate-900 dark:text-white block">
-                            {portafolio.titulo || 'Sin título'}
-                          </span>
-                          <span className="text-xs text-slate-400 truncate max-w-[160px] block">
-                            {portafolio.descripcion || 'Sin descripción'}
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <div className="size-7 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                          <span className="text-primary text-xs font-bold">{nombrePropietario.charAt(0)}</span>
-                        </div>
-                        <span className="text-sm text-slate-600 dark:text-slate-400">{nombrePropietario}</span>
-                      </div>
-                    </td>
-
-                    <td className="px-6 py-4">
-                      {numSecciones === 0
-                        ? <span className="text-xs text-slate-400 italic">Sin secciones</span>
-                        : <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
-                            <span className="material-symbols-outlined text-sm">grid_view</span>
-                            {numSecciones}
-                          </span>
-                      }
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${estado === 'Publicado'
-                          ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300'
-                          : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300'
-                        }`}>
-                        <span style={{
-                          width: '6px', height: '6px', borderRadius: '50%',
-                          background: estado === 'Publicado' ? '#10b981' : '#f59e0b',
-                          display: 'inline-block'
-                        }} />
-                        {estado}
-                      </span>
-                    </td>
-
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-2">
-                        <button
-                          onClick={() => setPortafolioSeleccionado(portafolio)}
-                          title="Ver portafolio"
-                          className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400 hover:text-primary transition-colors"
-                        >
-                          <span className="material-symbols-outlined text-xl">visibility</span>
+            {/* Filter bar */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, gap: 12, flexWrap: 'wrap' }}>
+                {/* Category tabs */}
+                <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                    {categoriasUnicas.slice(0, 5).map(cat => (
+                        <button key={cat} onClick={() => setFiltroCategoria(cat)} style={{
+                            padding: '7px 14px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 700, transition: 'all 0.15s',
+                            background: filtroCategoria === cat ? '#0ea5e9' : '#fff',
+                            color: filtroCategoria === cat ? '#fff' : '#64748b',
+                            border: `1px solid ${filtroCategoria === cat ? '#0ea5e9' : '#e2e8f0'}`,
+                        }}>
+                            {cat}
                         </button>
-                        <button
-                          onClick={() => eliminarPortafolio(portafolio.id)}
-                          title="Eliminar portafolio"
-                          className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg text-slate-400 hover:text-red-500 transition-colors"
-                        >
-                          <span className="material-symbols-outlined text-xl">delete</span>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                )
-              })}
+                    ))}
+                </div>
 
-              {portafoliosPagina.length === 0 && (
-                <tr>
-                  <td colSpan="5" className="px-6 py-12 text-center text-slate-500">
-                    No se encontraron portafolios que coincidan con la búsqueda.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    {/* Estado filter */}
+                    <div style={{ display: 'flex', gap: 4 }}>
+                        {['TODOS', 'Publicado', 'Pendiente'].map(e => (
+                            <button key={e} onClick={() => setFiltroEstado(e)} style={{
+                                padding: '7px 12px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600, transition: 'all 0.15s',
+                                background: filtroEstado === e ? '#f1f5f9' : 'transparent',
+                                color: filtroEstado === e ? '#0f172a' : '#94a3b8',
+                            }}>
+                                {e === 'TODOS' ? 'Todos' : e}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Search */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10, padding: '7px 12px' }}>
+                        <span className="material-symbols-outlined" style={{ fontSize: 16, color: '#94a3b8' }}>search</span>
+                        <input type="text" value={busqueda} onChange={e => setBusqueda(e.target.value)}
+                            placeholder="Buscar portafolios..."
+                            style={{ border: 'none', outline: 'none', fontSize: 13, color: '#334155', width: 180, background: 'transparent' }} />
+                    </div>
+
+                    {/* View toggle */}
+                    <div style={{ display: 'flex', background: '#f1f5f9', borderRadius: 8, padding: 3, gap: 2 }}>
+                        {[{ grid: true, icon: 'grid_view' }, { grid: false, icon: 'view_list' }].map(({ grid, icon }) => (
+                            <button key={icon} onClick={() => setVistaGrid(grid)} style={{
+                                width: 32, height: 28, borderRadius: 6, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                background: vistaGrid === grid ? '#fff' : 'transparent',
+                                color: vistaGrid === grid ? '#0ea5e9' : '#94a3b8',
+                                boxShadow: vistaGrid === grid ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                            }}>
+                                <span className="material-symbols-outlined" style={{ fontSize: 16 }}>{icon}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Card grid or list */}
+            {portafoliosPagina.length === 0 ? (
+                <div style={{ background: '#fff', borderRadius: 16, border: '1px solid #e8edf2', padding: '60px', textAlign: 'center' }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 40, color: '#e2e8f0', display: 'block', marginBottom: 12 }}>folder_off</span>
+                    <p style={{ color: '#94a3b8', fontSize: 14, margin: 0 }}>No se encontraron portafolios.</p>
+                </div>
+            ) : vistaGrid ? (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20, marginBottom: 24 }}>
+                    {portafoliosPagina.map(portafolio => {
+                        const estado = getEstado(portafolio)
+                        const nombrePropietario = getNombreUsuario(portafolio)
+                        const publicado = estado === 'Publicado'
+                        return (
+                            <div key={portafolio.id} style={{
+                                background: '#fff', borderRadius: 16, border: '1px solid #e8edf2',
+                                overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+                                transition: 'box-shadow 0.2s', cursor: 'pointer',
+                            }}
+                                onMouseEnter={e => e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.1)'}
+                                onMouseLeave={e => e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)'}>
+
+                                {/* Cover */}
+                                <div style={{ position: 'relative', height: 160, background: portafolio.imgPortada ? 'transparent' : '#f1f5f9', overflow: 'hidden' }}
+                                    onClick={() => setPortafolioSeleccionado(portafolio)}>
+                                    {portafolio.imgPortada
+                                        ? <img src={portafolio.imgPortada} alt={portafolio.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        : (
+                                            <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                                                <span className="material-symbols-outlined" style={{ fontSize: 36, color: '#cbd5e1' }}>folder_special</span>
+                                                <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600 }}>Sin portada</span>
+                                            </div>
+                                        )
+                                    }
+                                    {/* Badge */}
+                                    <span style={{
+                                        position: 'absolute', top: 10, left: 10, fontSize: 10, fontWeight: 700,
+                                        padding: '3px 10px', borderRadius: 6,
+                                        background: publicado ? '#10b981' : '#f59e0b',
+                                        color: '#fff', letterSpacing: 0.5, textTransform: 'uppercase',
+                                    }}>
+                                        {publicado ? 'Publicado' : 'Pendiente'}
+                                    </span>
+                                </div>
+
+                                {/* Body */}
+                                <div style={{ padding: '14px 16px 12px' }}>
+                                    <h4 style={{ fontSize: 14, fontWeight: 800, color: '#0f172a', margin: '0 0 4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                                        onClick={() => setPortafolioSeleccionado(portafolio)}>
+                                        {portafolio.titulo || 'Sin título'}
+                                    </h4>
+                                    <p style={{ fontSize: 12, color: '#94a3b8', margin: '0 0 12px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                                        {portafolio.descripcion || 'Sin descripción'}
+                                    </p>
+
+                                    {/* Author + actions */}
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                            <div style={{ width: 26, height: 26, borderRadius: '50%', background: '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                                <span style={{ fontSize: 11, fontWeight: 800, color: '#0ea5e9' }}>{nombrePropietario.charAt(0)}</span>
+                                            </div>
+                                            <span style={{ fontSize: 12, color: '#64748b', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 100 }}>{nombrePropietario}</span>
+                                        </div>
+                                        <div style={{ display: 'flex', gap: 4 }}>
+                                            <button onClick={() => setPortafolioSeleccionado(portafolio)} style={{ width: 30, height: 30, borderRadius: 8, border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', transition: 'all 0.15s' }}
+                                                onMouseEnter={e => { e.currentTarget.style.background = '#f0f9ff'; e.currentTarget.style.color = '#0ea5e9' }}
+                                                onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#94a3b8' }}>
+                                                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>visibility</span>
+                                            </button>
+                                            <button onClick={() => eliminarPortafolio(portafolio.id)} style={{ width: 30, height: 30, borderRadius: 8, border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', transition: 'all 0.15s' }}
+                                                onMouseEnter={e => { e.currentTarget.style.background = '#fef2f2'; e.currentTarget.style.color = '#ef4444' }}
+                                                onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#94a3b8' }}>
+                                                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>delete</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+            ) : (
+                /* List view */
+                <div style={{ background: '#fff', borderRadius: 16, border: '1px solid #e8edf2', overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,0.04)', marginBottom: 24 }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <thead>
+                            <tr style={{ background: '#f8fafc', borderBottom: '1px solid #f1f5f9' }}>
+                                {['PROYECTO', 'PROPIETARIO', 'CATEGORÍAS', 'ESTADO', 'ACCIONES'].map(h => (
+                                    <th key={h} style={{ padding: '12px 20px', fontSize: 10, fontWeight: 700, color: '#94a3b8', textAlign: h === 'ACCIONES' ? 'right' : 'left', textTransform: 'uppercase', letterSpacing: 0.8 }}>{h}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {portafoliosPagina.map(portafolio => {
+                                const estado = getEstado(portafolio)
+                                const nombrePropietario = getNombreUsuario(portafolio)
+                                const publicado = estado === 'Publicado'
+                                return (
+                                    <tr key={portafolio.id} style={{ borderBottom: '1px solid #f8fafc', transition: 'background 0.1s' }}
+                                        onMouseEnter={e => e.currentTarget.style.background = '#fafbfc'}
+                                        onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                                        <td style={{ padding: '12px 20px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                                <div style={{ width: 40, height: 40, borderRadius: 10, background: '#f1f5f9', overflow: 'hidden', flexShrink: 0 }}>
+                                                    {portafolio.imgPortada
+                                                        ? <img src={portafolio.imgPortada} alt={portafolio.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                        : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span className="material-symbols-outlined" style={{ fontSize: 18, color: '#cbd5e1' }}>folder_special</span></div>
+                                                    }
+                                                </div>
+                                                <div>
+                                                    <p style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', margin: 0 }}>{portafolio.titulo || 'Sin título'}</p>
+                                                    <p style={{ fontSize: 12, color: '#94a3b8', margin: 0, maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{portafolio.descripcion || '—'}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style={{ padding: '12px 20px', fontSize: 13, color: '#64748b' }}>{nombrePropietario}</td>
+                                        <td style={{ padding: '12px 20px' }}>
+                                            {(portafolio.categorias || []).slice(0, 2).map((cat, i) => (
+                                                <span key={i} style={{ fontSize: 10, fontWeight: 600, padding: '2px 8px', borderRadius: 6, background: '#f1f5f9', color: '#64748b', marginRight: 4 }}>{cat}</span>
+                                            ))}
+                                        </td>
+                                        <td style={{ padding: '12px 20px' }}>
+                                            <span style={{ fontSize: 11, fontWeight: 700, padding: '4px 12px', borderRadius: 20, background: publicado ? '#dcfce7' : '#fef3c7', color: publicado ? '#16a34a' : '#d97706' }}>{estado}</span>
+                                        </td>
+                                        <td style={{ padding: '12px 20px', textAlign: 'right' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 6 }}>
+                                                <button onClick={() => setPortafolioSeleccionado(portafolio)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#cbd5e1', padding: '6px', borderRadius: 8, display: 'flex', alignItems: 'center', transition: 'all 0.15s' }}
+                                                    onMouseEnter={e => { e.currentTarget.style.background = '#f0f9ff'; e.currentTarget.style.color = '#0ea5e9' }}
+                                                    onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#cbd5e1' }}>
+                                                    <span className="material-symbols-outlined" style={{ fontSize: 20 }}>visibility</span>
+                                                </button>
+                                                <button onClick={() => eliminarPortafolio(portafolio.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#cbd5e1', padding: '6px', borderRadius: 8, display: 'flex', alignItems: 'center', transition: 'all 0.15s' }}
+                                                    onMouseEnter={e => { e.currentTarget.style.background = '#fef2f2'; e.currentTarget.style.color = '#ef4444' }}
+                                                    onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#cbd5e1' }}>
+                                                    <span className="material-symbols-outlined" style={{ fontSize: 20 }}>delete</span>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+
+            {/* Pagination */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: 12, color: '#94a3b8' }}>
+                    Mostrando {portafoliosPagina.length} de {portafoliosFiltrados.length} portafolios
+                </span>
+                <Paginacion pagina={pagina} totalPaginas={totalPaginas} onChange={p => setPagina(p)}
+                    totalItems={portafoliosFiltrados.length} itemsMostrados={portafoliosPagina.length} />
+            </div>
+
+            {/* Modal ver portafolio */}
+            {portafolioSeleccionado && (
+                <ModalProyecto
+                    proyecto={portafolioSeleccionado}
+                    resenas={resenas}
+                    onClose={() => setPortafolioSeleccionado(null)}
+                    onReviewAdded={async () => {
+                        const data = await Fetch.getData(`resenas/portafolio/${portafolioSeleccionado.id}`)
+                        setResenas((data || []).map(normalizarResena))
+                    }}
+                />
+            )}
         </div>
-
-        <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-800">
-          <Paginacion
-            pagina={pagina}
-            totalPaginas={totalPaginas}
-            onChange={p => setPagina(p)}
-            totalItems={portafoliosFiltrados.length}
-            itemsMostrados={portafoliosPagina.length}
-          />
-        </div>
-      </div>
-
-      {portafolioSeleccionado && (
-        <ModalProyecto
-          proyecto={portafolioSeleccionado}
-          resenas={[]}
-          onClose={() => setPortafolioSeleccionado(null)}
-          onReviewAdded={() => {}}
-        />
-      )}
-    </div>
-  )
+    )
 }
 
 export default TabladePortafolios

@@ -35,6 +35,7 @@ export function normalizarUsuario(u) {
         img:            u.img_perfil,
         descripcion:    u.descripcion,
         id_rol:         u.id_rol,
+        createdAt:      u.createdAt,
     }
 }
 

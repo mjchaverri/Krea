@@ -45,12 +45,12 @@ const crearUsuario = async (req, res) => {
             correo,
             contrasena: contrasenaEncriptada,
             telefono,
-            provincia:   provincia  || null,
-            canton:      canton     || null,
-            distrito:    distrito   || null,
-            img_perfil:  img_perfil || null,
+            provincia: provincia || null,
+            canton: canton || null,
+            distrito: distrito || null,
+            img_perfil: img_perfil || null,
             descripcion: descripcion || null,
-            id_rol:      id_rol || null
+            id_rol: id_rol || null
         })
 
         const { contrasena: _, ...usuarioSinClave } = nuevoUsuario.toJSON()

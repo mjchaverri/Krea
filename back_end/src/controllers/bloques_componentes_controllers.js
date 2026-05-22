@@ -1,4 +1,4 @@
-const { Bloques_Componentes} = require("../index");
+const { Bloques_Componentes } = require("../index");
 
 const crearBloque_componente = async (req, res) => {
     try {

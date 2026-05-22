@@ -17,7 +17,7 @@ const crearResena = async (req, res) => {
 
 const obtenerResenas = async (req, res) => {
     try {
-        const page  = Math.max(parseInt(req.query.page)  || 1, 1)
+        const page = Math.max(parseInt(req.query.page) || 1, 1)
         const limit = Math.min(parseInt(req.query.limit) || 10, 100)
         const offset = (page - 1) * limit
 
@@ -36,7 +36,7 @@ const obtenerResenas = async (req, res) => {
 const obtenerResenasPorPortafolio = async (req, res) => {
     try {
         const { id_portafolio } = req.params
-        const page  = Math.max(parseInt(req.query.page)  || 1, 1)
+        const page = Math.max(parseInt(req.query.page) || 1, 1)
         const limit = Math.min(parseInt(req.query.limit) || 10, 100)
         const offset = (page - 1) * limit
 

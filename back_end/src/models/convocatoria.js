@@ -25,6 +25,11 @@ Convocatorias.init({
         type: DataTypes.INTEGER,
         allowNull: false,
         references: { model: 'usuarios', key: 'id_usuario' }
+    },
+    id_comunidad: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: { model: 'comunidades', key: 'id_comunidad' }
     }
 }, {
     sequelize,

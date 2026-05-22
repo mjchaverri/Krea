@@ -194,9 +194,7 @@ function InfoUsuario({ usuario, isOwner = false, onUpdate }) {
     }
 
     const handleLogout = () => {
-        localStorage.removeItem("UsuarioActivo")
-        navigate("/")
-        window.location.reload()
+        Fetch.logoutClient()
     }
 
     if (!usuario) return <p className="perfil-cargando">Cargando perfil...</p>

@@ -34,6 +34,7 @@ function CompPrincipal() {
     const [datos, setDatos] = useState({ usuarios: [], portafolios: [], resenas: [] });
     const [activeCategory, setActiveCategory] = useState('Todo');
     const [proyectoSeleccionado, setProyectoSeleccionado] = useState(null);
+    const [configDestacado, setConfigDestacado] = useState(null);
 
     const scrollFilters = (dir) =>
         filtersRef.current?.scrollBy({ left: dir * 240, behavior: 'smooth' });
@@ -41,16 +42,18 @@ function CompPrincipal() {
     useEffect(() => {
         const cargar = async () => {
             try {
-                const [resU, resP, resR] = await Promise.all([
+                const [resU, resP, resR, resCfg] = await Promise.all([
                     Fetch.getData('usuarios?limit=100'),
                     Fetch.getData('portafolios?limit=50'),
                     Fetch.getData('resenas?limit=100'),
+                    Fetch.getData('configuracion/talento_destacado').catch(() => null),
                 ]);
                 setDatos({
                     usuarios:    (resU || []).map(normalizarUsuario),
                     portafolios: (resP || []).map(normalizarPortafolio),
                     resenas:     (resR || []).map(normalizarResena),
                 });
+                if (resCfg) setConfigDestacado(resCfg);
             } catch (e) {
                 console.error('Error cargando datos:', e);
             }
@@ -84,6 +87,19 @@ function CompPrincipal() {
 
     const destacado = useMemo(() => {
         if (!portafoliosProcesados.length) return null;
+        // Si el admin eligió un talento, mostrar su mejor portafolio
+        if (configDestacado?.id_usuario) {
+            const portasDelTalento = portafoliosProcesados.filter(
+                p => String(p.usuarioId) === String(configDestacado.id_usuario)
+            );
+            if (portasDelTalento.length) {
+                const conResenas = portasDelTalento.filter(p => p.avgRating !== null);
+                return conResenas.length
+                    ? conResenas.reduce((best, p) => p.avgRating > best.avgRating ? p : best)
+                    : portasDelTalento[0];
+            }
+        }
+        // Fallback: portafolio con mejor rating automáticamente
         const conResenas = portafoliosProcesados.filter(p => p.avgRating !== null);
         if (!conResenas.length) return null;
         return conResenas.reduce((best, p) =>
@@ -91,7 +107,7 @@ function CompPrincipal() {
             (p.avgRating === best.avgRating && p.totalResenas > best.totalResenas)
                 ? p : best
         );
-    }, [portafoliosProcesados]);
+    }, [portafoliosProcesados, configDestacado]);
 
     const renderStars = (rating) => {
         const full = Math.floor(rating);

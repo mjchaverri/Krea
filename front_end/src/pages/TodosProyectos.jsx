@@ -9,6 +9,7 @@ import ModalProyecto from '../components/PerfilUsuario/ModalProyecto';
 import { calcularPromedio } from '../utils/calcularPromedio';
 import "../styles/EstilosPerfilUsuario/ProyectosRecientes.css";
 import "../styles/PlantillaTalentos/TodosProyectos.css";
+import Chatbot from '../chatbot/Chatbot';
 
 const ITEMS_POR_PAGINA = 12;
 
@@ -441,6 +442,8 @@ function TodosProyectos() {
                     <i className="fa-solid fa-user" /> Ver perfil del creador
                 </button>
             )}
+
+            <Chatbot />
         </div>
     );
 }

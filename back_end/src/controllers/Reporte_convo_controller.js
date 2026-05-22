@@ -31,13 +31,8 @@ const eliminarReporte_convo = async (req, res) => {
     try {
         const { id_reporte_convo } = req.params
         const reporte_convoEncontrado = await Reporte_convo.findByPk(id_reporte_convo)
-<<<<<<< HEAD
         if (!reporte_convoEncontrado) {
             return res.status(404).json({ "no se encontro el reporte de convocatoria": error.message })
-=======
-        if(!reporte_convoEncontrado) {
-            return res.status(404).json({ message: "Reporte de convocatoria no encontrado" })
->>>>>>> b3fd861996c50deaea98242b727c70b792f142ca
         }
         await reporte_convoEncontrado.destroy()
         res.status(200).json({ "reporte de convocatoria eliminado": reporte_convoEncontrado })
@@ -52,13 +47,8 @@ const editarReporte_convo = async (req, res) => {
         const { id_reporte_convo } = req.params
         const { id_convocatoria, id_portafolio, id_usuario } = req.body
         const reporte_convoEncontrado = await Reporte_convo.findByPk(id_reporte_convo)
-<<<<<<< HEAD
         if (!reporte_convoEncontrado) {
             return res.status(404).json({ "no se encontro el reporte de convocatoria": error.message })
-=======
-        if(!reporte_convoEncontrado) {
-            return res.status(404).json({ message: "Reporte de convocatoria no encontrado" })
->>>>>>> b3fd861996c50deaea98242b727c70b792f142ca
         }
         await reporte_convoEncontrado.update({
             id_convocatoria,

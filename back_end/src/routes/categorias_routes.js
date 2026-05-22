@@ -1,15 +1,11 @@
-const express = require("express");
-const router = express.Router();
-const {
-    crearCategoria,
-    obtenerCategorias,
-    eliminarCategoria,
-    editarCategoria
-} = require("../controllers/categorias_controllers");
+const express = require("express")
+const router = express.Router()
+const { crearCategoria, obtenerCategorias, eliminarCategoria, editarCategoria } = require("../controllers/categorias_controllers")
+const { validarNombre } = require("../validators/nombre_validators")
 
-router.post("/", crearCategoria);
-router.get("/", obtenerCategorias);
-router.put("/:id", editarCategoria);
-router.delete("/:id", eliminarCategoria);
+router.get("/",        obtenerCategorias)
+router.post("/",       validarNombre, crearCategoria)
+router.put("/:id",     validarNombre, editarCategoria)
+router.delete("/:id",               eliminarCategoria)
 
-module.exports = router;
+module.exports = router

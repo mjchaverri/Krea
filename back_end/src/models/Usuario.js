@@ -1,8 +1,7 @@
 const { DataTypes, Model } = require("sequelize")
-
 const sequelize = require("../config/db")
 
-class Usuario extends Model { }
+class Usuario extends Model {}
 
 Usuario.init({
     id_usuario: {
@@ -11,30 +10,52 @@ Usuario.init({
         autoIncrement: true,
     },
     nombre_usuario: {
-        type: DataTypes.STRING(100),
-        allowNull: false
-    },
-    email_usuario: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.STRING(30),
         allowNull: false,
         unique: true
     },
-    telefono_usuario:{
-        type: DataTypes.STRING(50),
-        allowNull: true
-    },
- 
-    contrasena_usuario : {
-        type : DataTypes.STRING(35),
+    nombre_completo: {
+        type: DataTypes.STRING(100),
         allowNull: false
     },
-    imagen_perfil_usuario : {
-        type : DataTypes.TEXT,
+    correo: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+        unique: true
+    },
+    telefono: {
+        type: DataTypes.STRING(20),
         allowNull: true
     },
-
-
-  
+    provincia: {
+        type: DataTypes.STRING(40),
+        allowNull: true
+    },
+    canton: {
+        type: DataTypes.STRING(40),
+        allowNull: true
+    },
+    distrito: {
+        type: DataTypes.STRING(40),
+        allowNull: true
+    },
+    contrasena: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+    },
+    img_perfil: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
+    descripcion: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
+    id_rol: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: { model: 'roles', key: 'id_rol' }
+    }
 }, {
     sequelize,
     modelName: "Usuario",

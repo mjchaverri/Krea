@@ -1,41 +1,86 @@
-/* Estilos generales de la página de perfil */
 .perfil-page {
   width: 100%;
   min-height: 100vh;
-  background: #f8fafc; /* Fondo más claro y moderno (Slate 50) */
-  padding-bottom: 80px;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Contenedor principal centrado */
 .perfil-content {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 40px 20px;
-  animation: fadeIn 0.8s ease-out;
+  padding: 40px 20px 0;
+  width: 100%;
+  animation: fadeIn 0.5s ease-out;
 }
 
-/* Sección de Tabs wrapper */
+/* Banner decorativo detrás de la foto */
+.perfil-banner {
+  width: 100%;
+  height: 180px;
+  background: linear-gradient(135deg, #00AEEF22 0%, #8b5cf622 100%);
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* Tabs sticky */
 .secciones-perfil {
   width: 100%;
   background: white;
   border-bottom: 1px solid #edf2f7;
   position: sticky;
-  top: 72px; /* Pegado justo debajo del navbar glass */
+  top: 72px;
   z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .perfil-resenas {
   max-width: 1100px;
   margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Botón volver (PerfilVisitante) */
+.perfil-volver-bar {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.perfil-volver-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 7px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4a5568;
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.perfil-volver-btn:hover {
+  background: #f7fafc;
+  border-color: #00AEEF;
+  color: #00AEEF;
+}
+
+.perfil-volver-txt {
+  font-size: 13px;
+  color: #94a3b8;
 }
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 768px) {
-  .perfil-content {
-    padding: 24px 16px;
-  }
+  .perfil-content { padding: 24px 16px 0; }
+  .perfil-banner  { height: 120px; }
 }

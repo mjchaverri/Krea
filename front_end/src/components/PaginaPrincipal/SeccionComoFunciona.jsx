@@ -30,10 +30,7 @@ function EditorMockup() {
                 <span className="cf-dot cf-dot--red" />
                 <span className="cf-dot cf-dot--yellow" />
                 <span className="cf-dot cf-dot--green" />
-                <div className="cf-mockup-tabs">
-                    <span className="cf-tab cf-tab--active">Escritorio</span>
-                    <span className="cf-tab">Móvil</span>
-                </div>
+               
             </div>
 
             <div className="cf-mockup-canvas">
@@ -84,7 +81,7 @@ function EditorMockup() {
                 </div>
 
                 <div className="cf-mockup-add">
-                    <i className="fa-solid fa-plus" /> Arrastra para añadir
+                    <i className="fa-solid fa-plus" /> Añade una plantilla
                 </div>
             </div>
         </div>

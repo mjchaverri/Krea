@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Fetch from "../../services/Fetch";
+import { normalizarPortafolio, normalizarResena } from '../../utils/normalizers';
 import PreviewComponentes from '../PlantillaTalentos/PreviewComponentes';
 import '../../styles/Principales/InicioPagina.css';
 
@@ -13,12 +14,15 @@ function ProjectShowcase({ showcaseRef }) {
     useEffect(() => {
         const cargarDatos = async () => {
             try {
-                const [u, p, r] = await Promise.all([
-                    Fetch.getData("usuarios"),
-                    Fetch.getData("portafolios"),
-                    Fetch.getData("resenas")
+                const [resP, resR] = await Promise.all([
+                    Fetch.getData("portafolios?limit=50"),
+                    Fetch.getData("resenas?limit=100"),
                 ]);
-                setDatos({ usuarios: u || [], portafolios: p || [], resenas: r || [] });
+                setDatos({
+                    usuarios:    [],
+                    portafolios: (resP || []).map(normalizarPortafolio),
+                    resenas:     (resR || []).map(normalizarResena),
+                });
             } catch (error) {
                 console.error("Error cargando portafolios:", error);
             }

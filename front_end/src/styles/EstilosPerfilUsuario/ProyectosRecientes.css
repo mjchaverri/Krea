@@ -196,3 +196,133 @@
     transform: translateY(-2px);
     box-shadow: 0 8px 16px rgba(13, 185, 242, 0.2);
 }
+
+/* ── pp-card: tarjeta estilo showcase ── */
+.pp-card {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    display: flex;
+    flex-direction: column;
+}
+.pp-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.14);
+}
+.pp-card-media {
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+    background: #f0f4f8;
+    flex-shrink: 0;
+}
+.pp-card-media > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+.pp-card:hover .pp-card-media > img {
+    transform: scale(1.04);
+}
+.pp-card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 40px 14px 12px;
+    background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%);
+}
+.pp-card-cats {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+}
+.pp-cat-tag {
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(6px);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    border-radius: 20px;
+    padding: 3px 10px;
+    letter-spacing: 0.02em;
+}
+.pp-card-title {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.pp-card-author {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-top: 1px solid #f1f5f9;
+}
+.pp-author-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.pp-author-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.pp-author-avatar i {
+    color: #94a3b8;
+    font-size: 13px;
+}
+.pp-author-name {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a202c;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.pp-author-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #f59e0b;
+    flex-shrink: 0;
+}
+.pp-card-delete {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(239,68,68,0.9);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: transform 0.2s;
+}
+.pp-card-delete:hover {
+    transform: scale(1.1);
+}

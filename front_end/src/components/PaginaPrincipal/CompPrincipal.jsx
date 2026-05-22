@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Fetch from '../../services/Fetch';
+import { normalizarPortafolio, normalizarResena, normalizarUsuario } from '../../utils/normalizers';
 import PreviewComponentes from '../PlantillaTalentos/PreviewComponentes';
 import ModalProyecto from '../PerfilUsuario/ModalProyecto';
 import SeccionComoFunciona from './SeccionComoFunciona';
@@ -40,12 +41,16 @@ function CompPrincipal() {
     useEffect(() => {
         const cargar = async () => {
             try {
-                const [u, p, r] = await Promise.all([
-                    Fetch.getData('usuarios'),
-                    Fetch.getData('portafolios'),
-                    Fetch.getData('resenas'),
+                const [resU, resP, resR] = await Promise.all([
+                    Fetch.getData('usuarios?limit=100'),
+                    Fetch.getData('portafolios?limit=50'),
+                    Fetch.getData('resenas?limit=100'),
                 ]);
-                setDatos({ usuarios: u || [], portafolios: p || [], resenas: r || [] });
+                setDatos({
+                    usuarios:    (resU || []).map(normalizarUsuario),
+                    portafolios: (resP || []).map(normalizarPortafolio),
+                    resenas:     (resR || []).map(normalizarResena),
+                });
             } catch (e) {
                 console.error('Error cargando datos:', e);
             }
@@ -113,7 +118,7 @@ function CompPrincipal() {
 
                 <div className="pp-filters-carousel">
                     <button className="pp-filters-arrow" onClick={() => scrollFilters(-1)}>
-                        <i className="fa-solid fa-chevron-left" />
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
                     </button>
                     <div className="pp-filters" ref={filtersRef}>
                         {categories.map(cat => (
@@ -127,7 +132,7 @@ function CompPrincipal() {
                         ))}
                     </div>
                     <button className="pp-filters-arrow" onClick={() => scrollFilters(1)}>
-                        <i className="fa-solid fa-chevron-right" />
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                     </button>
                 </div>
 
@@ -245,8 +250,8 @@ function CompPrincipal() {
                     resenas={datos.resenas}
                     onClose={() => setProyectoSeleccionado(null)}
                     onReviewAdded={async () => {
-                        const r = await Fetch.getData('resenas');
-                        setDatos(prev => ({ ...prev, resenas: r || [] }));
+                        const res = await Fetch.getData('resenas?limit=100');
+                        setDatos(prev => ({ ...prev, resenas: (res || []).map(normalizarResena) }));
                     }}
                 />
             )}

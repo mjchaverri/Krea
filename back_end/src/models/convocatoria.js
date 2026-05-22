@@ -1,33 +1,31 @@
-const {DataTypes , Model } = require('sequelize')
-
+const { DataTypes, Model } = require("sequelize")
 const sequelize = require("../config/db")
-
 
 class Convocatorias extends Model {}
 
 Convocatorias.init({
-    id_convocatoria : {
-        type : DataTypes.INTEGER,
-        primaryKey : true,
-        autoIncrement : true
-
+    id_convocatoria: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
     },
-    nombre : {
-        type : DataTypes.STRING(100),
-        allowNull : false
-
+    nombre: {
+        type: DataTypes.STRING(30),
+        allowNull: false
     },
-    descripcion : {
-        type : DataTypes.TEXT,
-        allowNull : false
-
+    descripcion: {
+        type: DataTypes.TEXT,
+        allowNull: false
     },
-   fecha_cierra : {
-    type : DataTypes.DATE,
-    allowNull : false
-
-   }
-
+    fecha_cierre: {
+        type: DataTypes.DATEONLY,
+        allowNull: false
+    },
+    id_usuario: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: { model: 'usuarios', key: 'id_usuario' }
+    }
 }, {
     sequelize,
     modelName: "Convocatorias",
@@ -35,4 +33,4 @@ Convocatorias.init({
     timestamps: true
 })
 
-module.exports = Convocatorias;
+module.exports = Convocatorias

@@ -1,65 +1,111 @@
-import React, { useState } from 'react'
-import Fetch from '../../services/Fetch'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Fetch from '../../services/Fetch'
 import UploadImage from '../PlantillaTalentos/SubirImagen'
 import '../../Styles/EstilosRegistros/Registro.css'
 
+const API_UBICACIONES = 'https://ubicaciones.paginasweb.cr'
+
 function Registro() {
     const navigate = useNavigate()
-    const volver = () => {
-        navigate("/")
-    }
 
     const [NombreUsuario, setNombreUsuario] = useState("")
-    const [Nombre, setNombre] = useState("")
-    const [Correo, setCorreo] = useState("")
-    const [Telefono, setTelefono] = useState("")
-    const [Provincias, setProvincia] = useState("")
-    const [Canton, setCanton] = useState("")
-    const [Distrito, setDistrito] = useState("")
-    const [TipoCuenta, setTipoCuenta] = useState("Personal")
-    const [Contrasena, setContraseña] = useState("")
-    const [img, setImg] = useState("")
-    const [showPassword, setShowPassword] = useState(false)
+    const [Nombre, setNombre]               = useState("")
+    const [Correo, setCorreo]               = useState("")
+    const [Telefono, setTelefono]           = useState("")
+    const [TipoCuenta, setTipoCuenta]       = useState("personal")
+    const [Contrasena, setContraseña]       = useState("")
+    const [img, setImg]                     = useState("")
+    const [showPassword, setShowPassword]   = useState(false)
+    const [cargando, setCargando]           = useState(false)
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // Ubicación — IDs para las llamadas a la API, nombres para enviar al backend
+    const [provincias, setProvincias]       = useState([])
+    const [cantones, setCantones]           = useState([])
+    const [distritos, setDistritos]         = useState([])
+    const [provinciaId, setProvinciaId]     = useState("")
+    const [provinciaNombre, setProvinciaNombre] = useState("")
+    const [cantonId, setCantonId]           = useState("")
+    const [cantonNombre, setCantonNombre]   = useState("")
+    const [distritoNombre, setDistritoNombre] = useState("")
+
+    useEffect(() => {
+        fetch(`${API_UBICACIONES}/provincias.json`)
+            .then(r => r.json())
+            .then(data => setProvincias(Object.entries(data).map(([id, nombre]) => ({ id, nombre }))))
+            .catch(console.error)
+    }, [])
+
+    const handleProvincia = async (id, nombre) => {
+        setProvinciaId(id)
+        setProvinciaNombre(nombre)
+        setCantonId("")
+        setCantonNombre("")
+        setDistritoNombre("")
+        setCantones([])
+        setDistritos([])
+        if (!id) return
+        try {
+            const data = await fetch(`${API_UBICACIONES}/provincia/${id}/cantones.json`).then(r => r.json())
+            setCantones(Object.entries(data).map(([cid, nombre]) => ({ id: cid, nombre })))
+        } catch (e) { console.error(e) }
+    }
+
+    const handleCanton = async (id, nombre) => {
+        setCantonId(id)
+        setCantonNombre(nombre)
+        setDistritoNombre("")
+        setDistritos([])
+        if (!id) return
+        try {
+            const data = await fetch(`${API_UBICACIONES}/provincia/${provinciaId}/canton/${id}/distritos.json`).then(r => r.json())
+            setDistritos(Object.entries(data).map(([did, nombre]) => ({ id: did, nombre })))
+        } catch (e) { console.error(e) }
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
     async function RegistroUsuarios() {
-        if (!NombreUsuario || !Nombre || !Correo || !Telefono || !Provincias || !Canton || !Distrito || !Contrasena) {
-            alert("Debe de llenar todo los campos");
-            return;
+        if (!NombreUsuario || !Nombre || !Correo || !Telefono || !provinciaNombre || !cantonNombre || !distritoNombre || !Contrasena) {
+            alert("Debe llenar todos los campos")
+            return
         }
-
-        const objUsuarios = {
-            NombreUsuario: NombreUsuario,
-            Nombre: Nombre,
-            Correo: Correo,
-            email: Correo,
-            telefono: Telefono,
-            Provincias: Provincias,
-            Canton: Canton,
-            Distrito: Distrito,
-            Roles: TipoCuenta,
-            Contrasena: Contrasena,
-            img: img || 'https://via.placeholder.com/150'
-        }
-
-        if (Contrasena.length < 8) {
-            alert("La contraseña debe tener al menos 8 caracteres")
-            return;
+        if (Contrasena.length < 6) {
+            alert("La contraseña debe tener al menos 6 caracteres")
+            return
         }
         if (!emailRegex.test(Correo)) {
-            alert("Correo inválido");
-            return;
+            alert("Correo inválido")
+            return
         }
 
-        const UsuarioAlmacenado = await Fetch.postData(objUsuarios, "usuarios")
-        if (UsuarioAlmacenado) {
-            alert("Registro exitoso")
-            if (UsuarioAlmacenado.id) {
-                localStorage.setItem('idUsuario', UsuarioAlmacenado.id)
+        setCargando(true)
+        try {
+            const id_rol = TipoCuenta === 'empresa' ? 3 : 2
+            const data = await Fetch.postData('usuarios/register', {
+                nombre_usuario:  NombreUsuario,
+                nombre_completo: Nombre,
+                correo:          Correo,
+                contrasena:      Contrasena,
+                telefono:        Telefono,
+                provincia:       provinciaNombre,
+                canton:          cantonNombre,
+                distrito:        distritoNombre,
+                img_perfil:      img || null,
+                id_rol,
+            })
+
+            alert("Registro exitoso. Ya puedes iniciar sesión.")
+            navigate("/Iniciar")
+        } catch (error) {
+            if (error.errors && Array.isArray(error.errors)) {
+                const msgs = error.errors.map(e => e.msg).join('\n')
+                alert(`Errores de validación:\n${msgs}`)
+            } else {
+                alert(error.message || "Error al registrar. Intenta de nuevo.")
             }
-            navigate("/")
+        } finally {
+            setCargando(false)
         }
     }
 
@@ -107,24 +153,14 @@ function Registro() {
                             <label>Nombre de usuario</label>
                             <div className='InputWithIcon'>
                                 <i className="fa-solid fa-at icon"></i>
-                                <input 
-                                    type="text" 
-                                    value={NombreUsuario} 
-                                    onChange={(e) => setNombreUsuario(e.target.value)} 
-                                    placeholder="usuario123" 
-                                />
+                                <input type="text" value={NombreUsuario} onChange={e => setNombreUsuario(e.target.value)} placeholder="usuario123" />
                             </div>
                         </div>
                         <div className='InputGroup'>
                             <label>Nombre completo</label>
                             <div className='InputWithIcon'>
                                 <i className="fa-regular fa-user icon"></i>
-                                <input 
-                                    type="text" 
-                                    value={Nombre} 
-                                    onChange={(e) => setNombre(e.target.value)} 
-                                    placeholder="Ej. Juan Pérez" 
-                                />
+                                <input type="text" value={Nombre} onChange={e => setNombre(e.target.value)} placeholder="Ej. Juan Pérez" />
                             </div>
                         </div>
                     </div>
@@ -136,24 +172,14 @@ function Registro() {
                             <label>Correo electrónico</label>
                             <div className='InputWithIcon'>
                                 <i className="fa-regular fa-envelope icon"></i>
-                                <input 
-                                    type="email" 
-                                    value={Correo} 
-                                    onChange={(e) => setCorreo(e.target.value)} 
-                                    placeholder="nombre@ejemplo.com" 
-                                />
+                                <input type="email" value={Correo} onChange={e => setCorreo(e.target.value)} placeholder="nombre@ejemplo.com" />
                             </div>
                         </div>
                         <div className='InputGroup'>
                             <label>Teléfono</label>
                             <div className='InputWithIcon'>
                                 <i className="fa-solid fa-phone icon"></i>
-                                <input 
-                                    type="text" 
-                                    value={Telefono} 
-                                    onChange={(e) => setTelefono(e.target.value)} 
-                                    placeholder="+506 8888-8888" 
-                                />
+                                <input type="text" value={Telefono} onChange={e => setTelefono(e.target.value)} placeholder="+506 8888-8888" />
                             </div>
                         </div>
                     </div>
@@ -164,41 +190,51 @@ function Registro() {
                         <div className='InputGroup'>
                             <label>Provincia</label>
                             <div className='SelectWrapper'>
-                                <select value={Provincias} onChange={(e) => setProvincia(e.target.value)}>
-                                    <option value="" disabled>Provincia</option>
-                                    <option value="San José">San José</option>
-                                    <option value="Alajuela">Alajuela</option>
-                                    <option value="Cartago">Cartago</option>
-                                    <option value="Heredia">Heredia</option>
-                                    <option value="Guanacaste">Guanacaste</option>
-                                    <option value="Puntarenas">Puntarenas</option>
-                                    <option value="Limón">Limón</option>
+                                <select
+                                    value={provinciaId}
+                                    onChange={e => {
+                                        const opt = e.target.options[e.target.selectedIndex]
+                                        handleProvincia(e.target.value, opt.text)
+                                    }}
+                                >
+                                    <option value="">Provincia</option>
+                                    {provincias.map(p => (
+                                        <option key={p.id} value={p.id}>{p.nombre}</option>
+                                    ))}
                                 </select>
-                                <i className="fa-solid fa-chevron-down select-icon"></i>
                             </div>
                         </div>
                         <div className='InputGroup'>
                             <label>Cantón</label>
                             <div className='SelectWrapper'>
-                                <input 
-                                    type="text" 
-                                    value={Canton} 
-                                    onChange={(e) => setCanton(e.target.value)} 
-                                    placeholder="Cantón" 
-                                />
-                                <i className="fa-solid fa-chevron-down select-icon"></i>
+                                <select
+                                    value={cantonId}
+                                    disabled={!provinciaId}
+                                    onChange={e => {
+                                        const opt = e.target.options[e.target.selectedIndex]
+                                        handleCanton(e.target.value, opt.text)
+                                    }}
+                                >
+                                    <option value="">Cantón</option>
+                                    {cantones.map(c => (
+                                        <option key={c.id} value={c.id}>{c.nombre}</option>
+                                    ))}
+                                </select>
                             </div>
                         </div>
                         <div className='InputGroup'>
                             <label>Distrito</label>
                             <div className='SelectWrapper'>
-                                <input 
-                                    type="text" 
-                                    value={Distrito} 
-                                    onChange={(e) => setDistrito(e.target.value)} 
-                                    placeholder="Distrito" 
-                                />
-                                <i className="fa-solid fa-chevron-down select-icon"></i>
+                                <select
+                                    value={distritoNombre}
+                                    disabled={!cantonId}
+                                    onChange={e => setDistritoNombre(e.target.value)}
+                                >
+                                    <option value="">Distrito</option>
+                                    {distritos.map(d => (
+                                        <option key={d.id} value={d.nombre}>{d.nombre}</option>
+                                    ))}
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -209,16 +245,10 @@ function Registro() {
                         <div className='InputGroup'>
                             <label>Tipo de cuenta</label>
                             <div className='ToggleGroup'>
-                                <button 
-                                    className={`ToggleBtn ${TipoCuenta === 'Personal' ? 'active' : ''}`}
-                                    onClick={() => setTipoCuenta('Personal')}
-                                >
+                                <button className={`ToggleBtn ${TipoCuenta === 'personal' ? 'active' : ''}`} onClick={() => setTipoCuenta('personal')}>
                                     Personal
                                 </button>
-                                <button 
-                                    className={`ToggleBtn ${TipoCuenta === 'Empresa' ? 'active' : ''}`}
-                                    onClick={() => setTipoCuenta('Empresa')}
-                                >
+                                <button className={`ToggleBtn ${TipoCuenta === 'empresa' ? 'active' : ''}`} onClick={() => setTipoCuenta('empresa')}>
                                     Empresa
                                 </button>
                             </div>
@@ -227,13 +257,13 @@ function Registro() {
                             <label>Contraseña</label>
                             <div className='InputWithIcon'>
                                 <i className="fa-solid fa-lock icon"></i>
-                                <input 
-                                    type={showPassword ? "text" : "password"} 
-                                    value={Contrasena} 
-                                    onChange={(e) => setContraseña(e.target.value)} 
-                                    placeholder="8+ caracteres" 
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    value={Contrasena}
+                                    onChange={e => setContraseña(e.target.value)}
+                                    placeholder="6+ caracteres"
                                 />
-                                <i 
+                                <i
                                     className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'} toggle-pass`}
                                     onClick={() => setShowPassword(!showPassword)}
                                 ></i>
@@ -242,9 +272,11 @@ function Registro() {
                     </div>
 
                     <div className='ButtonContainer'>
-                        <button className='BotonCrear' onClick={RegistroUsuarios}>Crear Cuenta</button>
+                        <button className='BotonCrear' onClick={RegistroUsuarios} disabled={cargando}>
+                            {cargando ? 'Creando cuenta...' : 'Crear Cuenta'}
+                        </button>
                         <div className='LoginPrompt'>
-                            <span>¿Ya tienes una cuenta? 
+                            <span>¿Ya tienes una cuenta?
                                 <span className='link_login' onClick={() => navigate("/Iniciar")}> Inicia Sesión Aquí</span>
                             </span>
                         </div>

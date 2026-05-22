@@ -20,30 +20,17 @@ function Navbar() {
             if (raw) {
                 const user = JSON.parse(raw);
                 setUserImg(user.img || null);
-                setUserName(user.Nombre || null);
+                setUserName(user.Nombre || user.nombre_usuario || null);
             }
         } catch {}
     }, []);
 
-    /* ── Convocatorias ── */
+    /* ── Convocatorias desde el backend real ── */
     useEffect(() => {
         const cargar = async () => {
             try {
-                const raw = localStorage.getItem('UsuarioActivo');
-                const user = raw ? JSON.parse(raw) : null;
-
-                const [todasConvocatorias, todasRespuestas] = await Promise.all([
-                    Fetch.getData('convocatorias'),
-                    Fetch.getData('respuestas_convocatorias'),
-                ]);
-
-                const filtradas = (todasConvocatorias || []).filter(conv => {
-                    if (!user) return true;
-                    return !(todasRespuestas || []).some(
-                        r => r.idConvocatoria === conv.id && r.usuarioNombre === user.Nombre
-                    );
-                });
-                setConvocatorias(filtradas);
+                const data = await Fetch.getData('convocatorias?limit=10');
+                setConvocatorias(data || []);
             } catch (e) {
                 console.error('Error cargando convocatorias:', e);
             }
@@ -62,29 +49,14 @@ function Navbar() {
         return () => document.removeEventListener('mousedown', handleClick);
     }, []);
 
-    const responder = async (id, respuesta) => {
-        try {
-            const raw = localStorage.getItem('UsuarioActivo');
-            const user = raw ? JSON.parse(raw) : { Nombre: 'Usuario desconocido' };
-            const conv = convocatorias.find(c => c.id === id);
-
-            await Fetch.postData({
-                idConvocatoria:     id,
-                usuarioNombre:      user.Nombre,
-                convocatoriaNombre: conv?.nombre || '',
-                respuesta,
-                fecha: new Date().toLocaleString(),
-            }, 'respuestas_convocatorias');
-
-            setConvocatorias(prev => prev.filter(c => c.id !== id));
-        } catch (e) {
-            console.error('Error al responder:', e);
-        }
+    const descartarConvocatoria = (id) => {
+        setConvocatorias(prev => prev.filter(c => c.id_convocatoria !== id));
     };
 
     const navLinks = [
         { to: '/principal',       label: 'Inicio' },
         { to: '/todos-proyectos', label: 'Proyectos' },
+        { to: '/comunidades',     label: 'Comunidades' },
         { to: '/pagina-contacto', label: 'Contactos' },
         { to: '/sobre-nosotros',  label: 'Sobre Nosotros' },
         { to: '/Funcionalidad',   label: 'Cómo Funciona' },
@@ -134,31 +106,31 @@ function Navbar() {
                         {bellOpen && (
                             <div className="pn-notif-panel">
                                 <div className="pn-notif-header">
-                                    <span>Notificaciones</span>
+                                    <span>Convocatorias</span>
                                     <button className="pn-notif-close" onClick={() => setBellOpen(false)}>
                                         <i className="fa-solid fa-xmark" />
                                     </button>
                                 </div>
                                 <div className="pn-notif-body">
                                     {convocatorias.length === 0 ? (
-                                        <p className="pn-notif-empty">No hay notificaciones nuevas.</p>
+                                        <p className="pn-notif-empty">No hay convocatorias nuevas.</p>
                                     ) : (
                                         convocatorias.map(conv => (
-                                            <div key={conv.id} className="pn-notif-item">
+                                            <div key={conv.id_convocatoria} className="pn-notif-item">
                                                 <p className="pn-notif-nombre">{conv.nombre}</p>
                                                 <p className="pn-notif-desc">{conv.descripcion}</p>
                                                 <div className="pn-notif-actions">
                                                     <button
                                                         className="pn-notif-accept"
-                                                        onClick={() => responder(conv.id, 'Participar')}
+                                                        onClick={() => descartarConvocatoria(conv.id_convocatoria)}
                                                     >
-                                                        Participar
+                                                        Ver
                                                     </button>
                                                     <button
                                                         className="pn-notif-decline"
-                                                        onClick={() => responder(conv.id, 'No participar')}
+                                                        onClick={() => descartarConvocatoria(conv.id_convocatoria)}
                                                     >
-                                                        No
+                                                        Cerrar
                                                     </button>
                                                 </div>
                                             </div>

@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from 'react'
 import CardProyecto from './CardProyecto';
 import ModalProyecto from './ModalProyecto';
 import Fetch from '../../services/Fetch';
+import { normalizarPortafolio, normalizarResena } from '../../utils/normalizers';
 import { calcularPromedio } from '../../utils/calcularPromedio';
 import { useNavigate } from "react-router-dom";
 
@@ -19,18 +20,15 @@ function ProyectosRecientes() {
         setLoading(true)
         try {
             const usuario = JSON.parse(localStorage.getItem("UsuarioActivo"))
+            if (!usuario?.id) return
 
-            const peticionJson = await Fetch.getData("portafolios")
+            const [resP, resR] = await Promise.all([
+                Fetch.getData(`portafolios/usuario/${usuario.id}?limit=50`),
+                Fetch.getData('resenas?limit=100'),
+            ])
 
-            const filtroProyectos = peticionJson.filter(
-                (proyecto) => usuario && proyecto.usuarioId === usuario.id
-            )
-
-            setProyectos(filtroProyectos)
-
-            const resenasJson = await Fetch.getData("resenas") || []
-            setTodasResenas(resenasJson)
-
+            setProyectos((resP || []).map(normalizarPortafolio))
+            setTodasResenas((resR || []).map(normalizarResena))
         } catch (error) {
             console.error(error)
         } finally {
@@ -43,7 +41,7 @@ function ProyectosRecientes() {
         if (!confirmar) return;
 
         try {
-            await Fetch.deleteData("portafolios", id);
+            await Fetch.deleteData(`portafolios/${id}`);
             setProyectos((prev) => prev.filter((p) => p.id !== id));
         } catch (error) {
             console.error("Error al eliminar portafolio:", error);

@@ -1,61 +1,88 @@
-const {Resenas } = require("../index")
-const jwt = require("jsonwebtoken")
+const { Resenas } = require("../../index")
+const { validationResult } = require("express-validator")
 
-const crearResena = async (req , res ) => {
-    
+const crearResena = async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ status: 400, message: "Datos inválidos", data: errors.array() })
+    }
     try {
-        const {comentario , calificacion} = req.body
-        const nuevoResena = await Resenas.create({
-            comentario,
-            calificacion
+        const { comentarios, calificacion, id_usuario, id_portafolio } = req.body
+        const nuevaResena = await Resenas.create({ comentarios, calificacion, id_usuario, id_portafolio })
+        res.status(201).json({ status: 201, message: "Reseña creada correctamente", data: nuevaResena })
+    } catch (error) {
+        res.status(500).json({ status: 500, message: error.message })
+    }
+}
+
+const obtenerResenas = async (req, res) => {
+    try {
+        const page = Math.max(parseInt(req.query.page) || 1, 1)
+        const limit = Math.min(parseInt(req.query.limit) || 10, 100)
+        const offset = (page - 1) * limit
+
+        const { count, rows } = await Resenas.findAndCountAll({ limit, offset, order: [["createdAt", "DESC"]] })
+        res.status(200).json({
+            status: 200,
+            message: "OK",
+            data: rows,
+            meta: { total: count, page, limit, pages: Math.ceil(count / limit) }
         })
-        res.status(201).json( {"reseña creada": nuevoResena})
     } catch (error) {
-        res.status(500).json({"no se pudo crear la reseña": error.message})
-    
-    }
-
-}
-const obtenerResenas = async (req , res ) => {
-    try {
-        const resenas = await Resenas.findAll()
-        res.status(200).json({"se han encontrado las siguientes reseñas": resenas})
-    } catch (error) {
-        res.status(500).json({"no se pudo obtener las reseñas": error.message})
+        res.status(500).json({ status: 500, message: error.message })
     }
 }
 
-const eliminarResena = async (req , res ) => {
+const obtenerResenasPorPortafolio = async (req, res) => {
     try {
-        const {id_resena} = req.params 
+        const { id_portafolio } = req.params
+        const page = Math.max(parseInt(req.query.page) || 1, 1)
+        const limit = Math.min(parseInt(req.query.limit) || 10, 100)
+        const offset = (page - 1) * limit
+
+        const { count, rows } = await Resenas.findAndCountAll({ where: { id_portafolio }, limit, offset })
+        res.status(200).json({
+            status: 200,
+            message: "OK",
+            data: rows,
+            meta: { total: count, page, limit, pages: Math.ceil(count / limit) }
+        })
+    } catch (error) {
+        res.status(500).json({ status: 500, message: error.message })
+    }
+}
+
+const eliminarResena = async (req, res) => {
+    try {
+        const { id_resena } = req.params
         const resenaEncontrada = await Resenas.findByPk(id_resena)
-        if(!resenaEncontrada) {
-            return res.status(404).json({"no se encontro la reseña": error.message})
+        if (!resenaEncontrada) {
+            return res.status(404).json({ status: 404, message: "Reseña no encontrada" })
         }
         await resenaEncontrada.destroy()
-        res.status(200).json({"reseña eliminada correctamente": resenaEncontrada})
+        res.status(200).json({ status: 200, message: "Reseña eliminada correctamente" })
     } catch (error) {
-        res.status(500).json({"no se pudo eliminar la reseña": error.message})
-    }
-}
-const editarResena = async (req, res) => {
-    try {
-        const {id_resena} = req.params
-        const {comentario , calificacion} = req.body
-        const resenaEncontrada = await Resenas.findByPk(id_resena)
-        if(!resenaEncontrada) {
-            return res.status(404).json({"no se encontro la reseña": error.message})
-        }
-        await resenaEncontrada.update({comentario , calificacion})
-        res.status(200).json({"reseña actualizada correctamente": resenaEncontrada})
-    } catch (error) {
-        res.status(500).json({"no se pudo actualizar la reseña": error.message})
+        res.status(500).json({ status: 500, message: error.message })
     }
 }
 
-module.exports = {
-    crearResena,
-    obtenerResenas,
-    eliminarResena,
-    editarResena
+const editarResena = async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ status: 400, message: "Datos inválidos", data: errors.array() })
+    }
+    try {
+        const { id_resena } = req.params
+        const { comentarios, calificacion } = req.body
+        const resenaEncontrada = await Resenas.findByPk(id_resena)
+        if (!resenaEncontrada) {
+            return res.status(404).json({ status: 404, message: "Reseña no encontrada" })
+        }
+        await resenaEncontrada.update({ comentarios, calificacion })
+        res.status(200).json({ status: 200, message: "Reseña actualizada correctamente", data: resenaEncontrada })
+    } catch (error) {
+        res.status(500).json({ status: 500, message: error.message })
+    }
 }
+
+module.exports = { crearResena, obtenerResenas, obtenerResenasPorPortafolio, eliminarResena, editarResena }

@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from 'react'
 import Fetch from '../../services/Fetch'
+import { normalizarUsuario } from '../../utils/normalizers'
 
 const DashboardAdmin = () => {
   const [usuarios, setUsuarios] = useState([])
   const [portafolios, setPortafolios] = useState([])
-  const [respuestas, setRespuestas] = useState([])
+  const [respuestas] = useState([])
 
   useEffect(() => {
     async function traerDatos() {
       try {
-        const [listaUsuarios, listaPortafolios, listaRespuestas] = await Promise.all([
-          Fetch.getData("usuarios"),
-          Fetch.getData("portafolios"),
-          Fetch.getData("respuestas_convocatorias")
+        const [resU, resP] = await Promise.all([
+          Fetch.getData("usuarios?limit=100"),
+          Fetch.getData("portafolios?limit=100"),
         ]);
-        setUsuarios(listaUsuarios || [])
-        setPortafolios(listaPortafolios || [])
-        setRespuestas(listaRespuestas || [])
+        setUsuarios((resU || []).map(normalizarUsuario))
+        setPortafolios(resP || [])
       } catch (error) {
         console.error("Error trayendo datos del dashboard", error)
       }

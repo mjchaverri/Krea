@@ -1,64 +1,80 @@
-const {Convocatorias} = require("../index")
-const jwt = require("jsonwebtoken")
+const { Convocatorias } = require("../../index")
+const { validationResult } = require("express-validator")
+const { Op } = require("sequelize")
 
-
-const crearConvocatoria = async (req , res) =>{
+const crearConvocatoria = async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ status: 400, message: "Datos inválidos", data: errors.array() })
+    }
     try {
-        const {nombre , descripcion , fecha_cierra} = req.body
-        const nuevaConvocatoria = await Convocatorias.create({
-            nombre,
-            descripcion,
-            fecha_cierra
+        const { nombre, descripcion, fecha_cierre, id_usuario } = req.body
+        const nuevaConvocatoria = await Convocatorias.create({ nombre, descripcion, fecha_cierre, id_usuario })
+        res.status(201).json({ status: 201, message: "Convocatoria creada correctamente", data: nuevaConvocatoria })
+    } catch (error) {
+        res.status(500).json({ status: 500, message: error.message })
+    }
+}
+
+const obtenerConvocatorias = async (req, res) => {
+    try {
+        const page = Math.max(parseInt(req.query.page) || 1, 1)
+        const limit = Math.min(parseInt(req.query.limit) || 10, 100)
+        const offset = (page - 1) * limit
+        const { buscar } = req.query
+
+        const where = buscar
+            ? { nombre: { [Op.like]: `%${buscar}%` } }
+            : {}
+
+        const { count, rows } = await Convocatorias.findAndCountAll({
+            where,
+            limit,
+            offset,
+            order: [["createdAt", "DESC"]]
         })
-        res.status(201).json({"convocatoria creada": nuevaConvocatoria})
+        res.status(200).json({
+            status: 200,
+            message: "OK",
+            data: rows,
+            meta: { total: count, page, limit, pages: Math.ceil(count / limit) }
+        })
     } catch (error) {
-        res.status(500).json({"no se pudo crear la convocatoria": error.message})
+        res.status(500).json({ status: 500, message: error.message })
     }
 }
-const obtenerConvocatorias = async (req , res) => {
-    try  {
-        const convocatorias = await Convocatorias.findAll()
-        res.status(200).json({"se han encontrado las siguientes convocatorias": convocatorias})
-    } catch (error) {
-        res.status(500).json({"no se pudo obtener las convocatorias": error.message})
-    
-    }
-}
-const eliminarConvocatoria = async (req , res) => {
+
+const eliminarConvocatoria = async (req, res) => {
     try {
-        const {id_convocatoria} = req.params
+        const { id_convocatoria } = req.params
         const convocatoriaEncontrada = await Convocatorias.findByPk(id_convocatoria)
-        if(!convocatoriaEncontrada) {
-            return res.status(404).json({"no se encontro la convocatoria": error.message})
+        if (!convocatoriaEncontrada) {
+            return res.status(404).json({ status: 404, message: "Convocatoria no encontrada" })
         }
         await convocatoriaEncontrada.destroy()
-        res.status(200).json({"convocatoria eliminada": convocatoriaEncontrada})
+        res.status(200).json({ status: 200, message: "Convocatoria eliminada correctamente" })
     } catch (error) {
-        res.status(500).json({"no se pudo eliminar la convocatoria": error.message})
+        res.status(500).json({ status: 500, message: error.message })
     }
 }
-const editarConvocatoria = async (req , res) => {
-        try {
-            const {id_convocatoria} = req.params
-            const {nombre , descripcion , fecha_cierra} = req.body
-            const convocatoriaEncontrada = await Convocatorias.findByPk(id_convocatoria)
-            if(!convocatoriaEncontrada) {
-                return res.status(404).json({"no se encontro la convocatoria": error.message})
-            }
-            await convocatoriaEncontrada.update({
-                nombre,
-                descripcion,
-                fecha_cierra
-            })
-            res.status(200).json({"convocatoria actualizada": convocatoriaEncontrada})
-        } catch (error) {
-            res.status(500).json({"no se pudo actualizar la convocatoria": error.message})
+
+const editarConvocatoria = async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ status: 400, message: "Datos inválidos", data: errors.array() })
+    }
+    try {
+        const { id_convocatoria } = req.params
+        const { nombre, descripcion, fecha_cierre } = req.body
+        const convocatoriaEncontrada = await Convocatorias.findByPk(id_convocatoria)
+        if (!convocatoriaEncontrada) {
+            return res.status(404).json({ status: 404, message: "Convocatoria no encontrada" })
         }
+        await convocatoriaEncontrada.update({ nombre, descripcion, fecha_cierre })
+        res.status(200).json({ status: 200, message: "Convocatoria actualizada correctamente", data: convocatoriaEncontrada })
+    } catch (error) {
+        res.status(500).json({ status: 500, message: error.message })
+    }
 }
 
-module.exports = {
-    crearConvocatoria,
-    obtenerConvocatorias,
-    eliminarConvocatoria,
-    editarConvocatoria
-}
+module.exports = { crearConvocatoria, obtenerConvocatorias, eliminarConvocatoria, editarConvocatoria }

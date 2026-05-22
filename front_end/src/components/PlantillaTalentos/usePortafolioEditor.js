@@ -1,10 +1,14 @@
 import { useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import { generarPDFBlob } from "../../extras/pdfPortafolio";
 import Fetch from "../../services/Fetch";
 import Swal from "sweetalert2";
 import html2canvas from "html2canvas";
 
 export function usePortafolioEditor() {
+    const location = useLocation();
+    const proyectoEditando = location.state?.proyectoEditando ?? null;
+
     const [componentes, setComponentes] = useState([]);
     const [tituloProyecto, setTituloProyecto] = useState("");
     const [descripcionProyecto, setDescripcionProyecto] = useState("");
@@ -12,9 +16,11 @@ export function usePortafolioEditor() {
     const [activeElement, setActiveElement] = useState(null);
     const [showPreviewModal, setShowPreviewModal] = useState(false);
     const [previewImage, setPreviewImage] = useState(null);
-    const [portafolioId, setPortafolioId] = useState(
-        () => localStorage.getItem("portafolioId") || null
-    );
+    const [portafolioId, setPortafolioId] = useState(() => {
+        if (proyectoEditando?.id) return String(proyectoEditando.id);
+        const stored = localStorage.getItem("portafolioId");
+        return stored && /^\d+$/.test(stored) ? stored : null;
+    });
 
     const historialRef = useRef([]);
     const indiceRef = useRef(-1);
@@ -39,18 +45,36 @@ export function usePortafolioEditor() {
         localStorage.setItem("portafolio", JSON.stringify({ componentes, tituloProyecto, descripcionProyecto, categorias }));
     }, [componentes, tituloProyecto, descripcionProyecto, categorias]);
 
-    // Persistencia localStorage — cargar
+    // Persistencia localStorage — cargar (o cargar portafolio existente para editar)
     useEffect(() => {
-        const data = JSON.parse(localStorage.getItem("portafolio"));
-        if (data) {
-            const comps = data.componentes || [];
+        if (proyectoEditando) {
+            // Editar portafolio existente: usar componentes del localStorage si coincide el id
+            const storedId  = localStorage.getItem("portafolioId");
+            const storedData = JSON.parse(localStorage.getItem("portafolio") || "null");
+            const comps = (storedId && String(storedId) === String(proyectoEditando.id) && storedData?.componentes?.length > 0)
+                ? storedData.componentes
+                : [];
+
             historialRef.current = [JSON.parse(JSON.stringify(comps))];
             indiceRef.current = 0;
             saltarRef.current = true;
             setComponentes(comps);
-            setTituloProyecto(data.tituloProyecto || "");
-            setDescripcionProyecto(data.descripcionProyecto || "");
-            setCategorias(data.categorias || []);
+            setTituloProyecto(proyectoEditando.titulo || "");
+            setDescripcionProyecto(proyectoEditando.descripcion || "");
+            setCategorias(proyectoEditando.categorias || []);
+            localStorage.setItem("portafolioId", String(proyectoEditando.id));
+        } else {
+            const data = JSON.parse(localStorage.getItem("portafolio"));
+            if (data) {
+                const comps = data.componentes || [];
+                historialRef.current = [JSON.parse(JSON.stringify(comps))];
+                indiceRef.current = 0;
+                saltarRef.current = true;
+                setComponentes(comps);
+                setTituloProyecto(data.tituloProyecto || "");
+                setDescripcionProyecto(data.descripcionProyecto || "");
+                setCategorias(data.categorias || []);
+            }
         }
     }, []);
 
@@ -140,23 +164,20 @@ export function usePortafolioEditor() {
 
             const usuarioActivo = JSON.parse(localStorage.getItem("UsuarioActivo") || "{}");
             const payload = {
-                usuarioId: localStorage.getItem("idUsuario") || usuarioActivo.id || "desconocido",
-                componentes,
-                titulo: tituloProyecto,
+                id_usuario:  usuarioActivo.id,
+                titulo:      tituloProyecto,
                 descripcion: descripcionProyecto,
-                categorias,
-                pdf: pdfUrl,
-                imgPortada: imgPortadaUrl,
-                nombreUsuario: usuarioActivo.Nombre || "Usuario"
+                pdf:         pdfUrl,
+                img_portada: imgPortadaUrl,
             };
 
             if (portafolioId) {
-                await Fetch.patchData("portafolios", payload, portafolioId);
+                await Fetch.putData(`portafolios/${portafolioId}`, payload);
             } else {
-                const response = await Fetch.postData(payload, "portafolios");
-                if (response?.id) {
-                    setPortafolioId(response.id);
-                    localStorage.setItem("portafolioId", response.id);
+                const response = await Fetch.postData("portafolios", payload);
+                if (response?.id_portafolio) {
+                    setPortafolioId(response.id_portafolio);
+                    localStorage.setItem("portafolioId", response.id_portafolio);
                 }
             }
 

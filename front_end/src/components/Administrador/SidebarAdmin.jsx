@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import Fetch from '../../services/Fetch'
 
 function SidebarAdmin({ mostrandoDashboard, mostrandoUsuarios, mostrandoPortafolio }) {
   const [admin, setAdmin] = useState({ Nombre: 'Admin User', Correo: 'admin@proshowcase.com' });
@@ -12,9 +13,7 @@ function SidebarAdmin({ mostrandoDashboard, mostrandoUsuarios, mostrandoPortafol
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("UsuarioActivo");
-    localStorage.removeItem("idUsuario");
-    window.location.href = "/";
+    Fetch.logoutClient()
   };
 
   return (

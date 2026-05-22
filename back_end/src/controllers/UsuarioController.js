@@ -9,7 +9,7 @@ const tokenBlacklist = new Set()
 
 const obtenerUsuarios = async (req, res) => {
     try {
-        const page  = Math.max(parseInt(req.query.page)  || 1, 1)
+        const page = Math.max(parseInt(req.query.page) || 1, 1)
         const limit = Math.min(parseInt(req.query.limit) || 20, 100)
         const offset = (page - 1) * limit
         const { count, rows } = await Usuario.findAndCountAll({
@@ -79,7 +79,7 @@ const LoginUsuario = async (req, res) => {
 
         const token = jwt.sign(
             { id: usuarioEncontrado.id_usuario, correo: usuarioEncontrado.correo, id_rol: usuarioEncontrado.id_rol },
-            process.env.JWT_SECRET,
+            process.env.JWT_SECRET || 'aguacate',
             { expiresIn: process.env.JWT_EXPIRES_IN || "8h" }
         )
 
@@ -89,12 +89,12 @@ const LoginUsuario = async (req, res) => {
             data: {
                 token,
                 usuario: {
-                    id_usuario:      usuarioEncontrado.id_usuario,
-                    nombre_usuario:  usuarioEncontrado.nombre_usuario,
+                    id_usuario: usuarioEncontrado.id_usuario,
+                    nombre_usuario: usuarioEncontrado.nombre_usuario,
                     nombre_completo: usuarioEncontrado.nombre_completo,
-                    correo:          usuarioEncontrado.correo,
-                    img_perfil:      usuarioEncontrado.img_perfil,
-                    id_rol:          usuarioEncontrado.id_rol
+                    correo: usuarioEncontrado.correo,
+                    img_perfil: usuarioEncontrado.img_perfil,
+                    id_rol: usuarioEncontrado.id_rol
                 }
             }
         })

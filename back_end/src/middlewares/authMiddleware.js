@@ -6,6 +6,7 @@ const verificarToken = (req, res, next) => {
     const authHeader = req.headers["authorization"]
     const token = authHeader && authHeader.split(" ")[1] // Bearer <token>
 
+    
     if (!token) {
         return res.status(401).json({ status: 401, message: "Acceso denegado. Token requerido." })
     }
@@ -15,7 +16,7 @@ const verificarToken = (req, res, next) => {
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'aguacate')
         req.usuario = decoded // { id, correo, id_rol }
         next()
     } catch (error) {

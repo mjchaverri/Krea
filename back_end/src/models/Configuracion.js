@@ -7,6 +7,7 @@ Configuracion.init({
     clave: {
         type: DataTypes.STRING(100),
         primaryKey: true,
+        allowNull: false,
     },
     valor: {
         type: DataTypes.TEXT,

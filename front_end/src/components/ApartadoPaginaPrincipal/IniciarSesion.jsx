@@ -4,9 +4,9 @@ import Fetch from '../../services/Fetch'
 import '../../styles/Principales/InicioSesion.css'
 
 function IniciarSesion() {
-    const [correo, setCorreo]       = useState("")
+    const [correo, setCorreo] = useState("")
     const [contrasena, setContrasena] = useState("")
-    const [cargando, setCargando]   = useState(false)
+    const [cargando, setCargando] = useState(false)
     const navigate = useNavigate()
 
     async function validarInicio() {
@@ -20,13 +20,13 @@ function IniciarSesion() {
 
             localStorage.setItem('token', data.token)
             localStorage.setItem('UsuarioActivo', JSON.stringify({
-                id:             data.usuario.id_usuario,
+                id: data.usuario.id_usuario,
                 nombre_usuario: data.usuario.nombre_usuario,
-                Nombre:         data.usuario.nombre_completo,
-                Correo:         data.usuario.correo,
-                img:            data.usuario.img_perfil,
-                id_rol:         data.usuario.id_rol,
-                Roles:          data.usuario.id_rol === 1 ? 'Admin' : 'Usuario'
+                Nombre: data.usuario.nombre_completo,
+                Correo: data.usuario.correo,
+                img: data.usuario.img_perfil,
+                id_rol: data.usuario.id_rol,
+                Roles: data.usuario.id_rol === 1 ? 'Admin' : 'Usuario'
             }))
             localStorage.setItem('idUsuario', data.usuario.id_usuario)
 

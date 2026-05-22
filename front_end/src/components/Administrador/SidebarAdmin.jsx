@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Fetch from '../../services/Fetch'
 
 const NAV_ITEMS = [
-    { id: 'dashboard',     icon: 'dashboard',      label: 'Dashboard' },
-    { id: 'usuarios',      icon: 'group',           label: 'Usuarios' },
-    { id: 'portafolio',    icon: 'folder_special',  label: 'Portafolios' },
-    { id: 'comunidades',   icon: 'groups',          label: 'Comunidades' },
-    { id: 'convocatorias', icon: 'campaign',        label: 'Convocatorias' },
+    { id: 'dashboard', icon: 'dashboard', label: 'Dashboard' },
+    { id: 'usuarios', icon: 'group', label: 'Usuarios' },
+    { id: 'portafolio', icon: 'folder_special', label: 'Portafolios' },
+    { id: 'comunidades', icon: 'groups', label: 'Comunidades' },
+    { id: 'convocatorias', icon: 'campaign', label: 'Convocatorias' },
 ]
 
 function SidebarAdmin({ vistaActual, mostrandoDashboard, mostrandoUsuarios, mostrandoPortafolio, mostrandoConvocatorias, mostrandoComunidades }) {
@@ -15,15 +16,15 @@ function SidebarAdmin({ vistaActual, mostrandoDashboard, mostrandoUsuarios, most
 
     useEffect(() => {
         const s = localStorage.getItem('UsuarioActivo')
-        if (s) try { setAdmin(JSON.parse(s)) } catch {}
+        if (s) try { setAdmin(JSON.parse(s)) } catch { }
     }, [])
 
     const handlers = {
-        dashboard:     mostrandoDashboard,
-        usuarios:      mostrandoUsuarios,
-        portafolio:    mostrandoPortafolio,
+        dashboard: mostrandoDashboard,
+        usuarios: mostrandoUsuarios,
+        portafolio: mostrandoPortafolio,
         convocatorias: mostrandoConvocatorias,
-        comunidades:   mostrandoComunidades,
+        comunidades: mostrandoComunidades,
     }
 
     const nombreCorto = (admin.Nombre || admin.nombre_completo || 'Admin').split(' ')[0]
@@ -116,8 +117,8 @@ function SidebarAdmin({ vistaActual, mostrandoDashboard, mostrandoUsuarios, most
                         </p>
                     </div>
                     <button
-                        onClick={() => { localStorage.clear(); window.location.href = '/' }}
                         title="Cerrar sesión"
+                        onClick={() => Fetch.logoutClient()}
                         style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 4 }}
                     >
                         <span className="material-symbols-outlined" style={{ fontSize: 18 }}>logout</span>

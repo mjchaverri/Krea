@@ -2,13 +2,14 @@ require("dotenv").config()
 const { Usuario } = require("../index")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
+const { validationResult } = require("express-validator")
 
 // Blacklist en memoria para tokens invalidados (logout)
 const tokenBlacklist = new Set()
 
 const obtenerUsuarios = async (req, res) => {
     try {
-        const page  = Math.max(parseInt(req.query.page)  || 1, 1)
+        const page = Math.max(parseInt(req.query.page) || 1, 1)
         const limit = Math.min(parseInt(req.query.limit) || 20, 100)
         const offset = (page - 1) * limit
         const { count, rows } = await Usuario.findAndCountAll({
@@ -29,6 +30,10 @@ const obtenerUsuarios = async (req, res) => {
 }
 
 const crearUsuario = async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ status: 400, message: "Datos inválidos", data: errors.array() })
+    }
     try {
         const { nombre_usuario, nombre_completo, correo, contrasena, telefono, provincia, canton, distrito, img_perfil, descripcion, id_rol } = req.body
 
@@ -40,12 +45,12 @@ const crearUsuario = async (req, res) => {
             correo,
             contrasena: contrasenaEncriptada,
             telefono,
-            provincia:   provincia  || null,
-            canton:      canton     || null,
-            distrito:    distrito   || null,
-            img_perfil:  img_perfil || null,
+            provincia: provincia || null,
+            canton: canton || null,
+            distrito: distrito || null,
+            img_perfil: img_perfil || null,
             descripcion: descripcion || null,
-            id_rol:      id_rol || null
+            id_rol: id_rol || null
         })
 
         const { contrasena: _, ...usuarioSinClave } = nuevoUsuario.toJSON()
@@ -56,6 +61,10 @@ const crearUsuario = async (req, res) => {
 }
 
 const LoginUsuario = async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ status: 400, message: "Datos inválidos", data: errors.array() })
+    }
     try {
         const { correo, contrasena } = req.body
 
@@ -73,7 +82,7 @@ const LoginUsuario = async (req, res) => {
 
         const token = jwt.sign(
             { id: usuarioEncontrado.id_usuario, correo: usuarioEncontrado.correo, id_rol: usuarioEncontrado.id_rol },
-            process.env.JWT_SECRET,
+            process.env.JWT_SECRET || 'aguacate',
             { expiresIn: process.env.JWT_EXPIRES_IN || "8h" }
         )
 
@@ -83,12 +92,12 @@ const LoginUsuario = async (req, res) => {
             data: {
                 token,
                 usuario: {
-                    id_usuario:      usuarioEncontrado.id_usuario,
-                    nombre_usuario:  usuarioEncontrado.nombre_usuario,
+                    id_usuario: usuarioEncontrado.id_usuario,
+                    nombre_usuario: usuarioEncontrado.nombre_usuario,
                     nombre_completo: usuarioEncontrado.nombre_completo,
-                    correo:          usuarioEncontrado.correo,
-                    img_perfil:      usuarioEncontrado.img_perfil,
-                    id_rol:          usuarioEncontrado.id_rol
+                    correo: usuarioEncontrado.correo,
+                    img_perfil: usuarioEncontrado.img_perfil,
+                    id_rol: usuarioEncontrado.id_rol
                 }
             }
         })
@@ -108,6 +117,10 @@ const LogoutUsuario = (req, res) => {
 }
 
 const editarUsuario = async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ status: 400, message: "Datos inválidos", data: errors.array() })
+    }
     try {
         const { id_usuario } = req.params
         const { nombre_usuario, nombre_completo, correo, telefono, provincia, canton, distrito, img_perfil, descripcion } = req.body

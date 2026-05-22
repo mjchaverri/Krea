@@ -17,7 +17,7 @@ const crearComunidad = async (req, res) => {
 
 const obtenerComunidades = async (req, res) => {
     try {
-        const page  = Math.max(parseInt(req.query.page)  || 1, 1)
+        const page = Math.max(parseInt(req.query.page) || 1, 1)
         const limit = Math.min(parseInt(req.query.limit) || 10, 100)
         const offset = (page - 1) * limit
 

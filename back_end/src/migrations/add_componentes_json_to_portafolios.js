@@ -1,29 +1,30 @@
-require('dotenv').config()
-const mysql = require('mysql2/promise')
+'use strict';
 
-async function run() {
-    const conn = await mysql.createConnection({
-        host:     process.env.DB_HOST || '127.0.0.1',
-        user:     process.env.DB_USER || 'root',
-        password: process.env.DB_PASS || 'root',
-        database: process.env.DB_NAME || 'krea',
-    })
+module.exports = {
+    async up(queryInterface, Sequelize) {
+        const [results] = await queryInterface.sequelize.query(`
+            SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME = 'portafolios'
+              AND COLUMN_NAME = 'componentes_json'
+        `);
 
-    try {
-        await conn.execute(`
-            ALTER TABLE portafolios
-            ADD COLUMN componentes_json LONGTEXT NULL DEFAULT NULL
-        `)
-        console.log('✓ Columna componentes_json agregada a portafolios')
-    } catch (e) {
-        if (e.code === 'ER_DUP_FIELDNAME') {
-            console.log('→ La columna ya existe, sin cambios.')
-        } else {
-            throw e
+        if (results.length > 0) {
+            console.log('✓ Columna componentes_json ya existe — nada que hacer.');
+            return;
         }
-    } finally {
-        await conn.end()
-    }
-}
 
-run().catch(err => { console.error(err); process.exit(1) })
+        await queryInterface.addColumn('portafolios', 'componentes_json', {
+            type: Sequelize.TEXT('long'),
+            allowNull: true,
+            defaultValue: null,
+        });
+
+        console.log('✓ Columna componentes_json agregada a portafolios.');
+    },
+
+    async down(queryInterface, Sequelize) {
+        await queryInterface.removeColumn('portafolios', 'componentes_json');
+        console.log('↩ Migración revertida.');
+    },
+};

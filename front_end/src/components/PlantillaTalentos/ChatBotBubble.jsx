@@ -1,4 +1,4 @@
-import { MessageCircle, X, Send } from "lucide-react";
+import {MessageCircle, X, Send} from "lucide-react"
 import { useEffect, useRef, useState } from "react";
 
 import "../../styles/PlantillaTalentos/ChatBotBubble.css";

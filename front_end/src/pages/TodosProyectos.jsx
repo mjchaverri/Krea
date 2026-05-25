@@ -311,11 +311,9 @@ function TodosProyectos() {
                                             key={proyecto.id}
                                             idProyecto={proyecto.id}
                                             nombreProyecto={proyecto.titulo}
-                                            descripcionProyecto={proyecto.descripcion}
-                                            estructura={proyecto.componentes?.[0]}
-                                            promedio={proyecto.promedio}
-                                            imgPortada={proyecto.imgPortada}
+                                            componentes={proyecto.componentes}
                                             categorias={proyecto.categorias || []}
+                                            promedio={proyecto.promedio}
                                             usuario={proyecto.usuario}
                                             onVerProyecto={() => setProyectoSeleccionado(proyecto)}
                                         />
@@ -396,11 +394,9 @@ function TodosProyectos() {
                                                 key={proyecto.id}
                                                 idProyecto={proyecto.id}
                                                 nombreProyecto={proyecto.titulo}
-                                                descripcionProyecto={proyecto.descripcion}
-                                                estructura={proyecto.componentes?.[0]}
-                                                promedio={calcularPromedio(resenasP)}
-                                                imgPortada={proyecto.imgPortada}
+                                                componentes={proyecto.componentes}
                                                 categorias={proyecto.categorias || []}
+                                                promedio={calcularPromedio(resenasP)}
                                                 onVerProyecto={() => setProyectoSeleccionado(proyecto)}
                                             />
                                         );

@@ -1,47 +1,41 @@
-import "../../styles/EstilosPerfilUsuario/ProyectosRecientes.css";
+import "../../styles/EstilosPerfilUsuario/PortafolioCard.css";
 import React from "react";
 import PreviewComponentes from "../PlantillaTalentos/PreviewComponentes";
 
 const CardProyecto = ({
     nombreProyecto,
-    descripcionProyecto,
-    estructura,
+    componentes,
     onVerProyecto,
     promedio,
-    imgPortada,
-    idProyecto,
     onDelete,
     usuario,
     categorias = [],
 }) => {
-    const comps = estructura ? [estructura] : [];
+    const comps = componentes || [];
+    const cats  = categorias  || [];
 
     return (
-        <div className="pp-card" onClick={onVerProyecto}>
-            <div className="pp-card-media">
-                {imgPortada ? (
-                    <img src={imgPortada} alt={nombreProyecto} loading="lazy" />
-                ) : (
-                    <PreviewComponentes componentes={comps} />
-                )}
+        <div className="pf-card" onClick={onVerProyecto}>
+            <div className="pf-card-media">
+                <PreviewComponentes componentes={comps} />
 
-                <div className="pp-card-overlay">
-                    {categorias.length > 0 && (
-                        <div className="pp-card-cats">
-                            {categorias.slice(0, 2).map(cat => (
-                                <span key={cat} className="pp-cat-tag">{cat}</span>
+                <div className="pf-card-overlay">
+                    {cats.length > 0 && (
+                        <div className="pf-card-cats">
+                            {cats.slice(0, 2).map(cat => (
+                                <span key={cat} className="pf-cat-tag">{cat}</span>
                             ))}
-                            {categorias.length > 2 && (
-                                <span className="pp-cat-tag">+{categorias.length - 2}</span>
+                            {cats.length > 2 && (
+                                <span className="pf-cat-tag">+{cats.length - 2}</span>
                             )}
                         </div>
                     )}
-                    <h3 className="pp-card-title">{nombreProyecto}</h3>
+                    <h3 className="pf-card-title">{nombreProyecto}</h3>
                 </div>
 
                 {onDelete && (
                     <button
-                        className="pp-card-delete"
+                        className="pf-card-delete"
                         onClick={e => { e.stopPropagation(); onDelete(); }}
                     >
                         <i className="fa-solid fa-trash-can" />
@@ -49,23 +43,18 @@ const CardProyecto = ({
                 )}
             </div>
 
-            <div className="pp-card-author">
-                {usuario ? (
-                    <>
-                        <div className="pp-author-avatar">
-                            {usuario.img
-                                ? <img src={usuario.img} alt={usuario.Nombre} />
-                                : <i className="fa-solid fa-user" />
-                            }
-                        </div>
-                        <span className="pp-author-name">{usuario.Nombre}</span>
-                    </>
-                ) : (
-                    <span className="pp-author-name">{nombreProyecto}</span>
-                )}
+            <div className="pf-card-author">
+                <div className="pf-author-avatar">
+                    {usuario?.img
+                        ? <img src={usuario.img} alt={usuario.Nombre} />
+                        : <i className="fa-solid fa-user" />
+                    }
+                </div>
+                <span className="pf-author-name">{usuario?.Nombre || nombreProyecto}</span>
                 {promedio > 0 && (
-                    <span className="pp-author-rating">
-                        <i className="fa-solid fa-star" /> {Number(promedio).toFixed(1)}
+                    <span className="pf-author-rating">
+                        <i className="fa-solid fa-star" />
+                        {Number(promedio).toFixed(1)}
                     </span>
                 )}
             </div>

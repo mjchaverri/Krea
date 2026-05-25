@@ -67,10 +67,9 @@ function ProyectosRecientes() {
                     key={proyecto.id}
                     idProyecto={proyecto.id}
                     nombreProyecto={proyecto.titulo}
-                    descripcionProyecto={proyecto.descripcion}
-                    estructura={proyecto.componentes?.[0]}
+                    componentes={proyecto.componentes}
+                    categorias={proyecto.categorias || []}
                     promedio={promedio}
-                    imgPortada={proyecto.imgPortada}
                     onVerProyecto={() => setProyectoSeleccionado(proyecto)}
                     onDelete={() => handleDeletePortfolio(proyecto.id)}
                 />

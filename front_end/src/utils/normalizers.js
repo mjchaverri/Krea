@@ -1,4 +1,8 @@
 export function normalizarPortafolio(p) {
+    let componentes = []
+    if (p.componentes_json) {
+        try { componentes = JSON.parse(p.componentes_json) } catch (_) { componentes = [] }
+    }
     return {
         id:          p.id_portafolio,
         titulo:      p.titulo,
@@ -6,7 +10,7 @@ export function normalizarPortafolio(p) {
         pdf:         p.pdf,
         imgPortada:  p.img_portada,
         usuarioId:   p.id_usuario,
-        componentes: p.componentes || [],
+        componentes,
         categorias:  p.categorias  || [],
     }
 }

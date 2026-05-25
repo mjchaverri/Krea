@@ -25,6 +25,10 @@ Portafolios.init({
         type: DataTypes.TEXT,
         allowNull: true
     },
+    componentes_json: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
     id_usuario: {
         type: DataTypes.INTEGER,
         allowNull: false,

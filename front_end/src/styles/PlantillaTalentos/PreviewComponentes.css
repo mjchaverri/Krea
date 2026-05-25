@@ -1,9 +1,10 @@
 .prevc-outer {
     width: 100%;
-    /* height set dynamically by JS */
     overflow: hidden;
     position: relative;
     background: #f8fafc;
+    /* height is controlled by JS: innerHeight × scale */
+    min-height: 80px;
 }
 
 .prevc-inner {
@@ -14,12 +15,20 @@
     pointer-events: none;
     display: flex;
     flex-direction: column;
+    width: 860px;
 }
 
 .prevc-empty {
     width: 100%;
-    min-height: 400px;
-    background-color: #f8fafc;
+    height: 400px;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    color: #94a3b8;
+    font-size: 48px;
 }
 
 /* hide the delete button that ComponentePortafolio renders */
@@ -27,7 +36,7 @@
     display: none;
 }
 
-/* strip editor chrome: borders, outlines, hover highlights, cursors */
+/* strip editor chrome */
 .prevc-inner .editable-block {
     box-shadow: none !important;
     outline: none !important;
@@ -44,4 +53,3 @@
 .prevc-inner [class*="estructura"] {
     cursor: default !important;
 }
-

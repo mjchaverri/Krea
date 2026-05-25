@@ -215,10 +215,10 @@ function PerfilVisitante() {
                                         key={proyecto.id}
                                         idProyecto={proyecto.id}
                                         nombreProyecto={proyecto.titulo}
-                                        descripcionProyecto={proyecto.descripcion}
-                                        estructura={proyecto.componentes?.[0]}
+                                        componentes={proyecto.componentes}
+                                        categorias={proyecto.categorias || []}
                                         promedio={calcularPromedio(resenasP)}
-                                        imgPortada={proyecto.imgPortada}
+                                        usuario={{ Nombre: usuario?.Nombre, img: usuario?.img }}
                                         onVerProyecto={() => setProyectoSeleccionado(proyecto)}
                                     />
                                 );

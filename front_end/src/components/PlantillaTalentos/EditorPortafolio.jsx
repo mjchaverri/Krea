@@ -7,6 +7,7 @@ import ModalVistaPrevia from "./ModalVistaPrevia";
 import { ImageProvider } from "./HookImagenCloudinary";
 import { usePortafolioEditor } from "./usePortafolioEditor";
 import "../../styles/PlantillaTalentos/Portafolio.css";
+import ChatBotBubble from "./ChatBotBubble";
 
 function EditorPortafolio() {
     const {
@@ -98,6 +99,8 @@ function EditorPortafolio() {
                 imagen={previewImage}
                 onClose={closePreview}
             />
+
+            <ChatBotBubble />
         </>
     );
 }

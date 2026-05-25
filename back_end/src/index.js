@@ -21,7 +21,7 @@ const Chat_Miembros = require("./models/Chat_Miembros")
 const Seguidos = require("./models/Seguidos")
 const Configuracion = require("./models/Configuracion")
 
-// ── Usuarios ────────────────────────────────────────────────────
+// ── Usuarios ─────────────────────────────────────────────────── //para commit
 // Un usuario tiene un rol
 Usuario.belongsTo(Roles, { foreignKey: "id_rol" })
 Roles.hasMany(Usuario, { foreignKey: "id_rol" })

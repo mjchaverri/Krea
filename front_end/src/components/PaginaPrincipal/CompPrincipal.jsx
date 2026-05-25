@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Fetch from '../../services/Fetch';
 import { normalizarPortafolio, normalizarResena, normalizarUsuario } from '../../utils/normalizers';
+import CardProyecto from '../PerfilUsuario/CardProyecto';
 import PreviewComponentes from '../PlantillaTalentos/PreviewComponentes';
 import ModalProyecto from '../PerfilUsuario/ModalProyecto';
 import SeccionComoFunciona from './SeccionComoFunciona';
@@ -154,41 +155,16 @@ function CompPrincipal() {
 
                 <div className="pp-grid">
                     {filtrados.map((project, index) => (
-                        <div
+                        <CardProyecto
                             key={`${project.id}-${index}`}
-                            className="pp-card"
-                            onClick={() => setProyectoSeleccionado(project)}
-                        >
-                            <div className="pp-card-media">
-                                <PreviewComponentes componentes={project.componentes} />
-                                <div className="pp-card-overlay">
-                                    <div className="pp-card-cats">
-                                        {(project.categorias?.length > 0 ? project.categorias : ['Proyecto'])
-                                            .slice(0, 2)
-                                            .map(cat => (
-                                                <span key={cat} className="pp-cat-tag">{cat}</span>
-                                            ))}
-                                        {project.categorias?.length > 2 && (
-                                            <span className="pp-cat-more">+{project.categorias.length - 2}</span>
-                                        )}
-                                    </div>
-                                    <h3 className="pp-card-title">{project.titulo}</h3>
-                                </div>
-                            </div>
-                            <div className="pp-card-author">
-                                <img
-                                    src={project.user?.img || 'https://via.placeholder.com/50'}
-                                    alt={project.user?.Nombre}
-                                />
-                                <span className="pp-author-name">{project.user?.Nombre}</span>
-                                {project.avgRating !== null && (
-                                    <span className="pp-author-rating">
-                                        <i className="fa-solid fa-star" />
-                                        {project.avgRating.toFixed(1)}
-                                    </span>
-                                )}
-                            </div>
-                        </div>
+                            idProyecto={project.id}
+                            nombreProyecto={project.titulo}
+                            componentes={project.componentes}
+                            categorias={project.categorias || []}
+                            usuario={project.user}
+                            promedio={project.avgRating}
+                            onVerProyecto={() => setProyectoSeleccionado(project)}
+                        />
                     ))}
 
                     {filtrados.length === 0 && (

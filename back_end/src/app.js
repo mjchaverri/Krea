@@ -1,6 +1,8 @@
+require("dotenv").config();
 const express = require("express")
 const cors = require("cors")
 const app = express()
+const chatbotRoutes = require("./routes/chatbot.routes");
 
 const sequelize = require("./config/db")
 require("./index")
@@ -47,10 +49,12 @@ app.use("/reporte-convo", reporte_convoRoutes)
 app.use("/miembros", miembrosRoutes)
 app.use("/seguidos", seguidosRoutes)
 app.use("/configuracion", configuracionRoutes)
+app.use("/api/chatbot", chatbotRoutes);
 
 setupSwagger(app)
 
 app.listen(3000, () => {
     console.log('servidor corriendo en puerto 3000')
     console.log('documentación disponible en http://localhost:3000/api/docs')
+    console.log(process.env.GEMINI_API_KEY);
 })

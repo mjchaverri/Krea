@@ -8,8 +8,8 @@ const crearPortafolio = async (req, res) => {
         return res.status(400).json({ status: 400, message: "Datos inválidos", data: errors.array() })
     }
     try {
-        const { titulo, descripcion, pdf, img_portada, id_usuario } = req.body
-        const nuevoPortafolio = await Portafolios.create({ titulo, descripcion, pdf, img_portada, id_usuario })
+        const { titulo, descripcion, pdf, img_portada, id_usuario, componentes_json } = req.body
+        const nuevoPortafolio = await Portafolios.create({ titulo, descripcion, pdf, img_portada, id_usuario, componentes_json: componentes_json || null })
         res.status(201).json({ status: 201, message: "Portafolio creado correctamente", data: nuevoPortafolio })
     } catch (error) {
         res.status(500).json({ status: 500, message: error.message })
@@ -84,12 +84,14 @@ const editarPortafolio = async (req, res) => {
     }
     try {
         const { id_portafolio } = req.params
-        const { titulo, descripcion, pdf, img_portada } = req.body
+        const { titulo, descripcion, pdf, img_portada, componentes_json } = req.body
         const portafolioEncontrado = await Portafolios.findByPk(id_portafolio)
         if (!portafolioEncontrado) {
             return res.status(404).json({ status: 404, message: "Portafolio no encontrado" })
         }
-        await portafolioEncontrado.update({ titulo, descripcion, pdf, img_portada })
+        const updates = { titulo, descripcion, pdf, img_portada }
+        if (componentes_json !== undefined) updates.componentes_json = componentes_json || null
+        await portafolioEncontrado.update(updates)
         res.status(200).json({ status: 200, message: "Portafolio actualizado correctamente", data: portafolioEncontrado })
     } catch (error) {
         res.status(500).json({ status: 500, message: error.message })

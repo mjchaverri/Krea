@@ -1,33 +1,35 @@
+require("dotenv").config();
 const express = require("express")
 const cors = require("cors")
 const app = express()
+const chatbotRoutes = require("./routes/chatbot.routes");
 
-const sequelize = require("./src/config/db")
-require("./index")
+const sequelize = require("./config/db")
+require("./src/index")
 
-const setupSwagger = require("./src/config/swagger");
-
+const setupSwagger = require("./config/swagger")
 
 app.use(cors())
 app.use(express.json())
 
 // ── Importar rutas ──────────────────────────────────────────────
-const usuarioRoutes = require("./src/routes/usuario_routes")
-const rolesRoutes = require("./src/routes/roles_routes")
-const talentosRoutes = require("./src/routes/talentos_routes")
-const convocatoriasRoutes = require("./src/routes/convocatorias_routes")
-const tipoParaConvosRoutes = require("./src/routes/tipo_para_convos_routes")
-const resenasRoutes = require("./src/routes/resenas_routes")
-const componentesRoutes = require("./src/routes/componentes_routes")
-const componentesEstilosRoutes = require("./src/routes/componentes_estilos_routes")
-const bloquesComponentesRoutes = require("./src/routes/bloques_componentes_routes")
-const chatComuRoutes = require("./src/routes/chat_comu_routes")
-const comunidadesRoutes = require("./src/routes/comunidades_routes")
-const categoriasRoutes = require("./src/routes/categorias_routes")
-const portafoliosRoutes = require("./src/routes/Portafolios_routes")
-const reporte_convoRoutes = require("./src/routes/Reportes_convo_routes")
-const miembrosRoutes = require("./src/routes/miembros_routes")
-const seguidosRoutes = require("./src/routes/seguidos_routes")
+const usuarioRoutes = require("./routes/usuario_routes")
+const rolesRoutes = require("./routes/roles_routes")
+const talentosRoutes = require("./routes/talentos_routes")
+const convocatoriasRoutes = require("./routes/convocatorias_routes")
+const tipoParaConvosRoutes = require("./routes/tipo_para_convos_routes")
+const resenasRoutes = require("./routes/resenas_routes")
+const componentesRoutes = require("./routes/componentes_routes")
+const componentesEstilosRoutes = require("./routes/componentes_estilos_routes")
+const bloquesComponentesRoutes = require("./routes/bloques_componentes_routes")
+const chatComuRoutes = require("./routes/chat_comu_routes")
+const comunidadesRoutes = require("./routes/comunidades_routes")
+const categoriasRoutes = require("./routes/categorias_routes")
+const portafoliosRoutes = require("./routes/Portafolios_routes")
+const reporte_convoRoutes = require("./routes/Reportes_convo_routes")
+const miembrosRoutes = require("./routes/miembros_routes")
+const seguidosRoutes = require("./routes/seguidos_routes")
+const configuracionRoutes = require("./routes/configuracion_routes")
 
 // ── Rutas ───────────────────────────────────────────────────────
 app.use("/usuarios", usuarioRoutes)
@@ -46,11 +48,13 @@ app.use("/portafolios", portafoliosRoutes)
 app.use("/reporte-convo", reporte_convoRoutes)
 app.use("/miembros", miembrosRoutes)
 app.use("/seguidos", seguidosRoutes)
-
+app.use("/configuracion", configuracionRoutes)
+app.use("/api/chatbot", chatbotRoutes);
 
 setupSwagger(app)
 
 app.listen(3000, () => {
     console.log('servidor corriendo en puerto 3000')
     console.log('documentación disponible en http://localhost:3000/api/docs')
+    console.log(process.env.GEMINI_API_KEY);
 })

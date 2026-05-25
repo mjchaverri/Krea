@@ -143,6 +143,33 @@ export function usePortafolioEditor() {
     };
 
     const guardarPortafolio = async () => {
+        if (!tituloProyecto.trim()) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Campos incompletos',
+                text: 'El portafolio debe tener un título antes de guardarse.',
+                confirmButtonColor: '#0ea5e9',
+            })
+            return
+        }
+        if (!descripcionProyecto.trim()) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Campos incompletos',
+                text: 'El portafolio debe tener una descripción antes de guardarse.',
+                confirmButtonColor: '#0ea5e9',
+            })
+            return
+        }
+        if (componentes.length === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Portafolio vacío',
+                text: 'Agrega al menos una sección antes de guardar.',
+                confirmButtonColor: '#0ea5e9',
+            })
+            return
+        }
         try {
             Swal.fire({
                 title: "Guardando portafolio...",
@@ -164,22 +191,25 @@ export function usePortafolioEditor() {
 
             const usuarioActivo = JSON.parse(localStorage.getItem("UsuarioActivo") || "{}");
             const payload = {
-                id_usuario:  usuarioActivo.id,
-                titulo:      tituloProyecto,
-                descripcion: descripcionProyecto,
-                pdf:         pdfUrl,
-                img_portada: imgPortadaUrl,
+                id_usuario:       usuarioActivo.id,
+                titulo:           tituloProyecto,
+                descripcion:      descripcionProyecto,
+                pdf:              pdfUrl,
+                img_portada:      imgPortadaUrl,
+                componentes_json: JSON.stringify(componentes),
             };
+            
+            const response = await Fetch.postData("portafolios", payload);
 
-            if (portafolioId) {
-                await Fetch.putData(`portafolios/${portafolioId}`, payload);
-            } else {
-                const response = await Fetch.postData("portafolios", payload);
-                if (response?.id_portafolio) {
-                    setPortafolioId(response.id_portafolio);
-                    localStorage.setItem("portafolioId", response.id_portafolio);
-                }
-            }
+            // if (portafolioId) {
+            //     await Fetch.putData(`portafolios/${portafolioId}`, payload);
+            // } else {
+            //     const response = await Fetch.postData("portafolios", payload);
+            //     if (response?.id_portafolio) {
+            //         setPortafolioId(response.id_portafolio);
+            //         localStorage.setItem("portafolioId", response.id_portafolio);
+            //     }
+            // }
 
             Swal.fire({ icon: "success", title: "Portafolio guardado", text: "Guardado correctamente" });
         } catch (error) {

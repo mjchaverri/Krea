@@ -4,6 +4,7 @@ import Swal from 'sweetalert2'
 import { normalizarPortafolio, normalizarUsuario, normalizarResena } from '../../utils/normalizers'
 import Paginacion from '../Administrador/Paginacion'
 import ModalProyecto from '../PerfilUsuario/ModalProyecto'
+import CardProyecto from '../PerfilUsuario/CardProyecto'
 
 const POR_PAGINA = 9
 
@@ -196,77 +197,18 @@ const TabladePortafolios = () => {
                 </div>
             ) : vistaGrid ? (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20, marginBottom: 24 }}>
-                    {portafoliosPagina.map(portafolio => {
-                        const estado = getEstado(portafolio)
-                        const nombrePropietario = getNombreUsuario(portafolio)
-                        const publicado = estado === 'Publicado'
-                        return (
-                            <div key={portafolio.id} style={{
-                                background: '#fff', borderRadius: 16, border: '1px solid #e8edf2',
-                                overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
-                                transition: 'box-shadow 0.2s', cursor: 'pointer',
-                            }}
-                                onMouseEnter={e => e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.1)'}
-                                onMouseLeave={e => e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)'}>
-
-                                {/* Cover */}
-                                <div style={{ position: 'relative', height: 160, background: portafolio.imgPortada ? 'transparent' : '#f1f5f9', overflow: 'hidden' }}
-                                    onClick={() => setPortafolioSeleccionado(portafolio)}>
-                                    {portafolio.imgPortada
-                                        ? <img src={portafolio.imgPortada} alt={portafolio.titulo} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                        : (
-                                            <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                                                <span className="material-symbols-outlined" style={{ fontSize: 36, color: '#cbd5e1' }}>folder_special</span>
-                                                <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600 }}>Sin portada</span>
-                                            </div>
-                                        )
-                                    }
-                                    {/* Badge */}
-                                    <span style={{
-                                        position: 'absolute', top: 10, left: 10, fontSize: 10, fontWeight: 700,
-                                        padding: '3px 10px', borderRadius: 6,
-                                        background: publicado ? '#10b981' : '#f59e0b',
-                                        color: '#fff', letterSpacing: 0.5, textTransform: 'uppercase',
-                                    }}>
-                                        {publicado ? 'Publicado' : 'Pendiente'}
-                                    </span>
-                                </div>
-
-                                {/* Body */}
-                                <div style={{ padding: '14px 16px 12px' }}>
-                                    <h4 style={{ fontSize: 14, fontWeight: 800, color: '#0f172a', margin: '0 0 4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-                                        onClick={() => setPortafolioSeleccionado(portafolio)}>
-                                        {portafolio.titulo || 'Sin título'}
-                                    </h4>
-                                    <p style={{ fontSize: 12, color: '#94a3b8', margin: '0 0 12px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
-                                        {portafolio.descripcion || 'Sin descripción'}
-                                    </p>
-
-                                    {/* Author + actions */}
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                            <div style={{ width: 26, height: 26, borderRadius: '50%', background: '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                                                <span style={{ fontSize: 11, fontWeight: 800, color: '#0ea5e9' }}>{nombrePropietario.charAt(0)}</span>
-                                            </div>
-                                            <span style={{ fontSize: 12, color: '#64748b', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 100 }}>{nombrePropietario}</span>
-                                        </div>
-                                        <div style={{ display: 'flex', gap: 4 }}>
-                                            <button onClick={() => setPortafolioSeleccionado(portafolio)} style={{ width: 30, height: 30, borderRadius: 8, border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', transition: 'all 0.15s' }}
-                                                onMouseEnter={e => { e.currentTarget.style.background = '#f0f9ff'; e.currentTarget.style.color = '#0ea5e9' }}
-                                                onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#94a3b8' }}>
-                                                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>visibility</span>
-                                            </button>
-                                            <button onClick={() => eliminarPortafolio(portafolio.id)} style={{ width: 30, height: 30, borderRadius: 8, border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', transition: 'all 0.15s' }}
-                                                onMouseEnter={e => { e.currentTarget.style.background = '#fef2f2'; e.currentTarget.style.color = '#ef4444' }}
-                                                onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#94a3b8' }}>
-                                                <span className="material-symbols-outlined" style={{ fontSize: 15 }}>delete</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )
-                    })}
+                    {portafoliosPagina.map(portafolio => (
+                        <CardProyecto
+                            key={portafolio.id}
+                            idProyecto={portafolio.id}
+                            nombreProyecto={portafolio.titulo || 'Sin título'}
+                            componentes={portafolio.componentes}
+                            categorias={portafolio.categorias || []}
+                            usuario={{ Nombre: getNombreUsuario(portafolio) }}
+                            onVerProyecto={() => setPortafolioSeleccionado(portafolio)}
+                            onDelete={() => eliminarPortafolio(portafolio.id)}
+                        />
+                    ))}
                 </div>
             ) : (
                 /* List view */

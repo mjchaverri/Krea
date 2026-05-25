@@ -84,49 +84,96 @@
 .pvw-body {
     flex: 1;
     overflow: auto;
-    background: #f8fafc;
-    display: flex;
-}
-
-.pvw-body::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-.pvw-body::-webkit-scrollbar-track {
     background: #f1f5f9;
 }
-.pvw-body::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 4px;
-}
-.pvw-body::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+
+.pvw-body::-webkit-scrollbar { width: 8px; height: 8px; }
+.pvw-body::-webkit-scrollbar-track { background: #f1f5f9; }
+.pvw-body::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+.pvw-body::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* HOST DEL ZOOM — zoom CSS afecta el layout correctamente */
+.pvw-scale-host {
+    background: #ffffff;
+    max-width: 860px;
+    margin: 24px auto;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    border-radius: 8px;
+    /* sin overflow:hidden para no recortar el header del lienzo */
 }
 
-/* WRAPPER INTERIOR */
-.pvw-scroll-inner {
-    min-width: 100%;
-    min-height: 100%;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 24px;
-    box-sizing: border-box;
+/* ══════════════════════════════════════════
+   MODO PREVIEW — limpiar toda la UI del editor
+   ══════════════════════════════════════════ */
+
+/* Deshabilitar hover/click para que no aparezcan bordes azules */
+.pvw-preview-mode * {
+    pointer-events: none !important;
+    outline: none !important;
 }
 
-/* IMAGEN */
-.pvw-img {
-    height: auto;
-    border-radius: 6px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-    display: block;
-    flex-shrink: 0;
-    animation: pvw-img-in 0.2s ease;
+/* Quitar box-shadow de todos los bloques editables y contenedores de grilla */
+.pvw-preview-mode .editable-block,
+.pvw-preview-mode .editable-block:hover,
+.pvw-preview-mode .editable-block--active,
+.pvw-preview-mode .grilla1_2_izda__image,
+.pvw-preview-mode .grilla1_2_izda__image:hover {
+    box-shadow: none !important;
+    outline: none !important;
+    border-radius: 0 !important;
+    cursor: default !important;
 }
 
-@keyframes pvw-img-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+/* Padding superior adecuado para que el título sea visible */
+.pvw-preview-mode .lienzo {
+    padding-top: 48px;
+}
+
+/* Ocultar categorías */
+.pvw-preview-mode .lienzo__categoria-row {
+    display: none !important;
+}
+
+/* Eliminar todos los bordes/sombras de los bloques editables */
+.pvw-preview-mode .editable-block,
+.pvw-preview-mode .editable-block:hover,
+.pvw-preview-mode .editable-block--active {
+    box-shadow: none !important;
+    outline: none !important;
+    cursor: default !important;
+    border-radius: 0 !important;
+}
+
+/* Eliminar el borde punteado del lienzo vacío */
+.pvw-preview-mode .lienzo__empty {
+    border: none !important;
+    background: transparent !important;
+}
+
+/* Ocultar columna de botones de acción */
+.pvw-preview-mode .componente-acciones {
+    display: none !important;
+}
+
+/* Quitar la columna lateral del flex del wrapper */
+.pvw-preview-mode .componente-wrapper {
+    display: block !important;
+}
+
+/* Ocultar X de quitar imagen */
+.pvw-preview-mode .bloque-quitar-imagen {
+    display: none !important;
+}
+
+/* Placeholder visual cuando el título/descripción están vacíos */
+.pvw-preview-mode .lienzo__titulo:empty::before {
+    content: "Sin título";
+    color: #d1d5db;
+}
+.pvw-preview-mode .lienzo__descripcion:empty::before {
+    content: "Sin descripción";
+    color: #e5e7eb;
+    font-size: 0.95rem;
 }
 
 /* BARRA DE ZOOM */

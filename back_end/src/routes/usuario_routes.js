@@ -45,7 +45,7 @@ const { validarCrearUsuario, validarLogin, validarEditarUsuario } = require("../
  *       201: { description: Usuario creado }
  *       400: { description: Datos inválidos }
  */
-router.get("/", verificarToken, roleMiddleware("admin"), obtenerUsuarios)
+router.get("/", verificarToken, obtenerUsuarios)
 router.post("/register", validarCrearUsuario, crearUsuario)
 
 /**

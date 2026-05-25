@@ -4,7 +4,8 @@ import Swal from 'sweetalert2'
 import { normalizarPortafolio, normalizarUsuario, normalizarResena } from '../../utils/normalizers'
 import Paginacion from '../Administrador/Paginacion'
 import ModalProyecto from '../PerfilUsuario/ModalProyecto'
-import CardProyecto from '../PerfilUsuario/CardProyecto'
+import CardPortafolioAdmin from '../Administrador/CardPortafolioAdmin'
+import '../../styles/EstilosAdmin/CardPortafolioAdmin.css'
 
 const POR_PAGINA = 9
 
@@ -44,8 +45,8 @@ const TabladePortafolios = () => {
     useEffect(() => {
         async function cargarDatos() {
             const [resP, resU] = await Promise.all([
-                Fetch.getData('portafolios?limit=200'),
-                Fetch.getData('usuarios?limit=200'),
+                Fetch.getData('portafolios?limit=200').catch(() => []),
+                Fetch.getData('usuarios?limit=200').catch(() => []),
             ])
             setPortafolios((resP || []).map(normalizarPortafolio))
             setUsuarios((resU || []).map(normalizarUsuario))
@@ -198,15 +199,12 @@ const TabladePortafolios = () => {
             ) : vistaGrid ? (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20, marginBottom: 24 }}>
                     {portafoliosPagina.map(portafolio => (
-                        <CardProyecto
+                        <CardPortafolioAdmin
                             key={portafolio.id}
-                            idProyecto={portafolio.id}
-                            nombreProyecto={portafolio.titulo || 'Sin título'}
-                            componentes={portafolio.componentes}
-                            categorias={portafolio.categorias || []}
-                            usuario={{ Nombre: getNombreUsuario(portafolio) }}
-                            onVerProyecto={() => setPortafolioSeleccionado(portafolio)}
-                            onDelete={() => eliminarPortafolio(portafolio.id)}
+                            portafolio={portafolio}
+                            nombrePropietario={getNombreUsuario(portafolio)}
+                            onVer={() => setPortafolioSeleccionado(portafolio)}
+                            onEliminar={() => eliminarPortafolio(portafolio.id)}
                         />
                     ))}
                 </div>

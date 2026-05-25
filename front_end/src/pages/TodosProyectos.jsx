@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/navbar/Navbar';
 import Footer from '../components/ApartadoPaginaPrincipal/Footer';
 import Fetch from '../services/Fetch';
-import { normalizarPortafolio, normalizarResena, normalizarUsuario } from '../utils/normalizers';
+import { normalizarPortafolio, normalizarResena } from '../utils/normalizers';
 import CardProyecto from '../components/PerfilUsuario/CardProyecto';
 import ModalProyecto from '../components/PerfilUsuario/ModalProyecto';
 import { calcularPromedio } from '../utils/calcularPromedio';
@@ -15,7 +15,6 @@ const ITEMS_POR_PAGINA = 12;
 function TodosProyectos() {
     const navigate = useNavigate();
     const [portafolios, setPortafolios]   = useState([]);
-    const [usuarios, setUsuarios]         = useState([]);
     const [todasResenas, setTodasResenas] = useState([]);
     const [proyectoSeleccionado, setProyectoSeleccionado] = useState(null);
     const [busqueda, setBusqueda]         = useState("");
@@ -40,13 +39,11 @@ function TodosProyectos() {
     const cargarDatos = async () => {
         setCargando(true);
         try {
-            const [resP, resU, resR] = await Promise.all([
-                Fetch.getData("portafolios?limit=200"),
-                Fetch.getData("usuarios?limit=200"),
-                Fetch.getData("resenas?limit=200"),
+            const [resP, resR] = await Promise.all([
+                Fetch.getData("portafolios?limit=500").catch(() => []),
+                Fetch.getData("resenas?limit=500").catch(() => []),
             ]);
             setPortafolios((resP || []).map(normalizarPortafolio));
-            setUsuarios((resU || []).map(normalizarUsuario));
             setTodasResenas((resR || []).map(normalizarResena));
         } catch (error) {
             console.error(error);
@@ -73,39 +70,39 @@ function TodosProyectos() {
     ]);
 
     const provinciasUnicas = useMemo(() =>
-        [...new Set(usuarios.map(u => u.Provincias).filter(Boolean))],
-    [usuarios]);
+        [...new Set(portafolios.map(p => p.usuario?.Provincias).filter(Boolean))],
+    [portafolios]);
 
     const cantonesUnicos = useMemo(() =>
-        [...new Set(usuarios
-            .filter(u => !filtroProvincia || u.Provincias === filtroProvincia)
-            .map(u => u.Canton).filter(Boolean))],
-    [usuarios, filtroProvincia]);
+        [...new Set(portafolios
+            .filter(p => !filtroProvincia || p.usuario?.Provincias === filtroProvincia)
+            .map(p => p.usuario?.Canton).filter(Boolean))],
+    [portafolios, filtroProvincia]);
 
     const distritosUnicos = useMemo(() =>
-        [...new Set(usuarios
-            .filter(u => !filtroCanton || u.Canton === filtroCanton)
-            .map(u => u.Distrito).filter(Boolean))],
-    [usuarios, filtroCanton]);
+        [...new Set(portafolios
+            .filter(p => !filtroCanton || p.usuario?.Canton === filtroCanton)
+            .map(p => p.usuario?.Distrito).filter(Boolean))],
+    [portafolios, filtroCanton]);
 
     const proyectosFiltrados = useMemo(() => {
         let resultado = portafolios.reduce((acc, proyecto) => {
-            const usuario = usuarios.find(u => String(u.id) === String(proyecto.usuarioId)) || {};
+            const u = proyecto.usuario || {};
 
-            if (filtroProvincia && usuario.Provincias !== filtroProvincia) return acc;
-            if (filtroCanton   && usuario.Canton     !== filtroCanton)     return acc;
-            if (filtroDistrito && usuario.Distrito   !== filtroDistrito)   return acc;
+            if (filtroProvincia && u.Provincias !== filtroProvincia) return acc;
+            if (filtroCanton   && u.Canton     !== filtroCanton)     return acc;
+            if (filtroDistrito && u.Distrito   !== filtroDistrito)   return acc;
 
             if (busqueda) {
                 const q = busqueda.toLowerCase();
-                if (!proyecto.titulo?.toLowerCase().includes(q) && !usuario.Nombre?.toLowerCase().includes(q)) return acc;
+                if (!proyecto.titulo?.toLowerCase().includes(q) && !u.Nombre?.toLowerCase().includes(q)) return acc;
             }
 
             const resenasP = todasResenas.filter(r => r.portafolioId === proyecto.id);
             const promedio = parseFloat(calcularPromedio(resenasP));
             if (filtroRating > 0 && promedio < filtroRating) return acc;
 
-            acc.push({ ...proyecto, usuario, promedio, cantidadResenas: resenasP.length });
+            acc.push({ ...proyecto, promedio, cantidadResenas: resenasP.length });
             return acc;
         }, []);
 
@@ -114,7 +111,7 @@ function TodosProyectos() {
         if (ordenarPor === "populares") resultado.sort((a, b) => b.cantidadResenas - a.cantidadResenas);
 
         return resultado;
-    }, [portafolios, usuarios, todasResenas, filtroProvincia, filtroCanton, filtroDistrito, filtroRating, ordenarPor, busqueda]);
+    }, [portafolios, todasResenas, filtroProvincia, filtroCanton, filtroDistrito, filtroRating, ordenarPor, busqueda]);
 
     const totalPaginas = Math.max(1, Math.ceil(proyectosFiltrados.length / ITEMS_POR_PAGINA));
     const proyectosPagina = proyectosFiltrados.slice(

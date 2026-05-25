@@ -1,0 +1,194 @@
+/* ── ESTRELLAS SCORE ── */
+.rp-estrellas-score {
+    display: flex;
+    gap: 4px;
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+.barra-count {
+    font-size: 12px;
+    color: #718096;
+    width: 20px;
+    text-align: right;
+}
+
+/* ── FORMULARIO ── */
+.rp-form {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
+}
+
+.rp-form-titulo {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 16px;
+}
+
+.rp-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 8px;
+}
+
+.rp-star-selector {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+}
+
+.rp-star-btn {
+    font-size: 28px;
+    color: #e2e8f0;
+    cursor: pointer;
+    transition: color 0.15s, transform 0.1s;
+    line-height: 1;
+}
+
+.rp-star-btn:hover,
+.rp-star-btn--on {
+    color: #0db9f2;
+    transform: scale(1.15);
+}
+
+.rp-textarea {
+    width: 100%;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    outline: none;
+    color: #2d3748;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+    margin-bottom: 16px;
+}
+
+.rp-textarea:focus {
+    border-color: #0db9f2;
+}
+
+.rp-msg {
+    font-size: 13px;
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+.rp-msg--error {
+    background: #fff5f5;
+    color: #c53030;
+    border: 1px solid #fed7d7;
+}
+
+.rp-msg--ok {
+    background: #f0fff4;
+    color: #276749;
+    border: 1px solid #c6f6d5;
+}
+
+.rp-btn-enviar {
+    width: 100%;
+    padding: 14px;
+    background: #0db9f2;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, opacity 0.2s;
+}
+
+.rp-btn-enviar:hover:not(:disabled) {
+    background: #0aa8db;
+}
+
+.rp-btn-enviar:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+/* ── CARD DE RESEÑA ── */
+.rp-resena-card {
+    padding: 20px 24px;
+}
+
+.rp-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.rp-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+    color: #94a3b8;
+    font-size: 16px;
+}
+
+.rp-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.rp-card-meta {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.rp-autor-nombre {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a202c;
+}
+
+.rp-fecha {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.rp-card-stars {
+    font-size: 16px;
+    margin-bottom: 0;
+}
+
+/* ── CARGAR MÁS ── */
+.rp-btn-mas {
+    background: none;
+    border: none;
+    color: #0db9f2;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 16px;
+    transition: opacity 0.2s;
+}
+
+.rp-btn-mas:hover {
+    opacity: 0.75;
+}
+
+.rp-btn-mas:disabled {
+    opacity: 0.5;
+    cursor: default;
+}

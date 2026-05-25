@@ -31,10 +31,20 @@ function Grilla1_2_Izda({ onActivate, activeElement, initialData, onUpdate }) {
                         tipo: "fondo",
                         setColorFondo: (c) => fondo.update({ colorFondo: c }),
                         setImageUrl: (u) => fondo.update({ imageUrl: u }),
-                        imageUrl: fondo.state.imageUrl
+                        imageUrl: fondo.state.imageUrl,
+                        colorFondo: fondo.state.colorFondo,
                     });
                 }}
             >
+                {fondo.state.imageUrl && (
+                    <button
+                        className="bloque-quitar-imagen"
+                        onClick={(e) => { e.stopPropagation(); fondo.update({ imageUrl: '' }); }}
+                        title="Quitar imagen"
+                    >
+                        <i className="fa-solid fa-xmark" />
+                    </button>
+                )}
             </div>
             <div className="grilla1_2_izda__content" style={{ position: "relative" }}>
                 <EditableBlock

@@ -18,25 +18,45 @@ const MAPA_COMPONENTES = {
     Grilla1_2_Izda,
 };
 
-function ComponentePortafolio({ comp, activeElement, onActivate, onUpdate, onEliminar }) {
+function ComponentePortafolio({ comp, activeElement, onActivate, onUpdate, onEliminar, onMover, isFirst, isLast }) {
     const Componente = MAPA_COMPONENTES[comp.type];
     if (!Componente) return null;
 
     return (
         <div className="componente-wrapper">
-            <Componente
-                onActivate={(e, data) => onActivate(e, { ...data, id: comp.id })}
-                activeElement={activeElement}
-                initialData={comp.data}
-                onUpdate={(newData) => onUpdate(comp.id, newData)}
-            />
-            <button
-                className="componente-eliminar"
-                onClick={(e) => { e.stopPropagation(); onEliminar(comp.id); }}
-                title="Eliminar bloque"
-            >
-                <i className="fa-solid fa-trash"></i>
-            </button>
+            <div className="componente-contenido">
+                <Componente
+                    onActivate={(e, data) => onActivate(e, { ...data, id: comp.id })}
+                    activeElement={activeElement}
+                    initialData={comp.data}
+                    onUpdate={(newData) => onUpdate(comp.id, newData)}
+                />
+            </div>
+            <div className="componente-acciones">
+                <button
+                    className="componente-mover"
+                    onClick={(e) => { e.stopPropagation(); onMover(comp.id, 'up'); }}
+                    disabled={isFirst}
+                    title="Mover arriba"
+                >
+                    <i className="fa-solid fa-chevron-up" />
+                </button>
+                <button
+                    className="componente-eliminar"
+                    onClick={(e) => { e.stopPropagation(); onEliminar(comp.id); }}
+                    title="Eliminar bloque"
+                >
+                    <i className="fa-solid fa-trash" />
+                </button>
+                <button
+                    className="componente-mover"
+                    onClick={(e) => { e.stopPropagation(); onMover(comp.id, 'down'); }}
+                    disabled={isLast}
+                    title="Mover abajo"
+                >
+                    <i className="fa-solid fa-chevron-down" />
+                </button>
+            </div>
         </div>
     );
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Fetch from '../../services/Fetch';
-import { normalizarPortafolio, normalizarResena, normalizarUsuario } from '../../utils/normalizers';
+import { normalizarPortafolio, normalizarResena } from '../../utils/normalizers';
 import CardProyecto from '../PerfilUsuario/CardProyecto';
 import PreviewComponentes from '../PlantillaTalentos/PreviewComponentes';
 import ModalProyecto from '../PerfilUsuario/ModalProyecto';
@@ -32,7 +32,7 @@ const categories = [
 function CompPrincipal() {
     const navigate = useNavigate();
     const filtersRef = useRef(null);
-    const [datos, setDatos] = useState({ usuarios: [], portafolios: [], resenas: [] });
+    const [datos, setDatos] = useState({ portafolios: [], resenas: [] });
     const [activeCategory, setActiveCategory] = useState('Todo');
     const [proyectoSeleccionado, setProyectoSeleccionado] = useState(null);
     const [configDestacado, setConfigDestacado] = useState(null);
@@ -43,14 +43,12 @@ function CompPrincipal() {
     useEffect(() => {
         const cargar = async () => {
             try {
-                const [resU, resP, resR, resCfg] = await Promise.all([
-                    Fetch.getData('usuarios?limit=100'),
-                    Fetch.getData('portafolios?limit=50'),
-                    Fetch.getData('resenas?limit=100'),
+                const [resP, resR, resCfg] = await Promise.all([
+                    Fetch.getData('portafolios?limit=500').catch(() => []),
+                    Fetch.getData('resenas?limit=500').catch(() => []),
                     Fetch.getData('configuracion/talento_destacado').catch(() => null),
                 ]);
                 setDatos({
-                    usuarios:    (resU || []).map(normalizarUsuario),
                     portafolios: (resP || []).map(normalizarPortafolio),
                     resenas:     (resR || []).map(normalizarResena),
                 });
@@ -66,17 +64,14 @@ function CompPrincipal() {
     const portafoliosProcesados = useMemo(() => {
         if (!datos.portafolios.length) return [];
         return datos.portafolios
-            .slice()
-            .sort((a, b) => Number(b.id) - Number(a.id))
             .map(p => {
-                const user = datos.usuarios.find(u => String(u.id) === String(p.usuarioId));
-                const userFinal = user || { Nombre: p.nombreUsuario || 'Usuario', img: '' };
                 const resenasPf = datos.resenas.filter(r => String(r.portafolioId) === String(p.id));
                 const avgRating = resenasPf.length > 0
                     ? resenasPf.reduce((sum, r) => sum + (r.rating || 0), 0) / resenasPf.length
-                    : null;
-                return { ...p, user: userFinal, avgRating, totalResenas: resenasPf.length };
-            });
+                    : 0;
+                return { ...p, user: p.usuario || { Nombre: 'Usuario', img: '' }, avgRating, totalResenas: resenasPf.length };
+            })
+            .sort((a, b) => b.avgRating - a.avgRating || b.totalResenas - a.totalResenas);
     }, [datos]);
 
     const filtrados = useMemo(() => {
@@ -242,7 +237,7 @@ function CompPrincipal() {
                     resenas={datos.resenas}
                     onClose={() => setProyectoSeleccionado(null)}
                     onReviewAdded={async () => {
-                        const res = await Fetch.getData('resenas?limit=100');
+                        const res = await Fetch.getData('resenas?limit=500').catch(() => []);
                         setDatos(prev => ({ ...prev, resenas: (res || []).map(normalizarResena) }));
                     }}
                 />

@@ -41,7 +41,7 @@ function GrillaTriple({ onActivate, activeElement, initialData, onUpdate }) {
             : "none",
           backgroundSize: "cover",
           backgroundPosition: "center",
-          outline: activeElement?.id === fondo.state.id ? "2px solid #3b82f6" : "none"
+          outline: (activeElement?.id && activeElement.id === fondo.state.id) ? "2px solid #3b82f6" : "none"
         }}
         onClick={(e) => {
           e.stopPropagation();
@@ -50,7 +50,8 @@ function GrillaTriple({ onActivate, activeElement, initialData, onUpdate }) {
             tipo: "fondo",
             setColorFondo: (c) => fondo.update({ colorFondo: c }),
             setImageUrl: (u) => fondo.update({ imageUrl: u }),
-            imageUrl: fondo.state.imageUrl
+            imageUrl: fondo.state.imageUrl,
+            colorFondo: fondo.state.colorFondo,
           });
         }}
       >
@@ -58,6 +59,16 @@ function GrillaTriple({ onActivate, activeElement, initialData, onUpdate }) {
           <div className="loading-overlay-fondo">
             <div className="spinner"></div>
           </div>
+        )}
+
+        {fondo.state.imageUrl && !loadingFondo && (
+          <button
+            className="bloque-quitar-imagen"
+            onClick={(e) => { e.stopPropagation(); fondo.update({ imageUrl: '' }); }}
+            title="Quitar imagen"
+          >
+            <i className="fa-solid fa-xmark" />
+          </button>
         )}
 
         <EditableBlock

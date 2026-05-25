@@ -41,7 +41,7 @@ function Estructura1_4({ onActivate, activeElement, initialData, onUpdate }) {
           ? `url(${fondo.state.imageUrl})`
           : "none",
         outline:
-          activeElement?.id === fondo.state.id ? "2px solid #3b82f6" : "none"
+          (activeElement?.id && activeElement.id === fondo.state.id) ? "2px solid #3b82f6" : "none"
       }}
       onClick={(e) => {
         e.stopPropagation();
@@ -51,7 +51,8 @@ function Estructura1_4({ onActivate, activeElement, initialData, onUpdate }) {
           tipo: "fondo",
           setColorFondo: (c) => fondo.update({ colorFondo: c }),
           setImageUrl: (u) => fondo.update({ imageUrl: u }),
-          imageUrl: fondo.state.imageUrl
+          imageUrl: fondo.state.imageUrl,
+          colorFondo: fondo.state.colorFondo,
         });
       }}
     >
@@ -60,6 +61,16 @@ function Estructura1_4({ onActivate, activeElement, initialData, onUpdate }) {
         <div className="loading-overlay-fondo">
           <div className="spinner"></div>
         </div>
+      )}
+
+      {fondo.state.imageUrl && !loadingFondo && (
+        <button
+          className="bloque-quitar-imagen"
+          onClick={(e) => { e.stopPropagation(); fondo.update({ imageUrl: '' }); }}
+          title="Quitar imagen"
+        >
+          <i className="fa-solid fa-xmark" />
+        </button>
       )}
 
       <div className="est1_4__content">

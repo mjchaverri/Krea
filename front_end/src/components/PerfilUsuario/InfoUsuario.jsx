@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../../styles/EstilosPerfilUsuario/InfoUsuarios.css";
 import UploadImage from "../PlantillaTalentos/SubirImagen";
 import Fetch from "../../services/Fetch";
+import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 
 const API_UBICACIONES = 'https://ubicaciones.paginasweb.cr'
@@ -150,7 +151,7 @@ function InfoUsuario({ usuario, isOwner = false, onUpdate }) {
             if (onUpdate) onUpdate()
         } catch (error) {
             console.error("Error actualizando:", error)
-            alert("Error al guardar cambios")
+            Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudieron guardar los cambios.', confirmButtonColor: '#0ea5e9' })
         }
     }
 
@@ -216,7 +217,13 @@ function InfoUsuario({ usuario, isOwner = false, onUpdate }) {
                 }
                 {isOwner && editando && (
                     <div className="perfil-img-acciones">
-                        <UploadImage setImageUrl={(url) => setForm(p => ({ ...p, img: url }))} />
+                        <UploadImage
+                            id="perfil-foto-input"
+                            setImageUrl={(url) => setForm(p => ({ ...p, img: url }))}
+                        />
+                        <label htmlFor="perfil-foto-input" className="perfil-img-subir" title="Subir foto">
+                            <i className="fa-solid fa-camera" /> {form.img ? "Cambiar foto" : "Subir foto"}
+                        </label>
                         {form.img && (
                             <button
                                 className="perfil-img-eliminar"

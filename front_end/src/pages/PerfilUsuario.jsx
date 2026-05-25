@@ -7,7 +7,7 @@ import ProyectosRecientes from '../components/PerfilUsuario/ProyectosRecientes';
 import "../styles/EstilosPerfilUsuario/PerfilUsuario.css";
 import Fetch from '../services/Fetch';
 import { normalizarUsuario } from '../utils/normalizers';
-import ResenasUsuario from '../components/PerfilUsuario/ReseñasUsuario';
+import ResenasPerfilUsuario from '../components/PerfilUsuario/ResenasPerfilUsuario';
 
 function PerfilUsuario() {
     const [usuarioPerfil, setUsuarioPerfil] = useState(null);
@@ -54,10 +54,12 @@ function PerfilUsuario() {
                 <ProyectosRecientes />
             </div>
 
-            {/* RESEÑAS NUEVAS */}
-            <div className="perfil-resenas">
-                <ResenasUsuario />
-            </div>
+            {/* RESEÑAS DE PERFIL */}
+            {usuarioPerfil?.id && (
+                <div className="perfil-resenas">
+                    <ResenasPerfilUsuario usuarioId={usuarioPerfil.id} isOwner={true} />
+                </div>
+            )}
 
             <Footer />
         </div>

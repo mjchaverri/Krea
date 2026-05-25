@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Fetch from '../../services/Fetch'
+import Swal from 'sweetalert2'
 import UploadImage from '../PlantillaTalentos/SubirImagen'
 import '../../Styles/EstilosRegistros/Registro.css'
 
@@ -67,22 +68,23 @@ function Registro() {
 
     async function RegistroUsuarios() {
         if (!NombreUsuario || !Nombre || !Correo || !Telefono || !provinciaNombre || !cantonNombre || !distritoNombre || !Contrasena) {
-            alert("Debe llenar todos los campos")
+            Swal.fire({ icon: 'warning', title: 'Campos incompletos', text: 'Debe llenar todos los campos.', confirmButtonColor: '#0ea5e9' })
             return
         }
         if (Contrasena.length < 6) {
-            alert("La contraseña debe tener al menos 6 caracteres")
+            Swal.fire({ icon: 'warning', title: 'Contraseña muy corta', text: 'La contraseña debe tener al menos 6 caracteres.', confirmButtonColor: '#0ea5e9' })
             return
         }
         if (!emailRegex.test(Correo)) {
-            alert("Correo inválido")
+            Swal.fire({ icon: 'warning', title: 'Correo inválido', text: 'Ingresa un correo electrónico válido.', confirmButtonColor: '#0ea5e9' })
             return
         }
 
+        Swal.fire({ title: 'Registrando cuenta...', allowOutsideClick: false, didOpen: () => Swal.showLoading() })
         setCargando(true)
         try {
             const id_rol = TipoCuenta === 'empresa' ? 3 : 2
-            const data = await Fetch.postData('usuarios/register', {
+            await Fetch.postData('usuarios/register', {
                 nombre_usuario:  NombreUsuario,
                 nombre_completo: Nombre,
                 correo:          Correo,
@@ -95,15 +97,13 @@ function Registro() {
                 id_rol,
             })
 
-            alert("Registro exitoso. Ya puedes iniciar sesión.")
+            await Swal.fire({ icon: 'success', title: '¡Registro exitoso!', text: 'Ya puedes iniciar sesión.', confirmButtonColor: '#0ea5e9' })
             navigate("/Iniciar")
         } catch (error) {
-            if (error.errors && Array.isArray(error.errors)) {
-                const msgs = error.errors.map(e => e.msg).join('\n')
-                alert(`Errores de validación:\n${msgs}`)
-            } else {
-                alert(error.message || "Error al registrar. Intenta de nuevo.")
-            }
+            const msg = error.errors?.length
+                ? error.errors.map(e => e.msg).join('\n')
+                : (error.message || 'Error al registrar. Intenta de nuevo.')
+            Swal.fire({ icon: 'error', title: 'Error al registrar', text: msg, confirmButtonColor: '#0ea5e9' })
         } finally {
             setCargando(false)
         }

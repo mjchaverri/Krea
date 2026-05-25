@@ -81,6 +81,7 @@ function Estructura1({ onActivate, activeElement, initialData, onUpdate }) {
                     setColorFondo: (color) => fondo.update({ colorFondo: color }),
                     setImageUrl: (url) => fondo.update({ imageUrl: url }),
                     imageUrl: fondoRef.current.imageUrl,
+                    colorFondo: fondoRef.current.colorFondo,
                 });
             }}
         >
@@ -88,6 +89,16 @@ function Estructura1({ onActivate, activeElement, initialData, onUpdate }) {
                 <div className="loading-overlay-fondo">
                     <div className="spinner"></div>
                 </div>
+            )}
+
+            {fondo.state.imageUrl && !loadingFondo && (
+                <button
+                    className="bloque-quitar-imagen"
+                    onClick={(e) => { e.stopPropagation(); fondo.update({ imageUrl: '' }); }}
+                    title="Quitar imagen"
+                >
+                    <i className="fa-solid fa-xmark" />
+                </button>
             )}
 
             {/* Bloque interior — mismo patrón que EditableBlock */}
@@ -111,6 +122,7 @@ function Estructura1({ onActivate, activeElement, initialData, onUpdate }) {
                         setColorFondo: (color) => fondo.update({ childColorFondo: color }),
                         setImageUrl: (url) => fondo.update({ childImageUrl: url }),
                         imageUrl: fondoRef.current.childImageUrl,
+                        colorFondo: fondoRef.current.childColorFondo,
                         focusTexto: () => {
                             setTextModeActive(true);
                             setTimeout(() => textareaRef.current?.focus(), 0);
@@ -120,11 +132,15 @@ function Estructura1({ onActivate, activeElement, initialData, onUpdate }) {
                         toggleItalic:  () => fondo.update({ italic: !fondoRef.current.italic }),
                         setAlign:      (align) => fondo.update({ align }),
                         setTextPosition: (pos) => fondo.update({ textPosition: pos }),
+                        setFontSize:   (size) => fondo.update({ fontSize: size }),
+                        setFontFamily: (family) => fondo.update({ fontFamily: family }),
                         bold:         fondoRef.current.bold,
                         italic:       fondoRef.current.italic,
                         align:        fondoRef.current.align,
                         colorTexto:   fondoRef.current.colorTexto,
                         textPosition: fondoRef.current.textPosition,
+                        fontSize:     fondoRef.current.fontSize,
+                        fontFamily:   fondoRef.current.fontFamily,
                     });
                 }}
             >
@@ -132,6 +148,16 @@ function Estructura1({ onActivate, activeElement, initialData, onUpdate }) {
                     <div className="loading-overlay-child">
                         <div className="spinner"></div>
                     </div>
+                )}
+
+                {fondo.state.childImageUrl && !loadingChild && (
+                    <button
+                        className="bloque-quitar-imagen"
+                        onClick={(e) => { e.stopPropagation(); fondo.update({ childImageUrl: '' }); }}
+                        title="Quitar imagen"
+                    >
+                        <i className="fa-solid fa-xmark" />
+                    </button>
                 )}
 
                 <textarea
@@ -145,10 +171,11 @@ function Estructura1({ onActivate, activeElement, initialData, onUpdate }) {
                     onClick={(e) => e.stopPropagation()}
                     style={{
                         color: fondo.state.colorTexto,
+                        fontSize: fondo.state.fontSize || "16px",
+                        fontFamily: fondo.state.fontFamily === "serif" ? "Georgia, serif" : "inherit",
                         fontWeight: fondo.state.bold ? "bold" : "normal",
                         fontStyle: fondo.state.italic ? "italic" : "normal",
                         textAlign: fondo.state.align || "center",
-                        fontSize: "1.6rem",
                     }}
                 />
             </div>

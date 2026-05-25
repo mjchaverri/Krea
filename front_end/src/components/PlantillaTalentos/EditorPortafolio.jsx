@@ -4,10 +4,23 @@ import SidebarTalentos from "./SidebarTalentos";
 import Lienzo from "./Lienzo";
 import ComponentePortafolio from "./ComponentePortafolio";
 import ModalVistaPrevia from "./ModalVistaPrevia";
+import Estructura1 from "./Estructura1";
+import Estructura1_1 from "./Estructura1_1";
+import Estructura1_2 from "./Estructura1_2";
+import Estructura1_3 from "./Estructura1_3";
+import Estructura1_4 from "./Estructura1_4";
+import GrillaDoble from "./GrillaDoble";
+import GrillaTriple from "./GrillaTriple";
+import Grilla1_2_Izda from "./Grilla1_2_Izda";
 import { ImageProvider } from "./HookImagenCloudinary";
 import { usePortafolioEditor } from "./usePortafolioEditor";
 import "../../styles/PlantillaTalentos/Portafolio.css";
 import ChatBotBubble from "./ChatBotBubble";
+
+const MAPA = {
+    Estructura1, Estructura1_1, Estructura1_2, Estructura1_3, Estructura1_4,
+    GrillaDoble, GrillaTriple, Grilla1_2_Izda,
+};
 
 function EditorPortafolio() {
     const {
@@ -18,7 +31,8 @@ function EditorPortafolio() {
         activeElement,
         setActiveElement,
         showPreviewModal,
-        previewImage,
+        showPdfCapture,
+        pdfCaptureRef,
         lienzoRef,
         indiceRef,
         historialRef,
@@ -27,10 +41,12 @@ function EditorPortafolio() {
         rehacer,
         toggleComponente,
         eliminarComponente,
+        moverComponente,
         updateComponentData,
         handlePreview,
         closePreview,
         guardarPortafolio,
+        descargarPDF,
         setTituloProyecto,
         setDescripcionProyecto,
         setCategorias,
@@ -38,7 +54,7 @@ function EditorPortafolio() {
 
     return (
         <>
-            <NavBarEditor guardar={guardarPortafolio} onPreview={handlePreview} />
+            <NavBarEditor guardar={guardarPortafolio} onPreview={handlePreview} onDescargar={descargarPDF} />
 
             <BarraHerramientas
                 activeElement={activeElement}
@@ -83,6 +99,9 @@ function EditorPortafolio() {
                                                 onActivate={activarEditor}
                                                 onUpdate={updateComponentData}
                                                 onEliminar={eliminarComponente}
+                                                onMover={moverComponente}
+                                                isFirst={index === 0}
+                                                isLast={index === componentes.length - 1}
                                             />
                                         ))}
                                     </>
@@ -94,9 +113,52 @@ function EditorPortafolio() {
                 </div>
             </ImageProvider>
 
+            {/* Div off-screen para captura de PDF con html2canvas — sin overflow ni clipping */}
+            {showPdfCapture && (
+                <div
+                    ref={pdfCaptureRef}
+                    aria-hidden="true"
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: "-200vw",
+                        width: "860px",
+                        background: "#ffffff",
+                        overflow: "visible",
+                        zIndex: -9999,
+                    }}
+                >
+                    <Lienzo
+                        tituloProyecto={tituloProyecto}
+                        descripcionProyecto={descripcionProyecto}
+                        categorias={categorias}
+                        childrenEstructura={
+                            <>
+                                {componentes.map((comp) => {
+                                    const Comp = MAPA[comp.type];
+                                    if (!Comp) return null;
+                                    return (
+                                        <Comp
+                                            key={comp.id}
+                                            initialData={comp.data}
+                                            onActivate={() => {}}
+                                            activeElement={null}
+                                            onUpdate={() => {}}
+                                        />
+                                    );
+                                })}
+                            </>
+                        }
+                    />
+                </div>
+            )}
+
             <ModalVistaPrevia
                 visible={showPreviewModal}
-                imagen={previewImage}
+                componentes={componentes}
+                tituloProyecto={tituloProyecto}
+                descripcionProyecto={descripcionProyecto}
+                categorias={categorias}
                 onClose={closePreview}
             />
 

@@ -1,6 +1,6 @@
 import "../../styles/PlantillaTalentos/NavBarEditor.css"
 
-function NavBarEditor({ guardar, onPreview }) {
+function NavBarEditor({ guardar, onPreview, onDescargar }) {
     const usuario = JSON.parse(localStorage.getItem("UsuarioActivo") || "{}");
     const fotoPerfil = usuario?.img || "";
 
@@ -21,6 +21,10 @@ function NavBarEditor({ guardar, onPreview }) {
             <div className="navbar-editor__right">
                 <button className="btn-preview" onClick={onPreview}>
                     <i className="fa-solid fa-eye"></i> Vista previa
+                </button>
+
+                <button className="btn-download" onClick={onDescargar}>
+                    <i className="fa-solid fa-file-arrow-down"></i> Descargar PDF
                 </button>
 
                 <button className="btn-save" onClick={guardar}>

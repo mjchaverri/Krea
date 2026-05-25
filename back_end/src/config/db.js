@@ -6,8 +6,18 @@ const sequelize = new Sequelize(
     config.development.username,
     config.development.password,
     {
-        host: config.development.host,
-        dialect: config.development.dialect
+        host:    config.development.host,
+        dialect: config.development.dialect,
+        pool: {
+            max:     10,
+            min:     2,
+            acquire: 30000,
+            idle:    10000,
+        },
+        dialectOptions: {
+            connectTimeout: 60000,
+        },
+        logging: false,
     }
 );
 

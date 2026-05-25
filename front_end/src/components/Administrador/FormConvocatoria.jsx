@@ -1,27 +1,27 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import '../../styles/EstilosAdmin/Formularioconvo.css'
 import Fetch from '../../services/Fetch'
+import Swal from 'sweetalert2'
 
 function FormConvocatoria() {
   const [nombre, setNombre]           = useState('')
   const [descripcion, setDescripcion] = useState('')
   const [fechaLimite, setFechaLimite] = useState('')
-  const [cargando, setCargando]       = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!nombre || !descripcion || !fechaLimite) {
-      alert("Por favor completa todos los campos")
+      Swal.fire({ icon: 'warning', title: 'Campos incompletos', text: 'Por favor completa todos los campos.', confirmButtonColor: '#0ea5e9' })
       return
     }
 
     const usuarioActivo = JSON.parse(localStorage.getItem('UsuarioActivo') || '{}')
     if (!usuarioActivo.id) {
-      alert("Debes iniciar sesión para crear convocatorias")
+      Swal.fire({ icon: 'warning', title: 'Sesión requerida', text: 'Debes iniciar sesión para crear convocatorias.', confirmButtonColor: '#0ea5e9' })
       return
     }
 
-    setCargando(true)
+    Swal.fire({ title: 'Creando convocatoria...', allowOutsideClick: false, didOpen: () => Swal.showLoading() })
     try {
       await Fetch.postData('convocatorias', {
         nombre,
@@ -29,18 +29,15 @@ function FormConvocatoria() {
         fecha_cierre: fechaLimite,
         id_usuario:   usuarioActivo.id,
       })
-      alert("Convocatoria creada exitosamente")
       setNombre('')
       setDescripcion('')
       setFechaLimite('')
+      Swal.fire({ icon: 'success', title: '¡Convocatoria creada!', text: 'La convocatoria fue publicada exitosamente.', confirmButtonColor: '#0ea5e9' })
     } catch (error) {
-      if (error.errors && Array.isArray(error.errors)) {
-        alert(error.errors.map(e => e.msg).join('\n'))
-      } else {
-        alert(error.message || "Error al crear la convocatoria")
-      }
-    } finally {
-      setCargando(false)
+      const msg = error.errors?.length
+        ? error.errors.map(e => e.msg).join('\n')
+        : (error.message || 'Error al crear la convocatoria')
+      Swal.fire({ icon: 'error', title: 'Error', text: msg, confirmButtonColor: '#0ea5e9' })
     }
   }
 
@@ -84,8 +81,8 @@ function FormConvocatoria() {
         </div>
 
         <div className="form-actions">
-          <button className="submit-button" type="submit" disabled={cargando}>
-            {cargando ? 'Enviando...' : 'Enviar Convocatoria'}
+          <button className="submit-button" type="submit">
+            Enviar Convocatoria
           </button>
         </div>
       </form>

@@ -56,6 +56,7 @@ function EditableBlock({ data, update, onActivate, activeElement, className = ""
         setColorFondo: (color) => update({ colorFondo: color }),
         setImageUrl: (url) => update({ imageUrl: url }),
         imageUrl: dataRef.current.imageUrl,
+        colorFondo: dataRef.current.colorFondo,
         focusTexto: () => {
             setTextModeActive(true);
             setTimeout(() => textareaRef.current?.focus(), 0);
@@ -65,11 +66,15 @@ function EditableBlock({ data, update, onActivate, activeElement, className = ""
         toggleItalic:  () => update({ italic: !dataRef.current.italic }),
         setAlign:      (align) => update({ align }),
         setTextPosition: (pos) => update({ textPosition: pos }),
+        setFontSize:   (size) => update({ fontSize: size }),
+        setFontFamily: (family) => update({ fontFamily: family }),
         bold:          dataRef.current.bold,
         italic:        dataRef.current.italic,
         align:         dataRef.current.align,
         colorTexto:    dataRef.current.colorTexto,
         textPosition:  dataRef.current.textPosition,
+        fontSize:      dataRef.current.fontSize,
+        fontFamily:    dataRef.current.fontFamily,
     });
 
     return (
@@ -95,6 +100,16 @@ function EditableBlock({ data, update, onActivate, activeElement, className = ""
                 </div>
             )}
 
+            {data.imageUrl && !loadingImage && (
+                <button
+                    className="bloque-quitar-imagen"
+                    onClick={(e) => { e.stopPropagation(); update({ imageUrl: '' }); }}
+                    title="Quitar imagen"
+                >
+                    <i className="fa-solid fa-xmark" />
+                </button>
+            )}
+
             <textarea
                 ref={textareaRef}
                 className={`bloque-texto${textModeActive ? " bloque-texto--editing" : ""}`}
@@ -107,6 +122,7 @@ function EditableBlock({ data, update, onActivate, activeElement, className = ""
                 style={{
                     color: data.colorTexto,
                     fontSize: data.fontSize,
+                    fontFamily: data.fontFamily === "serif" ? "Georgia, serif" : "inherit",
                     fontWeight: data.bold ? "bold" : "normal",
                     fontStyle: data.italic ? "italic" : "normal",
                     textAlign: data.align,

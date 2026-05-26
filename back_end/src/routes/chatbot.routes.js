@@ -6,6 +6,6 @@ const {
     sendMessage,
 } = require("../controllers/chatbot.controller");
 
-router.post("/message", sendMessage);
+router.post("/", sendMessage);
 
 module.exports = router;

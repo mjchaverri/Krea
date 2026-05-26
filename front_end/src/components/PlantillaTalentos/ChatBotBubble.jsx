@@ -1,47 +1,63 @@
-import {MessageCircle, X, Send} from "lucide-react"
-import { useEffect, useRef, useState } from "react";
+import {
+    MessageCircle,
+    Send,
+    X,
+} from "lucide-react";
+
+import {
+    useEffect,
+    useState,
+} from "react";
 
 import "../../styles/PlantillaTalentos/ChatBotBubble.css";
 
 function ChatBotBubble() {
 
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] =
+        useState(false);
 
-    const [message, setMessage] = useState("");
+    const [input, setInput] =
+        useState("");
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] =
+        useState(false);
 
-    const [messages, setMessages] = useState([
-        {
-            role: "assistant",
-            content:
-                "Hola :wave: Soy tu asistente IA del editor.",
-        },
+    const [messages, setMessages] =
+        useState(() => {
 
-        {
-            role: "assistant",
-            content:
-                "Puedo ayudarte con ideas, diseño UX/UI y estructura de tu portafolio.",
-        },
-    ]);
+            const saved =
+                localStorage.getItem(
+                    "kikia-chat"
+                );
 
-    const messagesEndRef = useRef(null);
+            return saved
+                ? JSON.parse(saved)
+                : [
+                    {
+                        role: "assistant",
+
+                        content:
+                            "Hola :wave: Soy KikIA.\nEstoy aquí para ayudarte a construir tu portafolio ideal.",
+                    },
+                ];
+        });
 
     useEffect(() => {
 
-        messagesEndRef.current?.scrollIntoView({
-            behavior: "smooth",
-        });
+        localStorage.setItem(
+            "kikia-chat",
+            JSON.stringify(messages)
+        );
 
     }, [messages]);
 
-    const handleSendMessage = async () => {
+    const sendMessage = async () => {
 
-        if (!message.trim() || loading) return;
+        if (!input.trim()) return;
 
         const userMessage = {
             role: "user",
-            content: message,
+            content: input,
         };
 
         setMessages((prev) => [
@@ -49,43 +65,60 @@ function ChatBotBubble() {
             userMessage,
         ]);
 
-        const currentMessage = message;
+        const currentInput = input;
 
-        setMessage("");
-
-        setLoading(true);
+        setInput("");
 
         try {
 
-            const response = await fetch(
-                "http://localhost:3000/api/chatbot/message",
-                {
-                    method: "POST",
+            setLoading(true);
 
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
+            const response =
+                await fetch(
+                    "http://localhost:3000/api/chatbot",
+                    {
+                        method: "POST",
 
-                    body: JSON.stringify({
-                        message: currentMessage,
-                    }),
-                }
-            );
+                        headers: {
+                            "Content-Type":
+                                "application/json",
+                        },
 
-            const data = await response.json();
+                        body: JSON.stringify({
+                            message:
+                                currentInput,
+                        }),
+                    }
+                );
+
+            const data =
+                await response.json();
 
             if (!data.ok) {
+
                 throw new Error(
-                    data.message ||
-                    "Error generando respuesta"
+                    data.message
                 );
             }
+
+            const aiResponse =
+                data.response;
+
+            // GUARDAR JSON ESTRUCTURADO
+            localStorage.setItem(
+                "kikia-last-response",
+                JSON.stringify(
+                    aiResponse.data
+                )
+            );
 
             setMessages((prev) => [
                 ...prev,
                 {
                     role: "assistant",
-                    content: data.response,
+
+                    content:
+                        aiResponse.message,
                 },
             ]);
 
@@ -97,114 +130,123 @@ function ChatBotBubble() {
                 ...prev,
                 {
                     role: "assistant",
+
                     content:
-                        "Ocurrió un error generando la respuesta.",
+                        "Ocurrió un error al procesar la solicitud.",
                 },
             ]);
 
         } finally {
 
             setLoading(false);
-
         }
-    };
-
-    const handleKeyDown = (e) => {
-
-        if (e.key === "Enter") {
-            handleSendMessage();
-        }
-
     };
 
     return (
         <>
 
-            {/* CHAT */}
-
-            <div className={`chatbot-window ${open ? "open" : ""}`}>
-
-                {/* HEADER */}
+            <div
+                className={`chatbot-window ${
+                    open ? "open" : ""
+                }`}
+            >
 
                 <div className="chatbot-header">
 
                     <div>
-                        <h4>Asistente IA</h4>
-                        <span>En línea</span>
+
+                        <h4>KikIA</h4>
+
+                        <span>
+                            Asistente IA
+                        </span>
+
                     </div>
 
                     <button
-                        onClick={() => setOpen(false)}
+                        onClick={() =>
+                            setOpen(false)
+                        }
                     >
                         <X size={18} />
                     </button>
 
                 </div>
 
-                {/* BODY */}
-
                 <div className="chatbot-body">
 
-                    {messages.map((msg, index) => (
+                    {messages.map(
+                        (msg, index) => (
 
-                        <div
-                            key={index}
-                            className={`chatbot-message ${msg.role === "assistant"
-                                    ? "bot"
-                                    : "user"
+                            <div
+                                key={index}
+
+                                className={`chatbot-message ${
+                                    msg.role ===
+                                    "assistant"
+                                        ? "bot"
+                                        : "user"
                                 }`}
-                        >
-                            {msg.content}
-                        </div>
-
-                    ))}
+                            >
+                                {msg.content}
+                            </div>
+                        )
+                    )}
 
                     {loading && (
 
                         <div className="chatbot-message bot">
-                            Escribiendo...
+                            KikIA está pensando...
                         </div>
-
                     )}
 
-                    <div ref={messagesEndRef} />
-
                 </div>
-
-                {/* FOOTER */}
 
                 <div className="chatbot-footer">
 
                     <input
                         type="text"
+
                         placeholder="Escribe un mensaje..."
-                        value={message}
+
+                        value={input}
+
                         onChange={(e) =>
-                            setMessage(e.target.value)
+                            setInput(
+                                e.target.value
+                            )
                         }
-                        onKeyDown={handleKeyDown}
+
+                        onKeyDown={(e) => {
+
+                            if (
+                                e.key === "Enter"
+                            ) {
+
+                                sendMessage();
+                            }
+                        }}
                     />
 
                     <button
-                        onClick={handleSendMessage}
+                        onClick={sendMessage}
                         disabled={loading}
                     >
                         <Send size={18} />
                     </button>
 
                 </div>
-
             </div>
-
-            {/* BURBUJA */}
 
             <button
                 className="chatbot-bubble"
-                onClick={() => setOpen(!open)}
+
+                onClick={() =>
+                    setOpen(!open)
+                }
             >
                 <MessageCircle size={28} />
             </button>
-
         </>
     );
 }

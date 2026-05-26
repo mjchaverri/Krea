@@ -58,5 +58,4 @@ setupSwagger(app)
 app.listen(3000, () => {
     console.log('servidor corriendo en puerto 3000')
     console.log('documentación disponible en http://localhost:3000/api/docs')
-    console.log(process.env.GEMINI_API_KEY);
 })

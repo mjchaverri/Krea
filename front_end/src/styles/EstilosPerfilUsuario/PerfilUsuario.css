@@ -1,16 +1,15 @@
 .perfil-page {
   width: 100%;
   min-height: 100vh;
-  background: #f8fafc;
+  background: #ffffff;
   display: flex;
   flex-direction: column;
 }
 
 .perfil-content {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 40px 20px 0;
   width: 100%;
+  padding: 40px 100px 0;
+  box-sizing: border-box;
   animation: fadeIn 0.5s ease-out;
 }
 
@@ -34,16 +33,16 @@
 }
 
 .perfil-resenas {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 20px;
+  width: 100%;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 /* Botón volver (PerfilVisitante) */
 .perfil-volver-bar {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 16px 20px 0;
+  width: 100%;
+  padding: 16px 100px 0;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: 10px;

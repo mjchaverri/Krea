@@ -2,19 +2,22 @@ import "../../styles/EstilosPerfilUsuario/ProyectosRecientes.css"
 import { useState, useEffect, useMemo } from 'react'
 import CardProyecto from './CardProyecto';
 import ModalProyecto from './ModalProyecto';
+import Paginacion from '../Administrador/Paginacion';
 import Fetch from '../../services/Fetch';
 import Swal from 'sweetalert2';
 import { normalizarPortafolio, normalizarResena } from '../../utils/normalizers';
 import { calcularPromedio } from '../../utils/calcularPromedio';
 import { useNavigate } from "react-router-dom";
 
+const POR_PAGINA = 8;
+
 function ProyectosRecientes() {
-    const [proyectos, setProyectos] = useState([])
-    const [todasResenas, setTodasResenas] = useState([])
+    const [proyectos,            setProyectos]            = useState([])
+    const [todasResenas,         setTodasResenas]         = useState([])
     const [proyectoSeleccionado, setProyectoSeleccionado] = useState(null)
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
-    const [visibleCount, setVisibleCount] = useState(3)
+    const [loading,              setLoading]              = useState(true)
+    const [error,                setError]                = useState(null)
+    const [pagina,               setPagina]               = useState(1)
 
     const navigate = useNavigate()
 
@@ -23,14 +26,11 @@ function ProyectosRecientes() {
         setError(null)
         try {
             const usuario = JSON.parse(localStorage.getItem("UsuarioActivo"))
-            if (!usuario?.id) {
-                setLoading(false)
-                return
-            }
+            if (!usuario?.id) { setLoading(false); return }
 
             const [resP, resR] = await Promise.all([
-                Fetch.getData(`portafolios/usuario/${usuario.id}?limit=50`),
-                Fetch.getData('resenas?limit=100'),
+                Fetch.getData(`portafolios/usuario/${usuario.id}?limit=200`),
+                Fetch.getData('resenas?limit=200'),
             ])
 
             setProyectos((resP || []).map(normalizarPortafolio))
@@ -43,9 +43,10 @@ function ProyectosRecientes() {
         }
     }
 
-    const handleEditarPortfolio = (proyecto) => {
+    useEffect(() => { cargarDatos() }, [])
+
+    const handleEditarPortfolio = (proyecto) =>
         navigate("/portafolio", { state: { proyectoEditando: proyecto } });
-    };
 
     const handleDeletePortfolio = async (id) => {
         const result = await Swal.fire({
@@ -59,30 +60,21 @@ function ProyectosRecientes() {
             cancelButtonColor: '#6b7280',
         });
         if (!result.isConfirmed) return;
-
         try {
             await Fetch.deleteData(`portafolios/${id}`);
-            setProyectos((prev) => prev.filter((p) => p.id !== id));
-            Swal.fire({ icon: 'success', title: 'Eliminado', text: 'El portafolio fue eliminado correctamente.', confirmButtonColor: '#0ea5e9', timer: 2000, showConfirmButton: false });
-        } catch (error) {
-            console.error("Error al eliminar portafolio:", error);
-            Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo eliminar el portafolio. Intenta de nuevo.', confirmButtonColor: '#0ea5e9' });
+            setProyectos(prev => prev.filter(p => p.id !== id));
+            Swal.fire({ icon: 'success', title: 'Eliminado', timer: 2000, showConfirmButton: false });
+        } catch {
+            Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo eliminar el portafolio.', confirmButtonColor: '#0ea5e9' });
         }
     };
 
-    useEffect(() => {
-        cargarDatos()
-    }, [])
+    const totalPaginas  = Math.max(1, Math.ceil(proyectos.length / POR_PAGINA));
+    const proyectosPag  = proyectos.slice((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA);
 
-    // 🔥 Memo optimizado (fuera del JSX)
-    const proyectosRenderizados = useMemo(() => {
-        return proyectos.slice(0, visibleCount).map((proyecto) => {
-            const resenasProyecto = todasResenas.filter(
-                r => r.portafolioId === proyecto.id
-            )
-
-            const promedio = calcularPromedio(resenasProyecto)
-
+    const proyectosRenderizados = useMemo(() =>
+        proyectosPag.map(proyecto => {
+            const resenasProyecto = todasResenas.filter(r => r.portafolioId === proyecto.id)
             return (
                 <CardProyecto
                     key={proyecto.id}
@@ -90,39 +82,31 @@ function ProyectosRecientes() {
                     nombreProyecto={proyecto.titulo}
                     componentes={proyecto.componentes}
                     categorias={proyecto.categorias || []}
-                    promedio={promedio}
+                    promedio={calcularPromedio(resenasProyecto)}
                     onVerProyecto={() => setProyectoSeleccionado(proyecto)}
                     onEditar={() => handleEditarPortfolio(proyecto)}
                     onDelete={() => handleDeletePortfolio(proyecto.id)}
                 />
             )
-        })
-    }, [proyectos, todasResenas, visibleCount])
-
-    const usuarioActivo = JSON.parse(localStorage.getItem("UsuarioActivo") || "{}");
-    const isOwner = !!usuarioActivo.id;
+        }),
+    [proyectosPag, todasResenas])
 
     return (
         <div className='proyectos-container'>
             <div className="proyectos-header">
-                <h4>Proyectos Recientes</h4>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                    {isOwner && (
-                        <button 
-                            className="btn-create-empty"
-                            onClick={() => navigate("/portafolio")}
-                            style={{ padding: '8px 16px', fontSize: '13px' }}
-                        >
-                            + Agregar Portafolio
-                        </button>
-                    )}
-                    <p onClick={() => navigate("/todos-proyectos")}>Ver todos</p>
-                </div>
+                <h4>Mis Proyectos</h4>
+                <button
+                    className="btn-create-empty"
+                    onClick={() => navigate("/portafolio")}
+                    style={{ padding: '8px 16px', fontSize: '13px' }}
+                >
+                    + Agregar Portafolio
+                </button>
             </div>
 
             <div className="proyectos-grid">
                 {loading ? (
-                    Array(3).fill(0).map((_, i) => (
+                    Array(6).fill(0).map((_, i) => (
                         <div key={i} className="proyecto-card-skeleton">
                             <div className="skeleton-image"></div>
                             <div className="skeleton-text title"></div>
@@ -134,57 +118,39 @@ function ProyectosRecientes() {
                         <div className="empty-state-icon">⚠️</div>
                         <h4>Error al cargar proyectos</h4>
                         <p>{error}</p>
-                        <button className="btn-create-empty" onClick={cargarDatos}>
-                            Reintentar
-                        </button>
+                        <button className="btn-create-empty" onClick={cargarDatos}>Reintentar</button>
                     </div>
                 ) : proyectos.length === 0 ? (
                     <div className="empty-state-container">
                         <div className="empty-state-icon">📁</div>
-                        <h4>Este usuario aún no tiene proyectos</h4>
-                        <p>Los proyectos que crees aparecerán en esta sección automáticamente.</p>
-                        <button
-                            className="btn-create-empty"
-                            onClick={() => navigate("/portafolio")}
-                        >
+                        <h4>Aún no tienes proyectos</h4>
+                        <p>Los proyectos que crees aparecerán aquí automáticamente.</p>
+                        <button className="btn-create-empty" onClick={() => navigate("/portafolio")}>
                             + Crear mi primer proyecto
                         </button>
                     </div>
                 ) : (
-                    <>
-                        {proyectosRenderizados}
-
-                        {proyectos.length > visibleCount && (
-                            <div
-                                className="paginacion-container"
-                                style={{
-                                    gridColumn: '1 / -1',
-                                    textAlign: 'center',
-                                    marginTop: '20px'
-                                }}
-                            >
-                                <button
-                                    className="btn-create-empty"
-                                    onClick={() => setVisibleCount(prev => prev + 3)}
-                                >
-                                    Cargar más proyectos
-                                </button>
-                            </div>
-                        )}
-                    </>
+                    proyectosRenderizados
                 )}
             </div>
 
-            {/* Modal */}
-            <ModalProyecto 
+            {!loading && !error && proyectos.length > 0 && (
+                <div style={{ marginTop: '32px' }}>
+                    <Paginacion
+                        pagina={pagina}
+                        totalPaginas={totalPaginas}
+                        onChange={p => { setPagina(p); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                        totalItems={proyectos.length}
+                        itemsMostrados={proyectosPag.length}
+                    />
+                </div>
+            )}
+
+            <ModalProyecto
                 proyecto={proyectoSeleccionado}
-                resenas={
-                    proyectoSeleccionado
-                        ? todasResenas.filter(
-                              r => r.portafolioId === proyectoSeleccionado.id
-                          )
-                        : []
-                }
+                resenas={proyectoSeleccionado
+                    ? todasResenas.filter(r => r.portafolioId === proyectoSeleccionado.id)
+                    : []}
                 onClose={() => setProyectoSeleccionado(null)}
                 onReviewAdded={cargarDatos}
             />

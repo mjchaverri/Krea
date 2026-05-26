@@ -12,6 +12,7 @@ import GrillaTriple from "../PlantillaTalentos/GrillaTriple";
 import Grilla1_2_Izda from "../PlantillaTalentos/Grilla1_2_Izda";
 import Grilla1_2_Derecha from "../PlantillaTalentos/Grilla1_2_Derecha";
 import Fetch from "../../services/Fetch";
+import Swal from "sweetalert2";
 import { normalizarUsuario } from "../../utils/normalizers";
 import { calcularPromedio } from "../../utils/calcularPromedio";
 
@@ -106,7 +107,10 @@ function ModalProyecto({ proyecto, resenas = [], onClose, onReviewAdded }) {
 
     const handleEnviarResena = async () => {
         if (!nuevaResena.comentario.trim()) return;
-        if (yaReseno) { alert('Ya dejaste una reseña en este proyecto.'); return; }
+        if (yaReseno) {
+            Swal.fire({ icon: 'info', title: 'Ya reseñaste', text: 'Ya dejaste una reseña en este proyecto.', confirmButtonColor: '#0ea5e9' });
+            return;
+        }
         setLoading(true);
         try {
             await Fetch.postData('resenas', {

@@ -1,7 +1,8 @@
 .proyectos-container {
-  max-width: 1100px;
-  margin: 48px auto;
-  padding: 0 40px;
+  width: 100%;
+  margin: 48px 0;
+  padding: 0 100px;
+  box-sizing: border-box;
 }
 
 /* 🔥 HEADER */
@@ -32,17 +33,11 @@
   opacity: 0.8;
 }
 
-/* 🔥 GRID RESPONSIVE (3 desktop, 2 tablet, 1 mobile) */
+/* 🔥 GRID RESPONSIVE — auto-fill para aprovechar el ancho disponible */
 .proyectos-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 32px;
-}
-
-@media (max-width: 1024px) {
-  .proyectos-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
 
 @media (max-width: 640px) {

@@ -104,6 +104,22 @@ function ChatBotBubble() {
             const aiResponse =
                 data.response;
 
+            // FORMATEAR COMPONENTES PARA QUE LA PREVISUALIZACIÓN Y EL LOCAL STORAGE COINCIDAN EXACTAMENTE
+            const DEFAULT_DATA = {
+                texto: "", colorTexto: "#1a202c", colorFondo: "",
+                imageUrl: "", fontSize: "16px", bold: false,
+                italic: false, align: "left", textPosition: "center",
+                childColorFondo: "", childImageUrl: ""
+            };
+
+            if (aiResponse.data && Array.isArray(aiResponse.data.componentesSeleccionados)) {
+                aiResponse.data.componentesSeleccionados = aiResponse.data.componentesSeleccionados.map((c) => ({
+                    id: crypto.randomUUID(),
+                    type: c.type,
+                    data: { ...DEFAULT_DATA, ...(c.data || {}) },
+                }));
+            }
+
             // GUARDAR JSON ESTRUCTURADO
             localStorage.setItem(
                 "kreia-last-response",
@@ -111,6 +127,15 @@ function ChatBotBubble() {
                     aiResponse.data
                 )
             );
+
+            // DISPARAR EVENTO DE VISTA PREVIA EN TIEMPO REAL
+            if (aiResponse.data?.componentesSeleccionados?.length > 0) {
+                window.dispatchEvent(
+                    new CustomEvent("kreia-preview", {
+                        detail: aiResponse.data,
+                    })
+                );
+            }
 
             setMessages((prev) => [
                 ...prev,

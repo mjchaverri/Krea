@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import NavBarEditor from "./NavBarEditor";
 import BarraHerramientas from "./BarraHerramientas";
 import SidebarTalentos from "./SidebarTalentos";
@@ -43,6 +44,7 @@ function EditorPortafolio() {
         eliminarComponente,
         moverComponente,
         updateComponentData,
+        aplicarChatbot,
         handlePreview,
         closePreview,
         guardarPortafolio,
@@ -51,6 +53,17 @@ function EditorPortafolio() {
         setDescripcionProyecto,
         setCategorias,
     } = usePortafolioEditor();
+
+    // ── Aplicar directamente al lienzo desde el ChatBot KreIA ──────────────────────────
+    useEffect(() => {
+        const handleKreiaPreview = (e) => {
+            const data = e.detail;
+            if (!data?.componentesSeleccionados?.length) return;
+            aplicarChatbot(data.componentesSeleccionados);
+        };
+        window.addEventListener("kreia-preview", handleKreiaPreview);
+        return () => window.removeEventListener("kreia-preview", handleKreiaPreview);
+    }, [aplicarChatbot]);
 
     return (
         <>

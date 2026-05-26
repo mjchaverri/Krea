@@ -59,6 +59,41 @@
     color: #0ea5e9;
 }
 
+/* ACCIONES DEL HEADER (botones cerrar + aplicar) */
+.pvw-card__header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* BOTÓN APLICAR AL LIENZO */
+.pvw-aplicar-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.pvw-aplicar-btn:hover {
+    background: linear-gradient(135deg, #059669, #047857);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+}
+
+.pvw-aplicar-btn:active {
+    transform: translateY(0);
+}
+
 /* BOTÓN CERRAR */
 .pvw-close {
     width: 32px;

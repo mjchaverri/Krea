@@ -31,21 +31,21 @@
     font-size: 48px;
 }
 
-/* hide the delete button that ComponentePortafolio renders */
-.prevc-inner .componente-eliminar {
-    display: none;
+/* hide all buttons inside preview */
+.prevc-inner .componente-eliminar,
+.prevc-inner .bloque-quitar-imagen,
+.prevc-inner button {
+    display: none !important;
 }
 
-/* strip editor chrome */
-.prevc-inner .editable-block {
+/* strip editor chrome — no borders, no lines, no outlines */
+.prevc-inner .editable-block,
+.prevc-inner .editable-block:hover,
+.prevc-inner .editable-block.editable-block--active {
     box-shadow: none !important;
     outline: none !important;
     cursor: default !important;
     border-radius: 0 !important;
-}
-
-.prevc-inner .editable-block:hover {
-    box-shadow: none !important;
 }
 
 .prevc-inner .est1,

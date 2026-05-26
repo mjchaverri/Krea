@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import "../../styles/PlantillaTalentos/EditableBlock.css";
+import { useImagePan } from "./useImagePan";
 
 const textPositionStyles = {
     top:    { justifyContent: "flex-start" },
@@ -49,6 +50,12 @@ function EditableBlock({ data, update, onActivate, activeElement, className = ""
     const posStyle = textPositionStyles[data.textPosition || "center"];
     const isActive = activeElement?.bloqueId === bloqueId;
 
+    const pan = useImagePan(
+        data.imageUrl,
+        data.imagePosition,
+        (pos) => update({ imagePosition: pos })
+    );
+
     const buildActivateData = () => ({
         bloqueId,
         tipo: "bloque",
@@ -86,10 +93,13 @@ function EditableBlock({ data, update, onActivate, activeElement, className = ""
                     ? `url(${data.imageUrl})`
                     : "none",
                 backgroundSize: "cover",
-                backgroundPosition: "center",
+                backgroundPosition: data.imagePosition || "50% 50%",
+                cursor: pan.cursor,
                 ...posStyle,
             }}
+            onMouseDown={pan.onMouseDown}
             onClick={(e) => {
+                if (pan.consumeClick()) return;
                 e.stopPropagation();
                 onActivate(e, buildActivateData());
             }}

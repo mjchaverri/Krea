@@ -1,6 +1,7 @@
 import "../../styles/PlantillaTalentos/Estructura1.css";
 import "../../styles/PlantillaTalentos/EditableBlock.css";
 import { useEditable } from "./useEditable";
+import { useImagePan } from "./useImagePan";
 import { useState, useEffect, useRef } from "react";
 
 const textPositionStyles = {
@@ -63,6 +64,18 @@ function Estructura1({ onActivate, activeElement, initialData, onUpdate }) {
 
     const isActive = activeElement?.bloqueId === bloqueId;
 
+    const panFondo = useImagePan(
+        fondo.state.imageUrl,
+        fondo.state.imagePosition,
+        (pos) => fondo.update({ imagePosition: pos })
+    );
+
+    const panChild = useImagePan(
+        fondo.state.childImageUrl,
+        fondo.state.childImagePosition,
+        (pos) => fondo.update({ childImagePosition: pos })
+    );
+
     return (
         <div
             className="est1"
@@ -72,9 +85,12 @@ function Estructura1({ onActivate, activeElement, initialData, onUpdate }) {
                     ? `url(${fondo.state.imageUrl})`
                     : "none",
                 backgroundSize: "cover",
-                backgroundPosition: "center",
+                backgroundPosition: fondo.state.imagePosition || "50% 50%",
+                cursor: panFondo.cursor,
             }}
+            onMouseDown={panFondo.onMouseDown}
             onClick={(e) => {
+                if (panFondo.consumeClick()) return;
                 e.stopPropagation();
                 onActivate(e, {
                     tipo: "fondo",
@@ -110,10 +126,13 @@ function Estructura1({ onActivate, activeElement, initialData, onUpdate }) {
                         ? `url(${fondo.state.childImageUrl})`
                         : "none",
                     backgroundSize: "cover",
-                    backgroundPosition: "center",
+                    backgroundPosition: fondo.state.childImagePosition || "50% 50%",
+                    cursor: panChild.cursor,
                     ...(textPositionStyles[fondo.state.textPosition || "center"]),
                 }}
+                onMouseDown={panChild.onMouseDown}
                 onClick={(e) => {
+                    if (panChild.consumeClick()) return;
                     e.stopPropagation();
                     onActivate(e, {
                         bloqueId,

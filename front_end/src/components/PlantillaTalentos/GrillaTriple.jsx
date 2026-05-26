@@ -1,6 +1,7 @@
 import "../../styles/PlantillaTalentos/GrillaTriple.css";
 import EditableBlock from "./EditableBlock";
 import { useEditable } from "./useEditable";
+import { useImagePan } from "./useImagePan";
 import { useState, useEffect } from "react";
 
 function GrillaTriple({ onActivate, activeElement, initialData, onUpdate }) {
@@ -15,6 +16,8 @@ function GrillaTriple({ onActivate, activeElement, initialData, onUpdate }) {
   const bloque1 = useEditable(initialData?.bloque1, (d) => handleUpdate('bloque1', d));
   const bloque2 = useEditable(initialData?.bloque2, (d) => handleUpdate('bloque2', d));
   const bloque3 = useEditable(initialData?.bloque3, (d) => handleUpdate('bloque3', d));
+
+  const pan = useImagePan(fondo.state.imageUrl, fondo.state.imagePosition, (pos) => fondo.update({ imagePosition: pos }));
 
   const [loadingFondo, setLoadingFondo] = useState(false);
 
@@ -40,10 +43,13 @@ function GrillaTriple({ onActivate, activeElement, initialData, onUpdate }) {
             ? `url(${fondo.state.imageUrl})`
             : "none",
           backgroundSize: "cover",
-          backgroundPosition: "center",
-          outline: (activeElement?.id && activeElement.id === fondo.state.id) ? "2px solid #3b82f6" : "none"
+          backgroundPosition: fondo.state.imagePosition || "50% 50%",
+          outline: (activeElement?.id && activeElement.id === fondo.state.id) ? "2px solid #3b82f6" : "none",
+          cursor: pan.cursor,
         }}
+        onMouseDown={pan.onMouseDown}
         onClick={(e) => {
+          if (pan.consumeClick()) return;
           e.stopPropagation();
           onActivate(e, {
             id: fondo.state.id,

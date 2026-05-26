@@ -31,6 +31,7 @@ const miembrosRoutes = require("./routes/miembros_routes")
 const seguidosRoutes = require("./routes/seguidos_routes")
 const configuracionRoutes = require("./routes/configuracion_routes")
 const resenas_perfilRoutes = require("./routes/resenas_perfil_routes")
+const reportesChatRoutes   = require("./routes/reportes_chat_routes")
 
 // ── Rutas ───────────────────────────────────────────────────────
 app.use("/usuarios", usuarioRoutes)
@@ -51,6 +52,7 @@ app.use("/miembros", miembrosRoutes)
 app.use("/seguidos", seguidosRoutes)
 app.use("/configuracion", configuracionRoutes)
 app.use("/resenas-perfil", resenas_perfilRoutes)
+app.use("/reportes-chat", reportesChatRoutes)
 app.use("/api/chatbot", chatbotRoutes);
 
 setupSwagger(app)

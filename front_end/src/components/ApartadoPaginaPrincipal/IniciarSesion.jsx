@@ -61,6 +61,7 @@ function IniciarSesion() {
                     <div className='ParrafoForm'>
                         <h6 className='SubtituloForm'>Inicia sesión para mostrar tu talento</h6>
 
+                        <form onSubmit={e => { e.preventDefault(); validarInicio() }} style={{ margin: 0, padding: 0, display: 'contents' }}>
                         <div className='InputGroup'>
                             <label>Correo electrónico</label>
                             <input
@@ -81,9 +82,10 @@ function IniciarSesion() {
                             />
                         </div>
 
-                        <button className='BotonEntrar' onClick={validarInicio}>
+                        <button type="submit" className='BotonEntrar'>
                             Entrar ahora
                         </button>
+                        </form>
 
                         <div className='RegistroPrompt'>
                             <h6>¿No tienes cuenta?

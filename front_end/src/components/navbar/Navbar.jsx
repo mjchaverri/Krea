@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Fetch from '../../services/Fetch';
+import Swal from 'sweetalert2';
 import '../../styles/Principales/NavBar.css';
 
 function Navbar() {
@@ -27,12 +28,37 @@ function Navbar() {
         } catch {}
     }, []);
 
-    /* ── Convocatorias desde el backend real ── */
+    /* ── Helpers para IDs descartados/participados (persistidos por usuario) ── */
+    const getDescartados = (userId) => {
+        try { return new Set(JSON.parse(localStorage.getItem(`convo_vistas_${userId}`) || '[]')); }
+        catch { return new Set(); }
+    };
+    const addDescartado = (userId, id) => {
+        const set = getDescartados(userId);
+        set.add(id);
+        localStorage.setItem(`convo_vistas_${userId}`, JSON.stringify([...set]));
+    };
+
+    /* ── Convocatorias — solo de comunidades en las que el usuario está ── */
     useEffect(() => {
         const cargar = async () => {
             try {
-                const data = await Fetch.getData('convocatorias?limit=10');
-                setConvocatorias(data || []);
+                const user = JSON.parse(localStorage.getItem('UsuarioActivo') || 'null');
+                if (!user?.id) { setConvocatorias([]); return; }
+
+                const descartados = getDescartados(user.id);
+
+                const [convos, memberships] = await Promise.all([
+                    Fetch.getData('convocatorias?limit=50'),
+                    Fetch.getData(`miembros/usuario/${user.id}`),
+                ]);
+
+                const comunidadIds = new Set((memberships || []).map(m => m.id_comunidad));
+                const filtradas = (convos || []).filter(c =>
+                    !descartados.has(c.id_convocatoria) &&
+                    (!c.id_comunidad || comunidadIds.has(c.id_comunidad))
+                );
+                setConvocatorias(filtradas);
             } catch (e) {
                 console.error('Error cargando convocatorias:', e);
             }
@@ -52,7 +78,49 @@ function Navbar() {
     }, []);
 
     const descartarConvocatoria = (id) => {
+        const user = JSON.parse(localStorage.getItem('UsuarioActivo') || 'null');
+        if (user?.id) addDescartado(user.id, id);
         setConvocatorias(prev => prev.filter(c => c.id_convocatoria !== id));
+    };
+
+    const handleVerDetalles = (conv) => {
+        const fecha = conv.fecha_cierre
+            ? new Date(conv.fecha_cierre + 'T12:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
+            : null;
+        Swal.fire({
+            title: conv.nombre,
+            html: `
+                ${conv.descripcion ? `<p style="text-align:left;font-size:14px;color:#374151;line-height:1.6;margin:0 0 14px">${conv.descripcion}</p>` : ''}
+                ${fecha ? `<div style="display:flex;align-items:center;gap:6px;font-size:13px;color:#64748b">📅 Cierre: <strong>${fecha}</strong></div>` : ''}
+            `,
+            confirmButtonText: 'Cerrar',
+            confirmButtonColor: '#0ea5e9',
+        });
+    };
+
+    const handleParticipar = async (conv) => {
+        if (!localStorage.getItem('token')) {
+            Swal.fire({ icon: 'info', title: 'Inicia sesión', text: 'Debes iniciar sesión para participar.', confirmButtonColor: '#0ea5e9' });
+            return;
+        }
+        try {
+            await Fetch.postData(`convocatorias/${conv.id_convocatoria}/participar`, {});
+            Swal.fire({ icon: 'success', title: '¡Inscripción exitosa!', text: `Te inscribiste en: ${conv.nombre}`, confirmButtonColor: '#0ea5e9', timer: 2000, showConfirmButton: false });
+        } catch (err) {
+            const msg = err.message || '';
+            if (!(msg.toLowerCase().includes('ya estás') || err.status === 409)) {
+                Swal.fire({ icon: 'error', title: 'Error', text: msg, confirmButtonColor: '#0ea5e9' });
+                return;
+            }
+        }
+        // éxito o ya estaba inscrito → descartar la notificación y notificar tarjetas abiertas
+        descartarConvocatoria(conv.id_convocatoria);
+        window.dispatchEvent(new CustomEvent('convo-participada', { detail: { convoId: conv.id_convocatoria } }));
+    };
+
+    const handleIrAlChat = (conv) => {
+        setBellOpen(false);
+        navigate('/comunidades', { state: { abrirComunidadId: conv.id_comunidad } });
     };
 
     const navLinks = [
@@ -128,21 +196,35 @@ function Navbar() {
                                     ) : (
                                         convocatorias.map(conv => (
                                             <div key={conv.id_convocatoria} className="pn-notif-item">
+                                                <div className="pn-notif-item__head">
+                                                    <span className="pn-notif-badge">📢 Convocatoria</span>
+                                                    <button className="pn-notif-item__dismiss" title="Descartar" onClick={() => descartarConvocatoria(conv.id_convocatoria)}>
+                                                        <i className="fa-solid fa-xmark" />
+                                                    </button>
+                                                </div>
                                                 <p className="pn-notif-nombre">{conv.nombre}</p>
-                                                <p className="pn-notif-desc">{conv.descripcion}</p>
+                                                {conv.descripcion && (
+                                                    <p className="pn-notif-desc">
+                                                        {conv.descripcion.length > 80 ? conv.descripcion.slice(0, 80) + '…' : conv.descripcion}
+                                                    </p>
+                                                )}
+                                                {conv.fecha_cierre && (
+                                                    <p className="pn-notif-meta">
+                                                        📅 Cierre: {new Date(conv.fecha_cierre + 'T12:00:00').toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                    </p>
+                                                )}
                                                 <div className="pn-notif-actions">
-                                                    <button
-                                                        className="pn-notif-accept"
-                                                        onClick={() => descartarConvocatoria(conv.id_convocatoria)}
-                                                    >
-                                                        Ver
+                                                    <button className="pn-notif-btn pn-notif-btn--ver" onClick={() => handleVerDetalles(conv)}>
+                                                        Ver detalles
                                                     </button>
-                                                    <button
-                                                        className="pn-notif-decline"
-                                                        onClick={() => descartarConvocatoria(conv.id_convocatoria)}
-                                                    >
-                                                        Cerrar
+                                                    <button className="pn-notif-btn pn-notif-btn--participar" onClick={() => handleParticipar(conv)}>
+                                                        Participar
                                                     </button>
+                                                    {conv.id_comunidad && (
+                                                        <button className="pn-notif-btn pn-notif-btn--chat" onClick={() => handleIrAlChat(conv)}>
+                                                            Ir al chat
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </div>
                                         ))

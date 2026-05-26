@@ -134,6 +134,7 @@ function DashboardAdmin({ onInspeccionar }) {
     const [convDetalle, setConvDetalle] = useState(null)
     const [destacadoMes, setDestacadoMes] = useState(null)
     const [guardandoDest, setGuardandoDest] = useState(false)
+    const [buscarUsuario, setBuscarUsuario] = useState('')
 
     useEffect(() => {
         Promise.all([
@@ -173,7 +174,7 @@ function DashboardAdmin({ onInspeccionar }) {
     const topCats = Object.entries(catCount).sort((a, b) => b[1] - a[1]).slice(0, 4)
     const CAT_COLORS = ['#0ea5e9', '#f59e0b', '#a855f7', '#64748b']
 
-    // Talento destacado (usuarios con mayor promedio de reseñas)
+    // Perfiles con 5 estrellas (promedio exacto de 5)
     const talentos = usuarios
         .map(u => {
             const misPortas = portafolios.filter(p => String(p.usuarioId) === String(u.id))
@@ -181,9 +182,8 @@ function DashboardAdmin({ onInspeccionar }) {
             const prom = calcularPromedio(misResenas)
             return { ...u, rating: parseFloat(prom) || 0, numResenas: misResenas.length }
         })
-        .filter(u => u.numResenas > 0)
-        .sort((a, b) => b.rating - a.rating)
-        .slice(0, 3)
+        .filter(u => u.rating === 5)
+        .sort((a, b) => b.numResenas - a.numResenas)
 
     const mesActual = new Date().toISOString().slice(0, 7) // "2026-05"
     const mesNombre = new Date().toLocaleString('es-ES', { month: 'long', year: 'numeric' })
@@ -213,10 +213,116 @@ function DashboardAdmin({ onInspeccionar }) {
         }
     }
 
-    // Últimos usuarios
-    const ultimosUsuarios = [...usuarios]
-        .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
-        .slice(0, 5)
+    const quitarDestacado = async () => {
+        const { isConfirmed } = await Swal.fire({
+            title: '¿Quitar talento destacado?',
+            html: `<strong>${destacadoMes?.nombre}</strong> dejará de aparecer como destacado en la página principal.`,
+            icon: 'warning', showCancelButton: true,
+            confirmButtonColor: '#ef4444', cancelButtonColor: '#64748b',
+            confirmButtonText: 'Sí, quitar', cancelButtonText: 'Cancelar',
+        })
+        if (!isConfirmed) return
+        setGuardandoDest(true)
+        Swal.fire({ title: 'Guardando...', allowOutsideClick: false, didOpen: () => Swal.showLoading() })
+        try {
+            await Fetch.putData('configuracion/talento_destacado', { valor: null })
+            setDestacadoMes(null)
+            Swal.fire({ icon: 'success', title: 'Destacado eliminado', text: 'Ya no hay un talento destacado activo.', timer: 2000, showConfirmButton: false })
+        } catch (err) {
+            Swal.fire({ icon: 'error', title: 'Error', text: err.message })
+        } finally {
+            setGuardandoDest(false)
+        }
+    }
+
+    const banearUsuario = async (u) => {
+        if (u.bloqueado) {
+            const expira = u.fecha_ban_expira
+                ? new Date(u.fecha_ban_expira).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
+                : 'permanente'
+            const { isConfirmed } = await Swal.fire({
+                title: '¿Reactivar cuenta?',
+                html: `<strong>${u.Nombre}</strong> podrá volver a iniciar sesión.<br/><small style="color:#94a3b8">Ban vigente hasta: ${expira}</small>`,
+                icon: 'question', showCancelButton: true,
+                confirmButtonColor: '#10b981', cancelButtonColor: '#64748b',
+                confirmButtonText: 'Sí, reactivar', cancelButtonText: 'Cancelar',
+            })
+            if (!isConfirmed) return
+            try {
+                await Fetch.patchData(`usuarios/${u.id}/bloquear`, { desbanear: true })
+                setUsuarios(prev => prev.map(us => us.id === u.id ? { ...us, bloqueado: false, fecha_ban_expira: null, razon_ban: null } : us))
+                Swal.fire({ icon: 'success', title: 'Cuenta reactivada', timer: 1800, showConfirmButton: false })
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'Error', text: err.message })
+            }
+            return
+        }
+        const { value: formValues, isConfirmed } = await Swal.fire({
+            title: `Suspender a ${u.Nombre}`,
+            html: `
+                <div style="text-align:left;display:flex;flex-direction:column;gap:12px;margin-top:8px">
+                    <div>
+                        <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:4px">Razón (opcional)</label>
+                        <textarea id="swal-razon" placeholder="Motivo del baneo..."
+                            style="width:100%;padding:8px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;resize:none;height:68px;box-sizing:border-box;font-family:inherit;outline:none"></textarea>
+                    </div>
+                    <div>
+                        <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:4px">Duración</label>
+                        <select id="swal-duracion" style="width:100%;padding:8px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;box-sizing:border-box;background:#fff">
+                            <option value="1">1 día</option>
+                            <option value="7">7 días</option>
+                            <option value="30">30 días</option>
+                            <option value="90">90 días</option>
+                            <option value="0">Permanente</option>
+                        </select>
+                    </div>
+                </div>`,
+            icon: 'warning', showCancelButton: true,
+            confirmButtonColor: '#ef4444', cancelButtonColor: '#64748b',
+            confirmButtonText: 'Suspender', cancelButtonText: 'Cancelar',
+            preConfirm: () => ({
+                razon: document.getElementById('swal-razon').value.trim(),
+                duracion: parseInt(document.getElementById('swal-duracion').value),
+            })
+        })
+        if (!isConfirmed) return
+        try {
+            const result = await Fetch.patchData(`usuarios/${u.id}/bloquear`, { razon: formValues.razon, duracion: formValues.duracion })
+            setUsuarios(prev => prev.map(us => us.id === u.id
+                ? { ...us, bloqueado: true, fecha_ban_expira: result?.fecha_ban_expira || null, razon_ban: formValues.razon }
+                : us))
+            Swal.fire({ icon: 'success', title: 'Usuario suspendido', timer: 1800, showConfirmButton: false })
+        } catch (err) {
+            Swal.fire({ icon: 'error', title: 'Error', text: err.message })
+        }
+    }
+
+    const eliminarUsuarioAdmin = async (u) => {
+        const { isConfirmed } = await Swal.fire({
+            title: '¿Eliminar usuario?',
+            html: `Esta acción es <strong>permanente</strong>. Se eliminará la cuenta de <strong>${u.Nombre}</strong> y todos sus datos asociados.`,
+            icon: 'error', showCancelButton: true,
+            confirmButtonColor: '#ef4444', cancelButtonColor: '#64748b',
+            confirmButtonText: 'Sí, eliminar permanentemente', cancelButtonText: 'Cancelar',
+        })
+        if (!isConfirmed) return
+        try {
+            await Fetch.deleteData(`usuarios/${u.id}`)
+            setUsuarios(prev => prev.filter(us => us.id !== u.id))
+            Swal.fire({ icon: 'success', title: 'Usuario eliminado', timer: 1800, showConfirmButton: false })
+        } catch (err) {
+            Swal.fire({ icon: 'error', title: 'Error', text: err.message })
+        }
+    }
+
+    // Usuarios filtrados para la tabla de gestión
+    const usuariosVisibles = buscarUsuario.trim()
+        ? usuarios.filter(u =>
+            u.Nombre?.toLowerCase().includes(buscarUsuario.toLowerCase()) ||
+            u.Correo?.toLowerCase().includes(buscarUsuario.toLowerCase()) ||
+            u.nombre_usuario?.toLowerCase().includes(buscarUsuario.toLowerCase())
+        )
+        : [...usuarios].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)).slice(0, 15)
 
     if (cargando) return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#94a3b8' }}>
@@ -347,44 +453,102 @@ function DashboardAdmin({ onInspeccionar }) {
                             </div>
                         </div>
 
-                        {/* Últimos registros */}
+                        {/* Gestión de Usuarios */}
                         <div style={{ background: '#fff', borderRadius: 16, border: '1px solid #e8edf2', overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
-                            <div style={{ padding: '20px 24px 16px' }}>
-                                <h3 style={{ fontSize: 15, fontWeight: 800, color: '#0f172a', margin: 0 }}>Últimos Registros de Usuarios</h3>
+                            <div style={{ padding: '20px 24px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+                                <div>
+                                    <h3 style={{ fontSize: 15, fontWeight: 800, color: '#0f172a', margin: 0 }}>Gestión de Usuarios</h3>
+                                    <p style={{ fontSize: 11, color: '#94a3b8', margin: '3px 0 0' }}>
+                                        {buscarUsuario.trim() ? `${usuariosVisibles.length} resultado(s)` : `Mostrando ${usuariosVisibles.length} de ${usuarios.length}`}
+                                    </p>
+                                </div>
+                                <div style={{ position: 'relative', flexShrink: 0 }}>
+                                    <span className="material-symbols-outlined" style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 16, color: '#94a3b8', pointerEvents: 'none' }}>search</span>
+                                    <input
+                                        value={buscarUsuario}
+                                        onChange={e => setBuscarUsuario(e.target.value)}
+                                        placeholder="Buscar usuario..."
+                                        style={{ paddingLeft: 32, paddingRight: 12, paddingTop: 8, paddingBottom: 8, borderRadius: 8, border: '1.5px solid #e2e8f0', fontSize: 13, outline: 'none', width: 200, fontFamily: 'inherit', background: '#f8fafc' }}
+                                    />
+                                </div>
                             </div>
                             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                                 <thead>
                                     <tr style={{ background: '#f8fafc', borderTop: '1px solid #f1f5f9', borderBottom: '1px solid #f1f5f9' }}>
-                                        {['USUARIO', 'CORREO', 'ROL', 'FECHA INGRESO'].map(h => (
-                                            <th key={h} style={{ padding: '10px 20px', fontSize: 10, fontWeight: 700, color: '#94a3b8', textAlign: 'left', textTransform: 'uppercase', letterSpacing: 0.8 }}>{h}</th>
+                                        {['USUARIO', 'CORREO', 'ROL', 'ESTADO', 'ACCIONES'].map(h => (
+                                            <th key={h} style={{ padding: '10px 16px', fontSize: 10, fontWeight: 700, color: '#94a3b8', textAlign: 'left', textTransform: 'uppercase', letterSpacing: 0.8 }}>{h}</th>
                                         ))}
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {ultimosUsuarios.length === 0 ? (
-                                        <tr><td colSpan={4} style={{ padding: '20px', textAlign: 'center', color: '#94a3b8', fontSize: 13 }}>Sin usuarios</td></tr>
-                                    ) : ultimosUsuarios.map(u => {
+                                    {usuariosVisibles.length === 0 ? (
+                                        <tr><td colSpan={5} style={{ padding: '24px', textAlign: 'center', color: '#94a3b8', fontSize: 13 }}>
+                                            {buscarUsuario.trim() ? 'Sin resultados para esa búsqueda' : 'Sin usuarios registrados'}
+                                        </td></tr>
+                                    ) : usuariosVisibles.map(u => {
                                         const ROL = { 1: { label: 'Admin', color: '#6366f1' }, 2: { label: 'Personal', color: '#f59e0b' }, 3: { label: 'Empresa', color: '#10b981' } }
                                         const rol = ROL[u.id_rol] || { label: '—', color: '#94a3b8' }
                                         return (
-                                            <tr key={u.id} style={{ borderBottom: '1px solid #f8fafc' }}>
-                                                <td style={{ padding: '12px 20px' }}>
+                                            <tr key={u.id} style={{ borderBottom: '1px solid #f8fafc', background: u.bloqueado ? '#fff5f5' : 'transparent' }}>
+                                                <td style={{ padding: '11px 16px' }}>
                                                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                                                         <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
                                                             {u.img ? <img src={u.img} alt={u.Nombre} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                                 : <span style={{ fontSize: 12, fontWeight: 800, color: '#0ea5e9' }}>{u.Nombre?.charAt(0)}</span>}
                                                         </div>
-                                                        <span style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>{u.Nombre}</span>
+                                                        <div style={{ minWidth: 0 }}>
+                                                            <p style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 160 }}>{u.Nombre}</p>
+                                                            <p style={{ fontSize: 11, color: '#94a3b8', margin: 0 }}>@{u.nombre_usuario}</p>
+                                                        </div>
                                                     </div>
                                                 </td>
-                                                <td style={{ padding: '12px 20px', fontSize: 13, color: '#64748b' }}>{u.Correo}</td>
-                                                <td style={{ padding: '12px 20px' }}>
-                                                    <span style={{ fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 20, background: rol.color + '20', color: rol.color }}>
+                                                <td style={{ padding: '11px 16px', fontSize: 12, color: '#64748b', maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.Correo}</td>
+                                                <td style={{ padding: '11px 16px' }}>
+                                                    <span style={{ fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 20, background: rol.color + '20', color: rol.color, whiteSpace: 'nowrap' }}>
                                                         {rol.label}
                                                     </span>
                                                 </td>
-                                                <td style={{ padding: '12px 20px', fontSize: 12, color: '#94a3b8' }}>
-                                                    {u.createdAt ? new Date(u.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
+                                                <td style={{ padding: '11px 16px' }}>
+                                                    {u.bloqueado ? (
+                                                        <span title={u.razon_ban || ''} style={{ fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 20, background: '#fef2f2', color: '#ef4444', whiteSpace: 'nowrap', cursor: u.razon_ban ? 'help' : 'default' }}>
+                                                            🚫 Suspendido
+                                                        </span>
+                                                    ) : (
+                                                        <span style={{ fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 20, background: '#dcfce7', color: '#16a34a', whiteSpace: 'nowrap' }}>
+                                                            ✓ Activo
+                                                        </span>
+                                                    )}
+                                                </td>
+                                                <td style={{ padding: '11px 16px' }}>
+                                                    <div style={{ display: 'flex', gap: 6 }}>
+                                                        <button
+                                                            onClick={() => banearUsuario(u)}
+                                                            title={u.bloqueado ? 'Reactivar cuenta' : 'Suspender cuenta'}
+                                                            style={{
+                                                                padding: '5px 10px', borderRadius: 7, border: 'none', cursor: 'pointer',
+                                                                fontSize: 11, fontWeight: 700, transition: 'all 0.15s',
+                                                                background: u.bloqueado ? '#dcfce7' : '#fef9c3',
+                                                                color: u.bloqueado ? '#16a34a' : '#d97706',
+                                                            }}
+                                                            onMouseEnter={e => { e.currentTarget.style.opacity = '0.8' }}
+                                                            onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
+                                                        >
+                                                            {u.bloqueado ? 'Reactivar' : 'Banear'}
+                                                        </button>
+                                                        <button
+                                                            onClick={() => eliminarUsuarioAdmin(u)}
+                                                            title="Eliminar usuario permanentemente"
+                                                            style={{
+                                                                padding: '5px 10px', borderRadius: 7, border: 'none', cursor: 'pointer',
+                                                                fontSize: 11, fontWeight: 700, background: '#fef2f2', color: '#ef4444',
+                                                                transition: 'all 0.15s',
+                                                            }}
+                                                            onMouseEnter={e => { e.currentTarget.style.background = '#ef4444'; e.currentTarget.style.color = '#fff' }}
+                                                            onMouseLeave={e => { e.currentTarget.style.background = '#fef2f2'; e.currentTarget.style.color = '#ef4444' }}
+                                                        >
+                                                            Eliminar
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         )
@@ -465,8 +629,8 @@ function DashboardAdmin({ onInspeccionar }) {
                             <div style={{ padding: '20px 20px 12px' }}>
                                 <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
                                     <div>
-                                        <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0f172a', margin: '0 0 2px' }}>Talento Destacado</h3>
-                                        <p style={{ fontSize: 11, color: '#94a3b8', margin: 0 }}>Selecciona quién aparece en la página principal</p>
+                                        <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0f172a', margin: '0 0 2px' }}>Perfiles Destacados ⭐⭐⭐⭐⭐</h3>
+                                        <p style={{ fontSize: 11, color: '#94a3b8', margin: 0 }}>Usuarios con promedio de 5 estrellas</p>
                                     </div>
                                     {destacadoMes && (
                                         <span style={{
@@ -522,7 +686,22 @@ function DashboardAdmin({ onInspeccionar }) {
                                                 <span style={{ fontSize: 13, fontWeight: 800, color: '#0f172a' }}>{u.rating}</span>
                                             </div>
                                             {esActual ? (
-                                                <span style={{ fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 20, background: '#0ea5e9', color: '#fff' }}>Activo</span>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                                    <span style={{ fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 20, background: '#0ea5e9', color: '#fff' }}>Activo</span>
+                                                    <button
+                                                        onClick={quitarDestacado}
+                                                        disabled={guardandoDest}
+                                                        style={{
+                                                            fontSize: 10, fontWeight: 700, padding: '4px 10px', borderRadius: 20,
+                                                            background: 'none', border: '1px solid #fca5a5', color: '#ef4444',
+                                                            cursor: 'pointer', transition: 'all 0.15s',
+                                                        }}
+                                                        onMouseEnter={e => { e.currentTarget.style.background = '#ef4444'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = '#ef4444' }}
+                                                        onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#ef4444'; e.currentTarget.style.borderColor = '#fca5a5' }}
+                                                    >
+                                                        Quitar
+                                                    </button>
+                                                </div>
                                             ) : (
                                                 <button
                                                     onClick={() => seleccionarDestacado(u)}

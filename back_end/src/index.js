@@ -21,6 +21,8 @@ const Chat_Miembros = require("./models/Chat_Miembros")
 const Seguidos = require("./models/Seguidos")
 const Configuracion = require("./models/Configuracion")
 const Resenas_perfil = require("./models/Resenas_perfil")
+const Reporte_chat = require("./models/Reporte_chat")
+const Baneado_comunidad = require("./models/Baneado_comunidad")
 
 // ── Usuarios ─────────────────────────────────────────────────── //para commit
 // Un usuario tiene un rol
@@ -122,6 +124,10 @@ Seguidos.belongsTo(Usuario, { foreignKey: "id_seguidor", as: "seguidor" })
 Usuario.hasMany(Seguidos, { foreignKey: "id_seguido", as: "seguidores" })
 Seguidos.belongsTo(Usuario, { foreignKey: "id_seguido", as: "seguido" })
 
+// ── Comunidades — creador ────────────────────────────────────────
+Usuario.hasMany(Comunidades, { foreignKey: "id_usuario", as: "ComunidadesCreadas" })
+Comunidades.belongsTo(Usuario, { foreignKey: "id_usuario", as: "Creador" })
+
 // ── Chat ──────────────────────────────────────────────────────────
 // Una comunidad tiene muchos mensajes de chat
 Comunidades.hasMany(Chat_Comu, { foreignKey: "id_comunidad" })
@@ -131,6 +137,26 @@ Chat_Comu.hasMany(Chat_Miembros, { foreignKey: "id_chat" })
 Chat_Miembros.belongsTo(Chat_Comu, { foreignKey: "id_chat" })
 Miembros.hasMany(Chat_Miembros, { foreignKey: "id_miembro" })
 Chat_Miembros.belongsTo(Miembros, { foreignKey: "id_miembro" })
+
+// ── Mensajes de chat — autor ─────────────────────────────────────
+Usuario.hasMany(Chat_Comu, { foreignKey: "id_usuario", as: "MensajesChat" })
+Chat_Comu.belongsTo(Usuario, { foreignKey: "id_usuario", as: "AutorMensaje" })
+
+// ── Reportes de chat ─────────────────────────────────────────────
+Chat_Comu.hasMany(Reporte_chat, { foreignKey: "id_mensaje" })
+Reporte_chat.belongsTo(Chat_Comu, { foreignKey: "id_mensaje" })
+Comunidades.hasMany(Reporte_chat, { foreignKey: "id_comunidad" })
+Reporte_chat.belongsTo(Comunidades, { foreignKey: "id_comunidad" })
+Usuario.hasMany(Reporte_chat, { foreignKey: "id_reportador", as: "ReportesEnviados" })
+Reporte_chat.belongsTo(Usuario, { foreignKey: "id_reportador", as: "Reportador" })
+Usuario.hasMany(Reporte_chat, { foreignKey: "id_usuario_autor", as: "ReportesRecibidos" })
+Reporte_chat.belongsTo(Usuario, { foreignKey: "id_usuario_autor", as: "AutorReportado" })
+
+// ── Baneados de comunidad ────────────────────────────────────────
+Comunidades.hasMany(Baneado_comunidad, { foreignKey: "id_comunidad" })
+Baneado_comunidad.belongsTo(Comunidades, { foreignKey: "id_comunidad" })
+Usuario.hasMany(Baneado_comunidad, { foreignKey: "id_usuario", as: "Banes" })
+Baneado_comunidad.belongsTo(Usuario, { foreignKey: "id_usuario", as: "UsuarioBaneado" })
 
 module.exports = {
     Usuario,
@@ -156,4 +182,6 @@ module.exports = {
     Seguidos,
     Configuracion,
     Resenas_perfil,
+    Reporte_chat,
+    Baneado_comunidad,
 }

@@ -1,6 +1,6 @@
 import PreviewComponentes from '../PlantillaTalentos/PreviewComponentes';
 
-function CardPortafolioAdmin({ portafolio, nombrePropietario, onVer, onEliminar }) {
+function CardPortafolioAdmin({ portafolio, nombrePropietario, onVer, onEliminar, onResenas }) {
     const estado    = portafolio.pdf ? 'Publicado' : 'Pendiente';
     const publicado = estado === 'Publicado';
     const cats      = (portafolio.categorias || []).slice(0, 2);
@@ -48,6 +48,12 @@ function CardPortafolioAdmin({ portafolio, nombrePropietario, onVer, onEliminar 
                     <span className="material-symbols-outlined">open_in_new</span>
                     Ver
                 </button>
+                {onResenas && (
+                    <button className="pfa-btn pfa-btn--res" onClick={onResenas} title="Gestionar reseñas">
+                        <span className="material-symbols-outlined">star</span>
+                        Reseñas
+                    </button>
+                )}
                 <button className="pfa-btn pfa-btn--del" onClick={onEliminar} title="Eliminar portafolio">
                     <span className="material-symbols-outlined">delete</span>
                     Eliminar

@@ -55,6 +55,21 @@ Usuario.init({
         type: DataTypes.INTEGER,
         allowNull: true,
         references: { model: 'roles', key: 'id_rol' }
+    },
+    bloqueado: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+    },
+    fecha_ban_expira: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        defaultValue: null,
+    },
+    razon_ban: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        defaultValue: null,
     }
 }, {
     sequelize,

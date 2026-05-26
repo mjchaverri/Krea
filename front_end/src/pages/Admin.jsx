@@ -5,6 +5,7 @@ import DashboardAdmin from '../components/Administrador/DashboardAdmin'
 import TabladePortafolios from '../components/PlantillaTalentos/TabladePortafolios'
 import TablaConvocatoriasAdmin from '../components/Administrador/TablaConvocatoriasAdmin'
 import TablaComunidadesAdmin from '../components/Administrador/TablaComunidadesAdmin'
+import TablaResenasAdmin from '../components/Administrador/TablaResenasAdmin'
 import '../styles/EstilosAdmin/Admin.css'
 
 const TITULOS = {
@@ -13,6 +14,7 @@ const TITULOS = {
     portafolio:    'Gestión de Portafolios',
     convocatorias: 'Convocatorias',
     comunidades:   'Comunidades',
+    resenas:       'Gestión de Reseñas',
 }
 
 const Admin = () => {
@@ -27,6 +29,7 @@ const Admin = () => {
                 mostrandoPortafolio={()    => setVista('portafolio')}
                 mostrandoConvocatorias={() => setVista('convocatorias')}
                 mostrandoComunidades={()   => setVista('comunidades')}
+                mostrandoResenas={()       => setVista('resenas')}
             />
 
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -48,6 +51,7 @@ const Admin = () => {
                     {vista === 'portafolio'     && <TabladePortafolios />}
                     {vista === 'convocatorias'  && <TablaConvocatoriasAdmin />}
                     {vista === 'comunidades'    && <TablaComunidadesAdmin />}
+                    {vista === 'resenas'        && <TablaResenasAdmin />}
                 </main>
             </div>
         </div>

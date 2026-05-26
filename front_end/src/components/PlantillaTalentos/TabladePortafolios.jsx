@@ -5,6 +5,7 @@ import { normalizarPortafolio, normalizarUsuario, normalizarResena } from '../..
 import Paginacion from '../Administrador/Paginacion'
 import ModalProyecto from '../PerfilUsuario/ModalProyecto'
 import CardPortafolioAdmin from '../Administrador/CardPortafolioAdmin'
+import ModalResenasPortafolio from '../Administrador/ModalResenasPortafolio'
 import '../../styles/EstilosAdmin/CardPortafolioAdmin.css'
 
 const POR_PAGINA = 9
@@ -38,6 +39,7 @@ const TabladePortafolios = () => {
     const [filtroEstado, setFiltroEstado] = useState('TODOS')
     const [filtroCategoria, setFiltroCategoria] = useState('Todas')
     const [portafolioSeleccionado, setPortafolioSeleccionado] = useState(null)
+    const [portafolioResenas, setPortafolioResenas] = useState(null)
     const [resenas, setResenas] = useState([])
     const [pagina, setPagina] = useState(1)
     const [vistaGrid, setVistaGrid] = useState(true)
@@ -205,6 +207,7 @@ const TabladePortafolios = () => {
                             nombrePropietario={getNombreUsuario(portafolio)}
                             onVer={() => setPortafolioSeleccionado(portafolio)}
                             onEliminar={() => eliminarPortafolio(portafolio.id)}
+                            onResenas={() => setPortafolioResenas(portafolio)}
                         />
                     ))}
                 </div>
@@ -253,12 +256,17 @@ const TabladePortafolios = () => {
                                         </td>
                                         <td style={{ padding: '12px 20px', textAlign: 'right' }}>
                                             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 6 }}>
-                                                <button onClick={() => setPortafolioSeleccionado(portafolio)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#cbd5e1', padding: '6px', borderRadius: 8, display: 'flex', alignItems: 'center', transition: 'all 0.15s' }}
+                                                <button onClick={() => setPortafolioSeleccionado(portafolio)} title="Ver portafolio" style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#cbd5e1', padding: '6px', borderRadius: 8, display: 'flex', alignItems: 'center', transition: 'all 0.15s' }}
                                                     onMouseEnter={e => { e.currentTarget.style.background = '#f0f9ff'; e.currentTarget.style.color = '#0ea5e9' }}
                                                     onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#cbd5e1' }}>
                                                     <span className="material-symbols-outlined" style={{ fontSize: 20 }}>visibility</span>
                                                 </button>
-                                                <button onClick={() => eliminarPortafolio(portafolio.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#cbd5e1', padding: '6px', borderRadius: 8, display: 'flex', alignItems: 'center', transition: 'all 0.15s' }}
+                                                <button onClick={() => setPortafolioResenas(portafolio)} title="Gestionar reseñas" style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#cbd5e1', padding: '6px', borderRadius: 8, display: 'flex', alignItems: 'center', transition: 'all 0.15s' }}
+                                                    onMouseEnter={e => { e.currentTarget.style.background = '#fef3c7'; e.currentTarget.style.color = '#f59e0b' }}
+                                                    onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#cbd5e1' }}>
+                                                    <span className="material-symbols-outlined" style={{ fontSize: 20 }}>star</span>
+                                                </button>
+                                                <button onClick={() => eliminarPortafolio(portafolio.id)} title="Eliminar" style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#cbd5e1', padding: '6px', borderRadius: 8, display: 'flex', alignItems: 'center', transition: 'all 0.15s' }}
                                                     onMouseEnter={e => { e.currentTarget.style.background = '#fef2f2'; e.currentTarget.style.color = '#ef4444' }}
                                                     onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#cbd5e1' }}>
                                                     <span className="material-symbols-outlined" style={{ fontSize: 20 }}>delete</span>
@@ -292,6 +300,14 @@ const TabladePortafolios = () => {
                         const data = await Fetch.getData(`resenas/portafolio/${portafolioSeleccionado.id}`)
                         setResenas((data || []).map(normalizarResena))
                     }}
+                />
+            )}
+
+            {/* Modal gestionar reseñas */}
+            {portafolioResenas && (
+                <ModalResenasPortafolio
+                    portafolio={portafolioResenas}
+                    onClose={() => setPortafolioResenas(null)}
                 />
             )}
         </div>

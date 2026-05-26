@@ -7,7 +7,9 @@ const {
     LogoutUsuario,
     editarUsuario,
     obtenerUsuario,
-    eliminarUsuario
+    eliminarUsuario,
+    bloquearUsuario,
+    obtenerMe,
 } = require("../controllers/UsuarioController")
 const verificarToken = require("../middlewares/authMiddleware")
 const roleMiddleware = require("../middlewares/roleMiddleware")
@@ -45,6 +47,7 @@ const { validarCrearUsuario, validarLogin, validarEditarUsuario } = require("../
  *       201: { description: Usuario creado }
  *       400: { description: Datos inválidos }
  */
+router.get("/me", verificarToken, obtenerMe)
 router.get("/", verificarToken, obtenerUsuarios)
 router.post("/register", validarCrearUsuario, crearUsuario)
 
@@ -143,6 +146,7 @@ router.post("/logout", verificarToken, LogoutUsuario)
  */
 router.get("/:id_usuario", verificarToken, obtenerUsuario)
 router.put("/:id_usuario", verificarToken, validarEditarUsuario, editarUsuario)
+router.patch("/:id_usuario/bloquear", verificarToken, roleMiddleware("admin"), bloquearUsuario)
 router.delete("/:id_usuario", verificarToken, roleMiddleware("admin"), eliminarUsuario)
 
 module.exports = router

@@ -37,18 +37,21 @@ export function normalizarResena(r) {
 
 export function normalizarUsuario(u) {
     return {
-        id:             u.id_usuario,
-        nombre_usuario: u.nombre_usuario,
-        Nombre:         u.nombre_completo,
-        Correo:         u.correo,
-        Telefono:       u.telefono,
-        Provincias:     u.provincia,
-        Canton:         u.canton,
-        Distrito:       u.distrito,
-        img:            u.img_perfil,
-        descripcion:    u.descripcion,
-        id_rol:         u.id_rol,
-        createdAt:      u.createdAt,
+        id:               u.id_usuario,
+        nombre_usuario:   u.nombre_usuario,
+        Nombre:           u.nombre_completo,
+        Correo:           u.correo,
+        Telefono:         u.telefono,
+        Provincias:       u.provincia,
+        Canton:           u.canton,
+        Distrito:         u.distrito,
+        img:              u.img_perfil,
+        descripcion:      u.descripcion,
+        id_rol:           u.id_rol,
+        createdAt:        u.createdAt,
+        bloqueado:        u.bloqueado || false,
+        fecha_ban_expira: u.fecha_ban_expira || null,
+        razon_ban:        u.razon_ban || null,
     }
 }
 

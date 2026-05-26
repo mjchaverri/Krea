@@ -5,10 +5,10 @@
 .sb {
     width: 260px;
     min-width: 260px;
-    min-height: 100%;
-    align-self: stretch;
+    height: calc(100vh - 72px);
+    align-self: flex-start;
     position: sticky;
-    top: 0;
+    top: 72px;
     display: flex;
     flex-direction: column;
     background: #f8fafc;
@@ -102,6 +102,36 @@
 .sb__nav-icon--emoji {
     border-radius: 6px;
     font-size: 0.9rem;
+}
+
+.sb__nav-admin-row {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.sb__nav-item--admin {
+    flex: 1;
+    min-width: 0;
+}
+
+.sb__nav-edit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+}
+.sb__nav-edit-btn:hover {
+    background: #e0f2fe;
+    color: #0ea5e9;
 }
 
 .sb__empty-txt {
@@ -388,6 +418,83 @@
 }
 .sb-modal__btn-submit:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
 .sb-modal__btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── Dropdown convocatorias ── */
+.sb__convo-panel {
+    margin: 4px 0 6px 12px;
+    border-left: 2px solid #e2e8f0;
+    padding-left: 10px;
+}
+
+.sb__convo-empty {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    padding: 6px 0;
+    margin: 0;
+}
+
+.sb__convo-group-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #64748b;
+    margin: 8px 0 4px;
+}
+
+.sb__convo-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 4px;
+    border-radius: 6px;
+    transition: background 0.15s;
+}
+.sb__convo-item:hover { background: #f1f5f9; }
+.sb__convo-item--cerrada { opacity: 0.6; }
+
+.sb__convo-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.sb__convo-nombre {
+    flex: 1;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #374151;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+}
+
+.sb__convo-btns {
+    display: flex;
+    gap: 2px;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+.sb__convo-item:hover .sb__convo-btns { opacity: 1; }
+
+.sb__convo-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 3px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #94a3b8;
+    transition: color 0.15s, background 0.15s;
+}
+.sb__convo-btn--inscritos:hover { color: #8b5cf6; background: #f5f3ff; }
+.sb__convo-btn--cerrar:hover    { color: #f59e0b; background: #fffbeb; }
+.sb__convo-btn--eliminar:hover  { color: #ef4444; background: #fef2f2; }
 
 /* ── Responsive ── */
 @media (max-width: 768px) {

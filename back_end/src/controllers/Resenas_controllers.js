@@ -1,4 +1,4 @@
-const { Resenas } = require("../index")
+const { Resenas, Usuario, Portafolios } = require("../index")
 const { validationResult } = require("express-validator")
 
 const crearResena = async (req, res) => {
@@ -85,4 +85,19 @@ const editarResena = async (req, res) => {
     }
 }
 
-module.exports = { crearResena, obtenerResenas, obtenerResenasPorPortafolio, eliminarResena, editarResena }
+const obtenerTodasResenas = async (req, res) => {
+    try {
+        const resenas = await Resenas.findAll({
+            order: [['createdAt', 'DESC']],
+            include: [
+                { model: Usuario, attributes: ['id_usuario', 'nombre_completo', 'nombre_usuario', 'img_perfil', 'bloqueado'] },
+                { model: Portafolios, attributes: ['id_portafolio', 'titulo'] },
+            ],
+        })
+        res.status(200).json({ status: 200, message: 'OK', data: resenas })
+    } catch (error) {
+        res.status(500).json({ status: 500, message: error.message })
+    }
+}
+
+module.exports = { crearResena, obtenerResenas, obtenerResenasPorPortafolio, eliminarResena, editarResena, obtenerTodasResenas }

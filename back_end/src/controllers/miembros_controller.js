@@ -1,10 +1,14 @@
-const { Miembros, Comunidades, Usuario } = require("../index")
+const { Miembros, Comunidades, Usuario, Baneado_comunidad } = require("../index")
 
 const unirseComunidad = async (req, res) => {
     try {
         const { id_comunidad, id_usuario } = req.body
         if (!id_comunidad || !id_usuario) {
             return res.status(400).json({ status: 400, message: "id_comunidad e id_usuario son requeridos" })
+        }
+        const baneado = await Baneado_comunidad.findOne({ where: { id_comunidad, id_usuario } })
+        if (baneado) {
+            return res.status(403).json({ status: 403, message: "Has sido baneado de esta comunidad." })
         }
         const existe = await Miembros.findOne({ where: { id_comunidad, id_usuario } })
         if (existe) {

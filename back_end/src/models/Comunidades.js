@@ -37,6 +37,11 @@ Comunidades.init({
         type: DataTypes.INTEGER,
         allowNull: true,
         references: { model: 'categorias', key: 'id_categoria' }
+    },
+    id_usuario: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: { model: 'usuarios', key: 'id_usuario' }
     }
 }, {
     sequelize,

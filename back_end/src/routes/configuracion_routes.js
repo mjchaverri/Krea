@@ -6,3 +6,4 @@ router.get("/:clave", obtenerConfig)
 router.put("/:clave", guardarConfig)
 
 module.exports = router
+  

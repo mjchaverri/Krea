@@ -10,7 +10,7 @@ import {
 import ModalDetalleConvocatoria from './ModalDetalleConvocatoria'
 
 const MESES = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
-const DIAS  = ['LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB', 'DOM']
+const DIAS = ['LUN', 'MAR', 'MIE', 'JUE', 'VIE', 'SAB', 'DOM']
 
 const CATEGORIAS_ABREV = {
     'Diseño y creatividad visual': 'Diseño Visual',
@@ -125,15 +125,15 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 // ── Dashboard principal ────────────────────────────────────────────────────────
 function DashboardAdmin({ onInspeccionar }) {
-    const [usuarios,      setUsuarios]      = useState([])
-    const [portafolios,   setPortafolios]   = useState([])
-    const [comunidades,   setComunidades]   = useState([])
+    const [usuarios, setUsuarios] = useState([])
+    const [portafolios, setPortafolios] = useState([])
+    const [comunidades, setComunidades] = useState([])
     const [convocatorias, setConvocatorias] = useState([])
-    const [resenas,       setResenas]       = useState([])
-    const [cargando,      setCargando]      = useState(true)
-    const [convDetalle,      setConvDetalle]      = useState(null)
-    const [destacadoMes,     setDestacadoMes]     = useState(null)
-    const [guardandoDest,    setGuardandoDest]    = useState(false)
+    const [resenas, setResenas] = useState([])
+    const [cargando, setCargando] = useState(true)
+    const [convDetalle, setConvDetalle] = useState(null)
+    const [destacadoMes, setDestacadoMes] = useState(null)
+    const [guardandoDest, setGuardandoDest] = useState(false)
 
     useEffect(() => {
         Promise.all([
@@ -227,333 +227,333 @@ function DashboardAdmin({ onInspeccionar }) {
 
     return (
         <>
-        <div style={{ padding: '28px 32px', minHeight: '100%' }}>
+            <div style={{ padding: '28px 32px', minHeight: '100%' }}>
 
-            {/* ── Stat cards ── */}
-            <div style={{ display: 'flex', gap: 20, marginBottom: 28 }}>
-                <StatCard label="Total Usuarios" value={usuarios.length.toLocaleString()} icon="group"
-                    iconColor="#0ea5e9" badge={!!crecUsuarios}
-                    badgeText={crecUsuarios ? `+${crecUsuarios}%` : null} badgeColor="#10b981"
-                    sub={`${usuarios.filter(u => u.id_rol === 3).length} empresas registradas`} />
-                <StatCard label="Portafolios" value={portafolios.length.toLocaleString()} icon="folder_special"
-                    iconColor="#a855f7" badge={portPublicados > 0}
-                    badgeText={`+${portPublicados}`} badgeColor="#0ea5e9"
-                    sub={`${portPublicados} publicados`} />
-                <StatCard label="Comunidades" value={comunidades.length} icon="groups"
-                    iconColor="#f59e0b" badge badgeText="Global" badgeColor="#f59e0b" />
-                <StatCard label="Tasa de Conversión" value={`${tasaConversion}%`} icon="trending_up"
-                    iconColor="#10b981" badge badgeText="Top" badgeColor="#10b981"
-                    sub="Portafolios publicados / usuarios" />
-            </div>
-
-            {/* ── Layout 2 columnas ── */}
-            <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}>
-
-                {/* ── Columna izquierda ── */}
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 24, minWidth: 0 }}>
-
-                    {/* Actividad de Usuarios */}
-                    <div style={{ background: '#fff', borderRadius: 16, padding: '24px 24px 16px', border: '1px solid #e8edf2', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
-                            <div>
-                                <h3 style={{ fontSize: 17, fontWeight: 800, color: '#0f172a', margin: 0 }}>Actividad de Usuarios</h3>
-                                <p style={{ fontSize: 12, color: '#94a3b8', margin: '4px 0 0' }}>Registros en los últimos 6 meses</p>
-                            </div>
-                            <span style={{
-                                fontSize: 12, fontWeight: 600, color: '#64748b',
-                                background: '#f1f5f9', borderRadius: 20, padding: '6px 14px',
-                                border: '1px solid #e2e8f0',
-                            }}>Últimos 6 Meses</span>
-                        </div>
-                        <ResponsiveContainer width="100%" height={200}>
-                            <AreaChart data={actividadMeses} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
-                                <defs>
-                                    <linearGradient id="gradArea" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%"  stopColor="#0ea5e9" stopOpacity={0.3} />
-                                        <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0.01} />
-                                    </linearGradient>
-                                </defs>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                                <XAxis dataKey="mes" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-                                <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-                                <Tooltip content={<CustomTooltip />} />
-                                <Area type="monotone" dataKey="usuarios" stroke="#0ea5e9" strokeWidth={2.5}
-                                    fill="url(#gradArea)" dot={{ fill: '#0ea5e9', r: 4 }} activeDot={{ r: 6 }} />
-                            </AreaChart>
-                        </ResponsiveContainer>
-                    </div>
-
-                    {/* Categorías + Heatmap */}
-                    <div style={{ display: 'flex', gap: 20 }}>
-
-                        {/* Proyectos por Categoría */}
-                        <div style={{ flex: 1, background: '#fff', borderRadius: 16, padding: 24, border: '1px solid #e8edf2', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
-                            <h3 style={{ fontSize: 14, fontWeight: 800, color: '#0f172a', margin: '0 0 18px', textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                                Proyectos por Categoría
-                            </h3>
-                            {topCats.length === 0 ? (
-                                <p style={{ color: '#94a3b8', fontSize: 13, fontStyle: 'italic' }}>Sin categorías asignadas</p>
-                            ) : topCats.map(([cat, count], i) => {
-                                const pct = Math.round((count / totalCat) * 100)
-                                return (
-                                    <div key={cat} style={{ marginBottom: 16 }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                                            <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5 }}>{cat}</span>
-                                            <span style={{ fontSize: 12, fontWeight: 700, color: '#0f172a' }}>{pct}%</span>
-                                        </div>
-                                        <div style={{ height: 8, background: '#f1f5f9', borderRadius: 4, overflow: 'hidden' }}>
-                                            <div style={{ height: '100%', width: `${pct}%`, background: CAT_COLORS[i] || '#0ea5e9', borderRadius: 4, transition: 'width 0.8s ease' }} />
-                                        </div>
-                                    </div>
-                                )
-                            })}
-                        </div>
-
-                        {/* Mapa de actividad semanal */}
-                        <div style={{ flex: 1, background: '#fff', borderRadius: 16, padding: 24, border: '1px solid #e8edf2', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
-                            <h3 style={{ fontSize: 14, fontWeight: 800, color: '#0f172a', margin: '0 0 18px', textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                                Mapa de Actividad Semanal
-                            </h3>
-                            <div style={{ display: 'flex', gap: 8 }}>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingTop: 2 }}>
-                                    {DIAS.map(d => (
-                                        <span key={d} style={{ fontSize: 9, color: '#94a3b8', fontWeight: 700, height: 14, lineHeight: '14px' }}>{d}</span>
-                                    ))}
-                                </div>
-                                <div style={{ display: 'flex', gap: 4, flex: 1 }}>
-                                    {heatmap.map((semana, si) => (
-                                        <div key={si} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                                            {semana.map((val, di) => {
-                                                const intensity = val / maxHeat
-                                                return (
-                                                    <div key={di} title={`${val} registro(s)`} style={{
-                                                        width: 14, height: 14, borderRadius: 3,
-                                                        background: val === 0 ? '#f1f5f9' : `rgba(14,165,233,${0.15 + intensity * 0.85})`,
-                                                        cursor: 'default',
-                                                    }} />
-                                                )
-                                            })}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 12 }}>
-                                <span style={{ fontSize: 10, color: '#94a3b8' }}>Menos</span>
-                                {[0.1, 0.3, 0.6, 0.85, 1].map((op, i) => (
-                                    <div key={i} style={{ width: 12, height: 12, borderRadius: 3, background: `rgba(14,165,233,${op})` }} />
-                                ))}
-                                <span style={{ fontSize: 10, color: '#94a3b8' }}>Más</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Últimos registros */}
-                    <div style={{ background: '#fff', borderRadius: 16, border: '1px solid #e8edf2', overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
-                        <div style={{ padding: '20px 24px 16px' }}>
-                            <h3 style={{ fontSize: 15, fontWeight: 800, color: '#0f172a', margin: 0 }}>Últimos Registros de Usuarios</h3>
-                        </div>
-                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                            <thead>
-                                <tr style={{ background: '#f8fafc', borderTop: '1px solid #f1f5f9', borderBottom: '1px solid #f1f5f9' }}>
-                                    {['USUARIO', 'CORREO', 'ROL', 'FECHA INGRESO'].map(h => (
-                                        <th key={h} style={{ padding: '10px 20px', fontSize: 10, fontWeight: 700, color: '#94a3b8', textAlign: 'left', textTransform: 'uppercase', letterSpacing: 0.8 }}>{h}</th>
-                                    ))}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {ultimosUsuarios.length === 0 ? (
-                                    <tr><td colSpan={4} style={{ padding: '20px', textAlign: 'center', color: '#94a3b8', fontSize: 13 }}>Sin usuarios</td></tr>
-                                ) : ultimosUsuarios.map(u => {
-                                    const ROL = { 1: { label: 'Admin', color: '#6366f1' }, 2: { label: 'Personal', color: '#f59e0b' }, 3: { label: 'Empresa', color: '#10b981' } }
-                                    const rol = ROL[u.id_rol] || { label: '—', color: '#94a3b8' }
-                                    return (
-                                        <tr key={u.id} style={{ borderBottom: '1px solid #f8fafc' }}>
-                                            <td style={{ padding: '12px 20px' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                                                    <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
-                                                        {u.img ? <img src={u.img} alt={u.Nombre} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                                            : <span style={{ fontSize: 12, fontWeight: 800, color: '#0ea5e9' }}>{u.Nombre?.charAt(0)}</span>}
-                                                    </div>
-                                                    <span style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>{u.Nombre}</span>
-                                                </div>
-                                            </td>
-                                            <td style={{ padding: '12px 20px', fontSize: 13, color: '#64748b' }}>{u.Correo}</td>
-                                            <td style={{ padding: '12px 20px' }}>
-                                                <span style={{ fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 20, background: rol.color + '20', color: rol.color }}>
-                                                    {rol.label}
-                                                </span>
-                                            </td>
-                                            <td style={{ padding: '12px 20px', fontSize: 12, color: '#94a3b8' }}>
-                                                {u.createdAt ? new Date(u.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
-                                            </td>
-                                        </tr>
-                                    )
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
+                {/* ── Stat cards ── */}
+                <div style={{ display: 'flex', gap: 20, marginBottom: 28 }}>
+                    <StatCard label="Total Usuarios" value={usuarios.length.toLocaleString()} icon="group"
+                        iconColor="#0ea5e9" badge={!!crecUsuarios}
+                        badgeText={crecUsuarios ? `+${crecUsuarios}%` : null} badgeColor="#10b981"
+                        sub={`${usuarios.filter(u => u.id_rol === 3).length} empresas registradas`} />
+                    <StatCard label="Portafolios" value={portafolios.length.toLocaleString()} icon="folder_special"
+                        iconColor="#a855f7" badge={portPublicados > 0}
+                        badgeText={`+${portPublicados}`} badgeColor="#0ea5e9"
+                        sub={`${portPublicados} publicados`} />
+                    <StatCard label="Comunidades" value={comunidades.length} icon="groups"
+                        iconColor="#f59e0b" badge badgeText="Global" badgeColor="#f59e0b" />
+                    <StatCard label="Tasa de Conversión" value={`${tasaConversion}%`} icon="trending_up"
+                        iconColor="#10b981" badge badgeText="Top" badgeColor="#10b981"
+                        sub="Portafolios publicados / usuarios" />
                 </div>
 
-                {/* ── Columna derecha ── */}
-                <div style={{ width: 320, display: 'flex', flexDirection: 'column', gap: 20, flexShrink: 0 }}>
+                {/* ── Layout 2 columnas ── */}
+                <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start' }}>
 
-                    {/* Convocatorias Activas */}
-                    <div style={{ background: '#fff', borderRadius: 16, border: '1px solid #e8edf2', overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
-                        <div style={{ padding: '20px 20px 16px' }}>
-                            <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0f172a', margin: 0 }}>Convocatorias Activas</h3>
+                    {/* ── Columna izquierda ── */}
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 24, minWidth: 0 }}>
+
+                        {/* Actividad de Usuarios */}
+                        <div style={{ background: '#fff', borderRadius: 16, padding: '24px 24px 16px', border: '1px solid #e8edf2', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+                                <div>
+                                    <h3 style={{ fontSize: 17, fontWeight: 800, color: '#0f172a', margin: 0 }}>Actividad de Usuarios</h3>
+                                    <p style={{ fontSize: 12, color: '#94a3b8', margin: '4px 0 0' }}>Registros en los últimos 6 meses</p>
+                                </div>
+                                <span style={{
+                                    fontSize: 12, fontWeight: 600, color: '#64748b',
+                                    background: '#f1f5f9', borderRadius: 20, padding: '6px 14px',
+                                    border: '1px solid #e2e8f0',
+                                }}>Últimos 6 Meses</span>
+                            </div>
+                            <ResponsiveContainer width="100%" height={200}>
+                                <AreaChart data={actividadMeses} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
+                                    <defs>
+                                        <linearGradient id="gradArea" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.3} />
+                                            <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0.01} />
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                                    <XAxis dataKey="mes" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+                                    <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+                                    <Tooltip content={<CustomTooltip />} />
+                                    <Area type="monotone" dataKey="usuarios" stroke="#0ea5e9" strokeWidth={2.5}
+                                        fill="url(#gradArea)" dot={{ fill: '#0ea5e9', r: 4 }} activeDot={{ r: 6 }} />
+                                </AreaChart>
+                            </ResponsiveContainer>
                         </div>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-                            {convActivas.length === 0 ? (
-                                <p style={{ padding: '16px 20px', color: '#94a3b8', fontSize: 13, fontStyle: 'italic' }}>No hay convocatorias activas</p>
-                            ) : convActivas.slice(0, 3).map((c, i) => {
-                                const urgente = i === 0
-                                const fechaFormato = c.fecha_cierre
-                                    ? new Date(c.fecha_cierre).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
-                                    : '—'
-                                return (
-                                    <div key={c.id_convocatoria} style={{
-                                        padding: '14px 20px',
-                                        borderBottom: i < Math.min(convActivas.length, 3) - 1 ? '1px solid #f8fafc' : 'none',
-                                    }}>
-                                        <div style={{ display: 'flex', gap: 6, marginBottom: 6, flexWrap: 'wrap' }}>
-                                            {urgente && (
-                                                <span style={{ fontSize: 10, fontWeight: 700, color: '#ef4444', background: '#fef2f2', padding: '2px 8px', borderRadius: 20 }}>URGENTE</span>
-                                            )}
-                                            <span style={{ fontSize: 10, fontWeight: 600, color: '#64748b' }}>
-                                                {c.nombre?.split(' ').slice(0, 3).join(' ')} • {c.ubicacion || 'Remoto'}
-                                            </span>
+                        {/* Categorías + Heatmap */}
+                        <div style={{ display: 'flex', gap: 20 }}>
+
+                            {/* Proyectos por Categoría */}
+                            <div style={{ flex: 1, background: '#fff', borderRadius: 16, padding: 24, border: '1px solid #e8edf2', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+                                <h3 style={{ fontSize: 14, fontWeight: 800, color: '#0f172a', margin: '0 0 18px', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                                    Proyectos por Categoría
+                                </h3>
+                                {topCats.length === 0 ? (
+                                    <p style={{ color: '#94a3b8', fontSize: 13, fontStyle: 'italic' }}>Sin categorías asignadas</p>
+                                ) : topCats.map(([cat, count], i) => {
+                                    const pct = Math.round((count / totalCat) * 100)
+                                    return (
+                                        <div key={cat} style={{ marginBottom: 16 }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                                                <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5 }}>{cat}</span>
+                                                <span style={{ fontSize: 12, fontWeight: 700, color: '#0f172a' }}>{pct}%</span>
+                                            </div>
+                                            <div style={{ height: 8, background: '#f1f5f9', borderRadius: 4, overflow: 'hidden' }}>
+                                                <div style={{ height: '100%', width: `${pct}%`, background: CAT_COLORS[i] || '#0ea5e9', borderRadius: 4, transition: 'width 0.8s ease' }} />
+                                            </div>
                                         </div>
-                                        <p style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', margin: '0 0 8px', lineHeight: 1.3 }}>
-                                            {c.nombre}
-                                        </p>
-                                        <div style={{ display: 'flex', gap: 12, marginBottom: 10 }}>
-                                            <span style={{ fontSize: 11, color: '#94a3b8', display: 'flex', alignItems: 'center', gap: 4 }}>
-                                                <span className="material-symbols-outlined" style={{ fontSize: 13 }}>schedule</span>
-                                                Cierre: {fechaFormato}
-                                            </span>
-                                        </div>
-                                        <button
-                                            onClick={() => setConvDetalle(c)}
-                                            style={{
-                                                width: '100%', padding: '9px', borderRadius: 10, border: 'none', cursor: 'pointer',
-                                                fontSize: 12, fontWeight: 700, letterSpacing: 0.5, textTransform: 'uppercase',
-                                                background: urgente ? '#0ea5e9' : '#f1f5f9',
-                                                color: urgente ? '#fff' : '#64748b',
-                                                transition: 'all 0.15s',
-                                            }}
-                                        >
-                                            Inspeccionar
-                                        </button>
+                                    )
+                                })}
+                            </div>
+
+                            {/* Mapa de actividad semanal */}
+                            <div style={{ flex: 1, background: '#fff', borderRadius: 16, padding: 24, border: '1px solid #e8edf2', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+                                <h3 style={{ fontSize: 14, fontWeight: 800, color: '#0f172a', margin: '0 0 18px', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                                    Mapa de Actividad Semanal
+                                </h3>
+                                <div style={{ display: 'flex', gap: 8 }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, paddingTop: 2 }}>
+                                        {DIAS.map(d => (
+                                            <span key={d} style={{ fontSize: 9, color: '#94a3b8', fontWeight: 700, height: 14, lineHeight: '14px' }}>{d}</span>
+                                        ))}
                                     </div>
-                                )
-                            })}
+                                    <div style={{ display: 'flex', gap: 4, flex: 1 }}>
+                                        {heatmap.map((semana, si) => (
+                                            <div key={si} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                                {semana.map((val, di) => {
+                                                    const intensity = val / maxHeat
+                                                    return (
+                                                        <div key={di} title={`${val} registro(s)`} style={{
+                                                            width: 14, height: 14, borderRadius: 3,
+                                                            background: val === 0 ? '#f1f5f9' : `rgba(14,165,233,${0.15 + intensity * 0.85})`,
+                                                            cursor: 'default',
+                                                        }} />
+                                                    )
+                                                })}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 12 }}>
+                                    <span style={{ fontSize: 10, color: '#94a3b8' }}>Menos</span>
+                                    {[0.1, 0.3, 0.6, 0.85, 1].map((op, i) => (
+                                        <div key={i} style={{ width: 12, height: 12, borderRadius: 3, background: `rgba(14,165,233,${op})` }} />
+                                    ))}
+                                    <span style={{ fontSize: 10, color: '#94a3b8' }}>Más</span>
+                                </div>
+                            </div>
                         </div>
 
-                        <div style={{ padding: '12px 20px', borderTop: '1px solid #f1f5f9' }}>
-                            <button
-                                onClick={onInspeccionar}
-                                style={{ fontSize: 13, fontWeight: 600, color: '#64748b', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
-                            >
-                                Ver todas las vacantes →
-                            </button>
+                        {/* Últimos registros */}
+                        <div style={{ background: '#fff', borderRadius: 16, border: '1px solid #e8edf2', overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+                            <div style={{ padding: '20px 24px 16px' }}>
+                                <h3 style={{ fontSize: 15, fontWeight: 800, color: '#0f172a', margin: 0 }}>Últimos Registros de Usuarios</h3>
+                            </div>
+                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                <thead>
+                                    <tr style={{ background: '#f8fafc', borderTop: '1px solid #f1f5f9', borderBottom: '1px solid #f1f5f9' }}>
+                                        {['USUARIO', 'CORREO', 'ROL', 'FECHA INGRESO'].map(h => (
+                                            <th key={h} style={{ padding: '10px 20px', fontSize: 10, fontWeight: 700, color: '#94a3b8', textAlign: 'left', textTransform: 'uppercase', letterSpacing: 0.8 }}>{h}</th>
+                                        ))}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {ultimosUsuarios.length === 0 ? (
+                                        <tr><td colSpan={4} style={{ padding: '20px', textAlign: 'center', color: '#94a3b8', fontSize: 13 }}>Sin usuarios</td></tr>
+                                    ) : ultimosUsuarios.map(u => {
+                                        const ROL = { 1: { label: 'Admin', color: '#6366f1' }, 2: { label: 'Personal', color: '#f59e0b' }, 3: { label: 'Empresa', color: '#10b981' } }
+                                        const rol = ROL[u.id_rol] || { label: '—', color: '#94a3b8' }
+                                        return (
+                                            <tr key={u.id} style={{ borderBottom: '1px solid #f8fafc' }}>
+                                                <td style={{ padding: '12px 20px' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+                                                            {u.img ? <img src={u.img} alt={u.Nombre} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                                : <span style={{ fontSize: 12, fontWeight: 800, color: '#0ea5e9' }}>{u.Nombre?.charAt(0)}</span>}
+                                                        </div>
+                                                        <span style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>{u.Nombre}</span>
+                                                    </div>
+                                                </td>
+                                                <td style={{ padding: '12px 20px', fontSize: 13, color: '#64748b' }}>{u.Correo}</td>
+                                                <td style={{ padding: '12px 20px' }}>
+                                                    <span style={{ fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 20, background: rol.color + '20', color: rol.color }}>
+                                                        {rol.label}
+                                                    </span>
+                                                </td>
+                                                <td style={{ padding: '12px 20px', fontSize: 12, color: '#94a3b8' }}>
+                                                    {u.createdAt ? new Date(u.createdAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
+                                                </td>
+                                            </tr>
+                                        )
+                                    })}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 
-                    {/* Talento Destacado */}
-                    <div style={{ background: '#fff', borderRadius: 16, border: '1px solid #e8edf2', overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
-                        <div style={{ padding: '20px 20px 12px' }}>
-                            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
-                                <div>
-                                    <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0f172a', margin: '0 0 2px' }}>Talento Destacado</h3>
-                                    <p style={{ fontSize: 11, color: '#94a3b8', margin: 0 }}>Selecciona quién aparece en la página principal</p>
+                    {/* ── Columna derecha ── */}
+                    <div style={{ width: 320, display: 'flex', flexDirection: 'column', gap: 20, flexShrink: 0 }}>
+
+                        {/* Convocatorias Activas */}
+                        <div style={{ background: '#fff', borderRadius: 16, border: '1px solid #e8edf2', overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+                            <div style={{ padding: '20px 20px 16px' }}>
+                                <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0f172a', margin: 0 }}>Convocatorias Activas</h3>
+                            </div>
+
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                                {convActivas.length === 0 ? (
+                                    <p style={{ padding: '16px 20px', color: '#94a3b8', fontSize: 13, fontStyle: 'italic' }}>No hay convocatorias activas</p>
+                                ) : convActivas.slice(0, 3).map((c, i) => {
+                                    const urgente = i === 0
+                                    const fechaFormato = c.fecha_cierre
+                                        ? new Date(c.fecha_cierre).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
+                                        : '—'
+                                    return (
+                                        <div key={c.id_convocatoria} style={{
+                                            padding: '14px 20px',
+                                            borderBottom: i < Math.min(convActivas.length, 3) - 1 ? '1px solid #f8fafc' : 'none',
+                                        }}>
+                                            <div style={{ display: 'flex', gap: 6, marginBottom: 6, flexWrap: 'wrap' }}>
+                                                {urgente && (
+                                                    <span style={{ fontSize: 10, fontWeight: 700, color: '#ef4444', background: '#fef2f2', padding: '2px 8px', borderRadius: 20 }}>URGENTE</span>
+                                                )}
+                                                <span style={{ fontSize: 10, fontWeight: 600, color: '#64748b' }}>
+                                                    {c.nombre?.split(' ').slice(0, 3).join(' ')} • {c.ubicacion || 'Remoto'}
+                                                </span>
+                                            </div>
+                                            <p style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', margin: '0 0 8px', lineHeight: 1.3 }}>
+                                                {c.nombre}
+                                            </p>
+                                            <div style={{ display: 'flex', gap: 12, marginBottom: 10 }}>
+                                                <span style={{ fontSize: 11, color: '#94a3b8', display: 'flex', alignItems: 'center', gap: 4 }}>
+                                                    <span className="material-symbols-outlined" style={{ fontSize: 13 }}>schedule</span>
+                                                    Cierre: {fechaFormato}
+                                                </span>
+                                            </div>
+                                            <button
+                                                onClick={() => setConvDetalle(c)}
+                                                style={{
+                                                    width: '100%', padding: '9px', borderRadius: 10, border: 'none', cursor: 'pointer',
+                                                    fontSize: 12, fontWeight: 700, letterSpacing: 0.5, textTransform: 'uppercase',
+                                                    background: urgente ? '#0ea5e9' : '#f1f5f9',
+                                                    color: urgente ? '#fff' : '#64748b',
+                                                    transition: 'all 0.15s',
+                                                }}
+                                            >
+                                                Inspeccionar
+                                            </button>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+
+                            <div style={{ padding: '12px 20px', borderTop: '1px solid #f1f5f9' }}>
+                                <button
+                                    onClick={onInspeccionar}
+                                    style={{ fontSize: 13, fontWeight: 600, color: '#64748b', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                                >
+                                    Ver todas las vacantes →
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Talento Destacado */}
+                        <div style={{ background: '#fff', borderRadius: 16, border: '1px solid #e8edf2', overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+                            <div style={{ padding: '20px 20px 12px' }}>
+                                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
+                                    <div>
+                                        <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0f172a', margin: '0 0 2px' }}>Talento Destacado</h3>
+                                        <p style={{ fontSize: 11, color: '#94a3b8', margin: 0 }}>Selecciona quién aparece en la página principal</p>
+                                    </div>
+                                    {destacadoMes && (
+                                        <span style={{
+                                            fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 20, flexShrink: 0,
+                                            background: necesitaRenovar ? '#fef3c7' : '#dcfce7',
+                                            color: necesitaRenovar ? '#d97706' : '#16a34a',
+                                        }}>
+                                            {necesitaRenovar ? `⚠ Renovar para ${mesNombre}` : `✓ ${mesNombre}`}
+                                        </span>
+                                    )}
                                 </div>
+
+                                {/* Talento actualmente destacado */}
                                 {destacadoMes && (
-                                    <span style={{
-                                        fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 20, flexShrink: 0,
-                                        background: necesitaRenovar ? '#fef3c7' : '#dcfce7',
-                                        color: necesitaRenovar ? '#d97706' : '#16a34a',
-                                    }}>
-                                        {necesitaRenovar ? `⚠ Renovar para ${mesNombre}` : `✓ ${mesNombre}`}
-                                    </span>
+                                    <div style={{ marginTop: 12, background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: 10, padding: '10px 12px', display: 'flex', alignItems: 'center', gap: 10 }}>
+                                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+                                            {destacadoMes.img
+                                                ? <img src={destacadoMes.img} alt={destacadoMes.nombre} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                : <span style={{ color: '#0ea5e9', fontWeight: 800, fontSize: 12 }}>{destacadoMes.nombre?.charAt(0)}</span>
+                                            }
+                                        </div>
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <p style={{ fontSize: 12, fontWeight: 700, color: '#0284c7', margin: 0 }}>{destacadoMes.nombre}</p>
+                                            <p style={{ fontSize: 10, color: '#64748b', margin: 0 }}>Destacado en página principal</p>
+                                        </div>
+                                        <span className="material-symbols-outlined" style={{ fontSize: 16, color: '#0ea5e9' }}>star</span>
+                                    </div>
                                 )}
                             </div>
 
-                            {/* Talento actualmente destacado */}
-                            {destacadoMes && (
-                                <div style={{ marginTop: 12, background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: 10, padding: '10px 12px', display: 'flex', alignItems: 'center', gap: 10 }}>
-                                    <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
-                                        {destacadoMes.img
-                                            ? <img src={destacadoMes.img} alt={destacadoMes.nombre} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                            : <span style={{ color: '#0ea5e9', fontWeight: 800, fontSize: 12 }}>{destacadoMes.nombre?.charAt(0)}</span>
-                                        }
-                                    </div>
-                                    <div style={{ flex: 1, minWidth: 0 }}>
-                                        <p style={{ fontSize: 12, fontWeight: 700, color: '#0284c7', margin: 0 }}>{destacadoMes.nombre}</p>
-                                        <p style={{ fontSize: 10, color: '#64748b', margin: 0 }}>Destacado en página principal</p>
-                                    </div>
-                                    <span className="material-symbols-outlined" style={{ fontSize: 16, color: '#0ea5e9' }}>star</span>
-                                </div>
-                            )}
-                        </div>
-
-                        {talentos.length === 0 ? (
-                            <p style={{ padding: '0 20px 20px', color: '#94a3b8', fontSize: 13, fontStyle: 'italic' }}>Sin reseñas registradas aún</p>
-                        ) : talentos.map((u, i) => {
-                            const esActual = destacadoMes && String(destacadoMes.id_usuario) === String(u.id)
-                            return (
-                                <div key={u.id} style={{
-                                    display: 'flex', alignItems: 'center', gap: 12,
-                                    padding: '12px 20px', borderTop: '1px solid #f8fafc',
-                                    background: esActual ? '#f0f9ff' : 'transparent',
-                                    transition: 'background 0.15s',
-                                }}>
-                                    <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
-                                        {u.img ? <img src={u.img} alt={u.Nombre} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                            : <span style={{ color: '#0ea5e9', fontWeight: 800, fontSize: 14 }}>{u.Nombre?.charAt(0)}</span>}
-                                    </div>
-                                    <div style={{ flex: 1, minWidth: 0 }}>
-                                        <p style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.Nombre}</p>
-                                        <p style={{ fontSize: 12, color: '#94a3b8', margin: 0 }}>{u.numResenas} reseña{u.numResenas !== 1 ? 's' : ''}</p>
-                                    </div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                                            <i className="fa-solid fa-star" style={{ fontSize: 12, color: '#f59e0b' }} />
-                                            <span style={{ fontSize: 13, fontWeight: 800, color: '#0f172a' }}>{u.rating}</span>
+                            {talentos.length === 0 ? (
+                                <p style={{ padding: '0 20px 20px', color: '#94a3b8', fontSize: 13, fontStyle: 'italic' }}>Sin reseñas registradas aún</p>
+                            ) : talentos.map((u, i) => {
+                                const esActual = destacadoMes && String(destacadoMes.id_usuario) === String(u.id)
+                                return (
+                                    <div key={u.id} style={{
+                                        display: 'flex', alignItems: 'center', gap: 12,
+                                        padding: '12px 20px', borderTop: '1px solid #f8fafc',
+                                        background: esActual ? '#f0f9ff' : 'transparent',
+                                        transition: 'background 0.15s',
+                                    }}>
+                                        <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+                                            {u.img ? <img src={u.img} alt={u.Nombre} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                : <span style={{ color: '#0ea5e9', fontWeight: 800, fontSize: 14 }}>{u.Nombre?.charAt(0)}</span>}
                                         </div>
-                                        {esActual ? (
-                                            <span style={{ fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 20, background: '#0ea5e9', color: '#fff' }}>Activo</span>
-                                        ) : (
-                                            <button
-                                                onClick={() => seleccionarDestacado(u)}
-                                                disabled={guardandoDest}
-                                                style={{
-                                                    fontSize: 10, fontWeight: 700, padding: '4px 10px', borderRadius: 20,
-                                                    background: 'none', border: '1px solid #e2e8f0', color: '#64748b',
-                                                    cursor: 'pointer', transition: 'all 0.15s',
-                                                }}
-                                                onMouseEnter={e => { e.currentTarget.style.background = '#0ea5e9'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = '#0ea5e9' }}
-                                                onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#64748b'; e.currentTarget.style.borderColor = '#e2e8f0' }}
-                                            >
-                                                Destacar
-                                            </button>
-                                        )}
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <p style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.Nombre}</p>
+                                            <p style={{ fontSize: 12, color: '#94a3b8', margin: 0 }}>{u.numResenas} reseña{u.numResenas !== 1 ? 's' : ''}</p>
+                                        </div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                                                <i className="fa-solid fa-star" style={{ fontSize: 12, color: '#f59e0b' }} />
+                                                <span style={{ fontSize: 13, fontWeight: 800, color: '#0f172a' }}>{u.rating}</span>
+                                            </div>
+                                            {esActual ? (
+                                                <span style={{ fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 20, background: '#0ea5e9', color: '#fff' }}>Activo</span>
+                                            ) : (
+                                                <button
+                                                    onClick={() => seleccionarDestacado(u)}
+                                                    disabled={guardandoDest}
+                                                    style={{
+                                                        fontSize: 10, fontWeight: 700, padding: '4px 10px', borderRadius: 20,
+                                                        background: 'none', border: '1px solid #e2e8f0', color: '#64748b',
+                                                        cursor: 'pointer', transition: 'all 0.15s',
+                                                    }}
+                                                    onMouseEnter={e => { e.currentTarget.style.background = '#0ea5e9'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = '#0ea5e9' }}
+                                                    onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#64748b'; e.currentTarget.style.borderColor = '#e2e8f0' }}
+                                                >
+                                                    Destacar
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                            )
-                        })}
+                                )
+                            })}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        {convDetalle && (
-            <ModalDetalleConvocatoria
-                convocatoria={convDetalle}
-                onClose={() => setConvDetalle(null)}
-                onActualizar={() => {}}
-            />
-        )}
+            {convDetalle && (
+                <ModalDetalleConvocatoria
+                    convocatoria={convDetalle}
+                    onClose={() => setConvDetalle(null)}
+                    onActualizar={() => { }}
+                />
+            )}
         </>
     )
 }

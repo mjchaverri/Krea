@@ -9,32 +9,33 @@ import ModalProyecto from '../components/PerfilUsuario/ModalProyecto';
 import { calcularPromedio } from '../utils/calcularPromedio';
 import "../styles/EstilosPerfilUsuario/ProyectosRecientes.css";
 import "../styles/PlantillaTalentos/TodosProyectos.css";
+import ChatBotBubble from '../components/PlantillaTalentos/ChatBotBubble';
 
 const ITEMS_POR_PAGINA = 12;
 
 function TodosProyectos() {
     const navigate = useNavigate();
-    const [portafolios, setPortafolios]   = useState([]);
+    const [portafolios, setPortafolios] = useState([]);
     const [todasResenas, setTodasResenas] = useState([]);
     const [proyectoSeleccionado, setProyectoSeleccionado] = useState(null);
-    const [busqueda, setBusqueda]         = useState("");
-    const [cargando, setCargando]         = useState(true);
-    const [tabActiva, setTabActiva]       = useState("todos");
+    const [busqueda, setBusqueda] = useState("");
+    const [cargando, setCargando] = useState(true);
+    const [tabActiva, setTabActiva] = useState("todos");
     const [paginaActual, setPaginaActual] = useState(1);
 
     const [filtroProvincia, setFiltroProvincia] = useState("");
-    const [filtroCanton, setFiltroCanton]       = useState("");
-    const [filtroDistrito, setFiltroDistrito]   = useState("");
-    const [filtroRating, setFiltroRating]       = useState(0);
-    const [ordenarPor, setOrdenarPor]           = useState("recientes");
+    const [filtroCanton, setFiltroCanton] = useState("");
+    const [filtroDistrito, setFiltroDistrito] = useState("");
+    const [filtroRating, setFiltroRating] = useState(0);
+    const [ordenarPor, setOrdenarPor] = useState("recientes");
 
     const usuarioActivo = useMemo(() => {
         try { return JSON.parse(localStorage.getItem("UsuarioActivo")) || null } catch { return null }
     }, []);
 
     const [portafoliosSiguiendo, setPortafoliosSiguiendo] = useState([]);
-    const [cargandoSiguiendo, setCargandoSiguiendo]       = useState(false);
-    const [paginaSiguiendo, setPaginaSiguiendo]           = useState(1);
+    const [cargandoSiguiendo, setCargandoSiguiendo] = useState(false);
+    const [paginaSiguiendo, setPaginaSiguiendo] = useState(1);
 
     const cargarDatos = async () => {
         setCargando(true);
@@ -71,27 +72,27 @@ function TodosProyectos() {
 
     const provinciasUnicas = useMemo(() =>
         [...new Set(portafolios.map(p => p.usuario?.Provincias).filter(Boolean))],
-    [portafolios]);
+        [portafolios]);
 
     const cantonesUnicos = useMemo(() =>
         [...new Set(portafolios
             .filter(p => !filtroProvincia || p.usuario?.Provincias === filtroProvincia)
             .map(p => p.usuario?.Canton).filter(Boolean))],
-    [portafolios, filtroProvincia]);
+        [portafolios, filtroProvincia]);
 
     const distritosUnicos = useMemo(() =>
         [...new Set(portafolios
             .filter(p => !filtroCanton || p.usuario?.Canton === filtroCanton)
             .map(p => p.usuario?.Distrito).filter(Boolean))],
-    [portafolios, filtroCanton]);
+        [portafolios, filtroCanton]);
 
     const proyectosFiltrados = useMemo(() => {
         let resultado = portafolios.reduce((acc, proyecto) => {
             const u = proyecto.usuario || {};
 
             if (filtroProvincia && u.Provincias !== filtroProvincia) return acc;
-            if (filtroCanton   && u.Canton     !== filtroCanton)     return acc;
-            if (filtroDistrito && u.Distrito   !== filtroDistrito)   return acc;
+            if (filtroCanton && u.Canton !== filtroCanton) return acc;
+            if (filtroDistrito && u.Distrito !== filtroDistrito) return acc;
 
             if (busqueda) {
                 const q = busqueda.toLowerCase();
@@ -434,6 +435,8 @@ function TodosProyectos() {
                     <i className="fa-solid fa-user" /> Ver perfil del creador
                 </button>
             )}
+
+            <ChatBotBubble />
         </div>
     );
 }

@@ -237,6 +237,111 @@
 .adm-btn-submit:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
 .adm-btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
 
+/* ── Baneados ── */
+.adm-baneados {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1.5px dashed #fca5a5;
+}
+
+.adm-baneados__titulo {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #ef4444;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 0.6rem;
+}
+
+.adm-miembro-item--baneado {
+    opacity: 0.8;
+    background: #fff5f5;
+    border-radius: 8px;
+    padding: 0.25rem 0.4rem;
+}
+
+.adm-btn-desbanear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    border: 1.5px solid #d1fae5;
+    background: #ecfdf5;
+    color: #10b981;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+}
+.adm-btn-desbanear:hover { background: #d1fae5; border-color: #10b981; }
+.adm-btn-desbanear:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── Tab Reportes ── */
+.adm-reportes { padding: 0.25rem 0; }
+
+.adm-reportes__lista {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.adm-reporte-item {
+    border: 1.5px solid #fee2e2;
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    background: #fff5f5;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.adm-reporte-autor {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #dc2626;
+}
+
+.adm-reporte-texto {
+    font-size: 0.8rem;
+    color: #374151;
+    margin: 0;
+    font-style: italic;
+    line-height: 1.4;
+}
+
+.adm-reporte-razon {
+    font-size: 0.77rem;
+    color: #6b7280;
+    margin: 0;
+}
+
+.adm-reporte-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.4rem;
+}
+
+.adm-reporte-btn {
+    padding: 0.35rem 0.75rem;
+    border-radius: 7px;
+    border: none;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: opacity 0.15s, transform 0.1s;
+}
+.adm-reporte-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+.adm-reporte-btn--descartar { background: #f1f5f9; color: #64748b; }
+.adm-reporte-btn--eliminar  { background: #fee2e2; color: #dc2626; }
+.adm-reporte-btn--sacar     { background: #fef3c7; color: #92400e; }
+.adm-reporte-btn--banear    { background: #dc2626; color: #ffffff; }
+
 /* ── Tab Miembros ── */
 .adm-miembros__count {
     font-size: 0.78rem;

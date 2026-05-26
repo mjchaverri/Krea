@@ -1,5 +1,6 @@
 const { Comunidades, Categorias } = require("../index")
 const { validationResult } = require("express-validator")
+const { literal } = require("sequelize")
 
 const crearComunidad = async (req, res) => {
     const errors = validationResult(req)
@@ -8,7 +9,11 @@ const crearComunidad = async (req, res) => {
     }
     try {
         const { nombre, descripcion, icono, Color, ColorClaro, banner, id_categoria } = req.body
-        const nuevaComunidad = await Comunidades.create({ nombre, descripcion, icono, Color, ColorClaro, banner, id_categoria: id_categoria || null })
+        const nuevaComunidad = await Comunidades.create({
+            nombre, descripcion, icono, Color, ColorClaro, banner,
+            id_categoria: id_categoria || null,
+            id_usuario:   req.usuario?.id || null,
+        })
         res.status(201).json({ status: 201, message: "Comunidad creada correctamente", data: nuevaComunidad })
     } catch (error) {
         res.status(500).json({ status: 500, message: error.message })
@@ -23,6 +28,12 @@ const obtenerComunidades = async (req, res) => {
 
         const { count, rows } = await Comunidades.findAndCountAll({
             include: [{ model: Categorias, attributes: ["nombre"] }],
+            attributes: {
+                include: [[
+                    literal(`(SELECT COUNT(*) FROM miembros WHERE miembros.id_comunidad = Comunidades.id_comunidad)`),
+                    'total_miembros'
+                ]]
+            },
             limit,
             offset,
             order: [["createdAt", "DESC"]]

@@ -131,6 +131,78 @@ const TablaUsuariosAdmin = () => {
         Fetch.getData('usuarios?limit=200').then(data => setUsuarios(data || [])).catch(console.error)
     }, [])
 
+    const gestionarBan = async (usuario) => {
+        if (usuario.bloqueado) {
+            // Desbanear
+            const { isConfirmed } = await Swal.fire({
+                title: '¿Reactivar cuenta?',
+                html: `La cuenta de <strong>${usuario.nombre_completo || usuario.nombre_usuario}</strong> volverá a estar activa.`,
+                icon: 'question',
+                showCancelButton: true, confirmButtonColor: '#10b981', cancelButtonColor: '#64748b',
+                confirmButtonText: 'Sí, reactivar', cancelButtonText: 'Cancelar',
+            })
+            if (!isConfirmed) return
+            try {
+                await Fetch.patchData(`usuarios/${usuario.id_usuario}/bloquear`, { desbanear: true })
+                setUsuarios(prev => prev.map(u =>
+                    u.id_usuario === usuario.id_usuario
+                        ? { ...u, bloqueado: false, fecha_ban_expira: null, razon_ban: null }
+                        : u
+                ))
+                Swal.fire({ icon: 'success', title: 'Cuenta reactivada', timer: 1500, showConfirmButton: false })
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'Error', text: err.message })
+            }
+        } else {
+            // Banear — mostrar formulario con duración y razón
+            const DURACIONES = [
+                { val: '1',  label: '1 día' },
+                { val: '3',  label: '3 días' },
+                { val: '7',  label: '7 días' },
+                { val: '30', label: '30 días' },
+                { val: '0',  label: 'Permanente' },
+            ]
+            const { value: formVals, isConfirmed } = await Swal.fire({
+                title: 'Suspender cuenta',
+                html: `
+                    <p style="color:#64748b;font-size:13px;margin:0 0 16px">Suspender a <strong>${usuario.nombre_completo || usuario.nombre_usuario}</strong></p>
+                    <select id="swal-duracion" style="width:100%;padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;margin-bottom:12px;outline:none">
+                        ${DURACIONES.map(d => `<option value="${d.val}">${d.label}</option>`).join('')}
+                    </select>
+                    <textarea id="swal-razon" placeholder="Motivo de la suspensión (opcional)" style="width:100%;padding:10px 14px;border:1px solid #e2e8f0;border-radius:8px;font-size:13px;resize:vertical;min-height:80px;outline:none;box-sizing:border-box"></textarea>
+                `,
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Suspender',
+                cancelButtonText: 'Cancelar',
+                preConfirm: () => ({
+                    duracion: document.getElementById('swal-duracion').value,
+                    razon: document.getElementById('swal-razon').value.trim(),
+                }),
+            })
+            if (!isConfirmed) return
+            try {
+                const duracion = parseInt(formVals.duracion) || 0
+                await Fetch.patchData(`usuarios/${usuario.id_usuario}/bloquear`, {
+                    duracion: duracion > 0 ? duracion : null,
+                    razon: formVals.razon || null,
+                })
+                const nuevaExpira = duracion > 0
+                    ? new Date(Date.now() + duracion * 86400000).toISOString()
+                    : null
+                setUsuarios(prev => prev.map(u =>
+                    u.id_usuario === usuario.id_usuario
+                        ? { ...u, bloqueado: true, fecha_ban_expira: nuevaExpira, razon_ban: formVals.razon || null }
+                        : u
+                ))
+                Swal.fire({ icon: 'success', title: 'Cuenta suspendida', timer: 1500, showConfirmButton: false })
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'Error', text: err.message })
+            }
+        }
+    }
+
     const eliminarUsuario = async (id_usuario) => {
         const { isConfirmed } = await Swal.fire({
             title: '¿Eliminar usuario?', text: 'Esta acción no se puede deshacer.', icon: 'warning',
@@ -398,22 +470,44 @@ const TablaUsuariosAdmin = () => {
                                     </td>
 
                                     <td style={{ padding: '12px 20px' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
-                                            <span style={{ fontSize: 13, color: '#64748b', fontWeight: 500 }}>Activo</span>
-                                        </div>
+                                        {usuario.bloqueado ? (
+                                            <div>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                                                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444', display: 'inline-block', flexShrink: 0 }} />
+                                                    <span style={{ fontSize: 12, fontWeight: 700, color: '#ef4444' }}>Suspendido</span>
+                                                </div>
+                                                <span style={{ fontSize: 11, color: '#94a3b8' }}>
+                                                    {usuario.fecha_ban_expira
+                                                        ? `Hasta ${new Date(usuario.fecha_ban_expira).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}`
+                                                        : 'Permanente'}
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                                <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
+                                                <span style={{ fontSize: 13, color: '#64748b', fontWeight: 500 }}>Activo</span>
+                                            </div>
+                                        )}
                                     </td>
 
                                     <td style={{ padding: '12px 20px', fontSize: 13, color: '#94a3b8' }}>{fechaReg}</td>
 
                                     <td style={{ padding: '12px 20px', textAlign: 'right' }}>
                                         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 6 }}>
-                                            <button onClick={() => iniciarEdicion(usuario)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#cbd5e1', padding: '6px', borderRadius: 8, display: 'flex', alignItems: 'center', transition: 'all 0.15s' }}
+                                            <button onClick={() => iniciarEdicion(usuario)} title="Editar" style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#cbd5e1', padding: '6px', borderRadius: 8, display: 'flex', alignItems: 'center', transition: 'all 0.15s' }}
                                                 onMouseEnter={e => { e.currentTarget.style.background = '#f0f9ff'; e.currentTarget.style.color = '#0ea5e9' }}
                                                 onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#cbd5e1' }}>
                                                 <span className="material-symbols-outlined" style={{ fontSize: 20 }}>edit</span>
                                             </button>
-                                            <button onClick={() => eliminarUsuario(usuario.id_usuario)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#cbd5e1', padding: '6px', borderRadius: 8, display: 'flex', alignItems: 'center', transition: 'all 0.15s' }}
+                                            <button
+                                                onClick={() => gestionarBan(usuario)}
+                                                title={usuario.bloqueado ? 'Reactivar cuenta' : 'Suspender cuenta'}
+                                                style={{ background: 'none', border: 'none', cursor: 'pointer', color: usuario.bloqueado ? '#10b981' : '#cbd5e1', padding: '6px', borderRadius: 8, display: 'flex', alignItems: 'center', transition: 'all 0.15s' }}
+                                                onMouseEnter={e => { e.currentTarget.style.background = usuario.bloqueado ? '#f0fdf4' : '#fef3c7'; e.currentTarget.style.color = usuario.bloqueado ? '#10b981' : '#f59e0b' }}
+                                                onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = usuario.bloqueado ? '#10b981' : '#cbd5e1' }}>
+                                                <span className="material-symbols-outlined" style={{ fontSize: 20 }}>{usuario.bloqueado ? 'lock_open' : 'block'}</span>
+                                            </button>
+                                            <button onClick={() => eliminarUsuario(usuario.id_usuario)} title="Eliminar" style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#cbd5e1', padding: '6px', borderRadius: 8, display: 'flex', alignItems: 'center', transition: 'all 0.15s' }}
                                                 onMouseEnter={e => { e.currentTarget.style.background = '#fef2f2'; e.currentTarget.style.color = '#ef4444' }}
                                                 onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = '#cbd5e1' }}>
                                                 <span className="material-symbols-outlined" style={{ fontSize: 20 }}>delete</span>

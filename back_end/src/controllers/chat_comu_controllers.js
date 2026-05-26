@@ -11,7 +11,10 @@ const crearMensaje = async (req, res) => {
   }
   try {
     const { usuario_nombre, texto, id_comunidad } = req.body
-    const nuevoMensaje = await Chat_Comu.create({ usuario_nombre, Fecha: new Date(), texto, id_comunidad })
+    const nuevoMensaje = await Chat_Comu.create({
+        usuario_nombre, Fecha: new Date(), texto, id_comunidad,
+        id_usuario: req.usuario?.id || null,
+    })
     res.status(201).json({ status: 201, message: "Mensaje enviado correctamente", data: nuevoMensaje })
   } catch (error) {
     res.status(500).json({ status: 500, message: error.message })

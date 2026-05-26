@@ -45,6 +45,15 @@ async function putData(endpoint, obj) {
     return handleResponse(res)
 }
 
+async function patchData(endpoint, obj) {
+    const res = await fetch(`${BASE_URL}/${endpoint}`, {
+        method: 'PATCH',
+        headers: buildHeaders(),
+        body: JSON.stringify(obj),
+    })
+    return handleResponse(res)
+}
+
 async function deleteData(endpoint) {
     const res = await fetch(`${BASE_URL}/${endpoint}`, {
         method: 'DELETE',
@@ -73,4 +82,4 @@ async function logoutClient() {
     }
 }
 
-export default { getData, postData, putData, deleteData, logoutClient }
+export default { getData, postData, putData, patchData, deleteData, logoutClient }

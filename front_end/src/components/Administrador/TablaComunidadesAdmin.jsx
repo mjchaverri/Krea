@@ -50,10 +50,14 @@ function TablaComunidadesAdmin() {
     const [guardandoEditar,      setGuardandoEditar]      = useState(false)
     const [subiendoBannerEditar, setSubiendoBannerEditar] = useState(false)
 
-    // Modal detalle
-    const [comunidadDetalle, setComunidadDetalle] = useState(null)
+    // Modal gestión
     const [verMiembrosId,    setVerMiembrosId]    = useState(null)
+    const [gestionTab,       setGestionTab]       = useState('miembros')
     const [cargandoMiemb,    setCargandoMiemb]    = useState(null)
+    const [reportes,         setReportes]         = useState({})
+    const [cargandoRep,      setCargandoRep]      = useState(null)
+    const [baneados,         setBaneados]         = useState({})
+    const [cargandoBan,      setCargandoBan]      = useState(null)
 
     const cargarComunidades = async () => {
         const data = await Fetch.getData('comunidades?limit=100')
@@ -168,6 +172,7 @@ function TablaComunidadesAdmin() {
 
     const verMiembros = async (id) => {
         setVerMiembrosId(id)
+        setGestionTab('miembros')
         if (!miembros[id]) {
             setCargandoMiemb(id)
             try {
@@ -175,6 +180,132 @@ function TablaComunidadesAdmin() {
                 setMiembros(prev => ({ ...prev, [id]: data || [] }))
             } catch (err) { console.error(err) } finally { setCargandoMiemb(null) }
         }
+    }
+
+    const cargarReportes = async (id) => {
+        setCargandoRep(id)
+        try {
+            const data = await Fetch.getData(`reportes-chat/comunidad/${id}`)
+            setReportes(prev => ({ ...prev, [id]: Array.isArray(data) ? data : (data?.data || []) }))
+        } catch (err) { console.error(err) } finally { setCargandoRep(null) }
+    }
+
+    const cargarBaneados = async (id) => {
+        setCargandoBan(id)
+        try {
+            const data = await Fetch.getData(`reportes-chat/baneados/${id}`)
+            setBaneados(prev => ({ ...prev, [id]: Array.isArray(data) ? data : (data?.data || []) }))
+        } catch (err) { console.error(err) } finally { setCargandoBan(null) }
+    }
+
+    const cambiarTab = (tab) => {
+        setGestionTab(tab)
+        const id = verMiembrosId
+        if (tab === 'reportes' && !reportes[id]) cargarReportes(id)
+        if (tab === 'baneados' && !baneados[id]) cargarBaneados(id)
+    }
+
+    const handleActualizarEstadoReporte = async (id_reporte, estado, idCom) => {
+        try {
+            await Fetch.putData(`reportes-chat/${id_reporte}/estado`, { estado })
+            setReportes(prev => ({
+                ...prev,
+                [idCom]: prev[idCom].map(r => r.id_reporte_chat === id_reporte ? { ...r, estado } : r)
+            }))
+        } catch (err) {
+            Swal.fire({ icon: 'error', title: 'Error', text: err.message })
+        }
+    }
+
+    const handleEliminarMensaje = async (id_reporte, id_mensaje, idCom) => {
+        const { isConfirmed } = await Swal.fire({
+            title: '¿Eliminar mensaje?', text: 'El mensaje del chat será eliminado permanentemente.', icon: 'warning',
+            showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#64748b',
+            confirmButtonText: 'Sí, eliminar', cancelButtonText: 'Cancelar',
+        })
+        if (!isConfirmed) return
+        try {
+            await Fetch.deleteData(`chat-comunidad/${id_mensaje}`)
+            await handleActualizarEstadoReporte(id_reporte, 'revisado', idCom)
+        } catch (err) { Swal.fire({ icon: 'error', title: 'Error', text: err.message }) }
+    }
+
+    const handleExpulsarMiembro = async (id_comunidad, m) => {
+        const nombre = m.Usuario?.nombre_completo || 'este usuario'
+        const idUsuario = m.id_usuario || m.Usuario?.id_usuario
+        const { isConfirmed } = await Swal.fire({
+            title: `¿Expulsar a ${nombre}?`,
+            text: 'Será removido de la comunidad pero podrá volver a unirse.',
+            icon: 'warning', showCancelButton: true,
+            confirmButtonColor: '#f59e0b', cancelButtonColor: '#64748b',
+            confirmButtonText: 'Sí, expulsar', cancelButtonText: 'Cancelar',
+        })
+        if (!isConfirmed) return
+        try {
+            await Fetch.deleteData(`miembros/${id_comunidad}/${idUsuario}`)
+            setMiembros(prev => ({
+                ...prev,
+                [id_comunidad]: prev[id_comunidad].filter(x => (x.id_usuario || x.Usuario?.id_usuario) !== idUsuario)
+            }))
+            Swal.fire({ icon: 'success', title: `${nombre} fue expulsado`, timer: 1500, showConfirmButton: false })
+        } catch (err) {
+            Swal.fire({ icon: 'error', title: 'Error', text: err.message })
+        }
+    }
+
+    const handleBanearMiembro = async (id_comunidad, m) => {
+        const nombre = m.Usuario?.nombre_completo || 'este usuario'
+        const idUsuario = m.id_usuario || m.Usuario?.id_usuario
+        const { value: formValues, isConfirmed } = await Swal.fire({
+            title: `Banear a ${nombre}`,
+            html: `
+                <div style="text-align:left;display:flex;flex-direction:column;gap:12px;margin-top:8px">
+                    <div>
+                        <label style="font-size:13px;font-weight:600;color:#374151;display:block;margin-bottom:4px">Razón (opcional)</label>
+                        <textarea id="swal-ban-razon" placeholder="Motivo del baneo..."
+                            style="width:100%;padding:8px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13px;resize:none;height:68px;box-sizing:border-box;font-family:inherit;outline:none"></textarea>
+                    </div>
+                </div>`,
+            icon: 'warning', showCancelButton: true,
+            confirmButtonColor: '#ef4444', cancelButtonColor: '#64748b',
+            confirmButtonText: 'Banear', cancelButtonText: 'Cancelar',
+            preConfirm: () => ({ razon: document.getElementById('swal-ban-razon').value.trim() })
+        })
+        if (!isConfirmed) return
+        try {
+            await Fetch.postData('reportes-chat/banear', {
+                id_comunidad:   id_comunidad,
+                id_usuario:     idUsuario,
+                razon:          formValues.razon,
+                nombre_usuario: m.Usuario?.nombre_usuario || nombre,
+            })
+            setMiembros(prev => ({
+                ...prev,
+                [id_comunidad]: prev[id_comunidad].filter(x => (x.id_usuario || x.Usuario?.id_usuario) !== idUsuario)
+            }))
+            // Refrescar baneados si ya estaba cargado
+            if (baneados[id_comunidad]) cargarBaneados(id_comunidad)
+            Swal.fire({ icon: 'success', title: `${nombre} fue baneado`, timer: 1500, showConfirmButton: false })
+        } catch (err) {
+            Swal.fire({ icon: 'error', title: 'Error', text: err.message })
+        }
+    }
+
+    const handleDesbanear = async (id_comunidad, id_usuario) => {
+        const { isConfirmed } = await Swal.fire({
+            title: '¿Desbanear usuario?', text: 'El usuario podrá unirse de nuevo a la comunidad.', icon: 'question',
+            showCancelButton: true, confirmButtonColor: '#10b981', cancelButtonColor: '#64748b',
+            confirmButtonText: 'Sí, desbanear', cancelButtonText: 'Cancelar',
+        })
+        if (!isConfirmed) return
+        try {
+            await Fetch.deleteData(`reportes-chat/baneados/${id_comunidad}/${id_usuario}`)
+            setBaneados(prev => ({
+                ...prev,
+                [id_comunidad]: prev[id_comunidad].filter(b => b.id_usuario !== id_usuario)
+            }))
+            Swal.fire({ icon: 'success', title: 'Usuario desbaneado', timer: 1500, showConfirmButton: false })
+        } catch (err) { Swal.fire({ icon: 'error', title: 'Error', text: err.message }) }
     }
 
     // Derivados
@@ -330,8 +461,8 @@ function TablaComunidadesAdmin() {
                                             }}
                                                 onMouseEnter={e => { e.currentTarget.style.background = '#f0f9ff'; e.currentTarget.style.borderColor = '#0ea5e9'; e.currentTarget.style.color = '#0ea5e9' }}
                                                 onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.color = '#64748b' }}>
-                                                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>group</span>
-                                                Ver miembros
+                                                <span className="material-symbols-outlined" style={{ fontSize: 14 }}>manage_accounts</span>
+                                                Gestionar
                                             </button>
                                             <button onClick={() => abrirEditar(c)} style={{ width: 34, height: 34, borderRadius: 8, border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8', transition: 'all 0.15s' }}
                                                 onMouseEnter={e => { e.currentTarget.style.background = '#fef3c7'; e.currentTarget.style.color = '#f59e0b' }}
@@ -352,48 +483,154 @@ function TablaComunidadesAdmin() {
                 </div>
             </div>
 
-            {/* Modal ver miembros */}
+            {/* Modal gestión comunidad — tabs: Miembros | Reportes | Baneados */}
             {verMiembrosId !== null && (
                 <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)', padding: 16 }} onClick={() => setVerMiembrosId(null)}>
-                    <div style={{ background: '#fff', borderRadius: 20, boxShadow: '0 20px 60px rgba(0,0,0,0.15)', width: '100%', maxWidth: 480, maxHeight: '80vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }} onClick={e => e.stopPropagation()}>
+                    <div style={{ background: '#fff', borderRadius: 20, boxShadow: '0 20px 60px rgba(0,0,0,0.15)', width: '100%', maxWidth: 520, maxHeight: '85vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }} onClick={e => e.stopPropagation()}>
                         {(() => {
                             const c = comunidades.find(x => x.id_comunidad === verMiembrosId)
+                            const id = verMiembrosId
+                            const TABS = [
+                                { id: 'miembros', label: 'Miembros' },
+                                { id: 'reportes', label: 'Reportes' },
+                                { id: 'baneados', label: 'Baneados' },
+                            ]
                             return (
                                 <>
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid #f1f5f9' }}>
+                                    {/* Header */}
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 24px 0', flexShrink: 0 }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                                             <span style={{ fontSize: 22 }}>{c?.icono || '🌐'}</span>
-                                            <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0f172a', margin: 0 }}>Miembros — {c?.nombre}</h3>
+                                            <h3 style={{ fontSize: 15, fontWeight: 800, color: '#0f172a', margin: 0 }}>{c?.nombre}</h3>
                                         </div>
                                         <button onClick={() => setVerMiembrosId(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8' }}>
                                             <span className="material-symbols-outlined">close</span>
                                         </button>
                                     </div>
+                                    {/* Tabs */}
+                                    <div style={{ display: 'flex', borderBottom: '1px solid #f1f5f9', margin: '12px 24px 0', flexShrink: 0 }}>
+                                        {TABS.map(tab => (
+                                            <button key={tab.id} onClick={() => cambiarTab(tab.id)} style={{
+                                                padding: '8px 16px', border: 'none', borderBottom: `2px solid ${gestionTab === tab.id ? '#0ea5e9' : 'transparent'}`,
+                                                background: 'transparent', color: gestionTab === tab.id ? '#0ea5e9' : '#64748b',
+                                                fontSize: 13, fontWeight: 700, cursor: 'pointer', transition: 'all 0.15s',
+                                            }}>{tab.label}</button>
+                                        ))}
+                                    </div>
+                                    {/* Body */}
                                     <div style={{ overflowY: 'auto', flex: 1, padding: '16px 24px' }}>
-                                        {cargandoMiemb === verMiembrosId ? (
-                                            <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px 0' }}>Cargando miembros...</p>
-                                        ) : (miembros[verMiembrosId] || []).length === 0 ? (
-                                            <p style={{ color: '#94a3b8', fontStyle: 'italic', textAlign: 'center', padding: '20px 0' }}>Esta comunidad no tiene miembros aún.</p>
-                                        ) : (
-                                            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                                                {(miembros[verMiembrosId] || []).map((m, i) => {
-                                                    const nombre = m.Usuario?.nombre_completo || 'Usuario desconocido'
-                                                    return (
-                                                        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', borderRadius: 10, background: '#f8fafc' }}>
-                                                            <div style={{ width: 36, height: 36, borderRadius: '50%', background: c?.ColorClaro || '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
-                                                                {m.Usuario?.img_perfil
-                                                                    ? <img src={m.Usuario.img_perfil} alt={nombre} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                                                    : <span style={{ fontSize: 13, fontWeight: 800, color: c?.Color || '#0ea5e9' }}>{nombre.charAt(0)}</span>}
+
+                                        {/* TAB: Miembros */}
+                                        {gestionTab === 'miembros' && (
+                                            cargandoMiemb === id ? (
+                                                <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px 0' }}>Cargando miembros...</p>
+                                            ) : (miembros[id] || []).length === 0 ? (
+                                                <p style={{ color: '#94a3b8', fontStyle: 'italic', textAlign: 'center', padding: '20px 0' }}>Esta comunidad no tiene miembros aún.</p>
+                                            ) : (
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                                    {(miembros[id] || []).map((m, i) => {
+                                                        const nombre = m.Usuario?.nombre_completo || 'Usuario desconocido'
+                                                        return (
+                                                            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', borderRadius: 10, background: '#f8fafc' }}>
+                                                                <div style={{ width: 36, height: 36, borderRadius: '50%', background: c?.ColorClaro || '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', flexShrink: 0 }}>
+                                                                    {m.Usuario?.img_perfil
+                                                                        ? <img src={m.Usuario.img_perfil} alt={nombre} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                                        : <span style={{ fontSize: 13, fontWeight: 800, color: c?.Color || '#0ea5e9' }}>{nombre.charAt(0)}</span>}
+                                                                </div>
+                                                                <div style={{ flex: 1, minWidth: 0 }}>
+                                                                    <p style={{ fontSize: 14, fontWeight: 600, color: '#0f172a', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{nombre}</p>
+                                                                    <p style={{ fontSize: 12, color: '#94a3b8', margin: 0 }}>@{m.Usuario?.nombre_usuario || '—'}</p>
+                                                                </div>
+                                                                <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+                                                                    <button
+                                                                        onClick={() => handleExpulsarMiembro(id, m)}
+                                                                        title="Expulsar de la comunidad"
+                                                                        style={{ padding: '4px 10px', borderRadius: 7, border: 'none', background: '#fef9c3', color: '#d97706', fontSize: 11, fontWeight: 700, cursor: 'pointer', transition: 'all 0.15s' }}
+                                                                        onMouseEnter={e => { e.currentTarget.style.background = '#f59e0b'; e.currentTarget.style.color = '#fff' }}
+                                                                        onMouseLeave={e => { e.currentTarget.style.background = '#fef9c3'; e.currentTarget.style.color = '#d97706' }}
+                                                                    >
+                                                                        Expulsar
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() => handleBanearMiembro(id, m)}
+                                                                        title="Banear de la comunidad"
+                                                                        style={{ padding: '4px 10px', borderRadius: 7, border: 'none', background: '#fef2f2', color: '#ef4444', fontSize: 11, fontWeight: 700, cursor: 'pointer', transition: 'all 0.15s' }}
+                                                                        onMouseEnter={e => { e.currentTarget.style.background = '#ef4444'; e.currentTarget.style.color = '#fff' }}
+                                                                        onMouseLeave={e => { e.currentTarget.style.background = '#fef2f2'; e.currentTarget.style.color = '#ef4444' }}
+                                                                    >
+                                                                        Banear
+                                                                    </button>
+                                                                </div>
                                                             </div>
-                                                            <div>
-                                                                <p style={{ fontSize: 14, fontWeight: 600, color: '#0f172a', margin: 0 }}>{nombre}</p>
-                                                                <p style={{ fontSize: 12, color: '#94a3b8', margin: 0 }}>@{m.Usuario?.nombre_usuario || '—'}</p>
-                                                            </div>
-                                                        </div>
-                                                    )
-                                                })}
-                                            </div>
+                                                        )
+                                                    })}
+                                                </div>
+                                            )
                                         )}
+
+                                        {/* TAB: Reportes */}
+                                        {gestionTab === 'reportes' && (
+                                            cargandoRep === id ? (
+                                                <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px 0' }}>Cargando reportes...</p>
+                                            ) : (reportes[id] || []).length === 0 ? (
+                                                <p style={{ color: '#94a3b8', fontStyle: 'italic', textAlign: 'center', padding: '20px 0' }}>No hay reportes en esta comunidad.</p>
+                                            ) : (
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                                                    {(reportes[id] || []).map(r => (
+                                                        <div key={r.id_reporte_chat} style={{ border: '1.5px solid #fee2e2', borderRadius: 10, padding: '12px 14px', background: r.estado === 'pendiente' ? '#fff5f5' : '#f8fafc', display: 'flex', flexDirection: 'column', gap: 4 }}>
+                                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                                <span style={{ fontSize: 12, fontWeight: 700, color: '#dc2626' }}>{r.autor_mensaje || 'Desconocido'}</span>
+                                                                <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 6, background: r.estado === 'pendiente' ? '#fef3c7' : r.estado === 'revisado' ? '#dcfce7' : '#f1f5f9', color: r.estado === 'pendiente' ? '#92400e' : r.estado === 'revisado' ? '#15803d' : '#64748b', fontWeight: 700 }}>
+                                                                    {r.estado}
+                                                                </span>
+                                                            </div>
+                                                            <p style={{ fontSize: 13, color: '#374151', margin: 0, fontStyle: 'italic' }}>"{r.texto_mensaje}"</p>
+                                                            <p style={{ fontSize: 12, color: '#6b7280', margin: 0 }}>Razón: {r.razon}</p>
+                                                            {r.estado === 'pendiente' && (
+                                                                <div style={{ display: 'flex', gap: 6, marginTop: 6, flexWrap: 'wrap' }}>
+                                                                    <button onClick={() => handleActualizarEstadoReporte(r.id_reporte_chat, 'descartado', id)} style={{ padding: '4px 10px', borderRadius: 6, border: 'none', background: '#f1f5f9', color: '#64748b', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+                                                                        Descartar
+                                                                    </button>
+                                                                    <button onClick={() => handleActualizarEstadoReporte(r.id_reporte_chat, 'revisado', id)} style={{ padding: '4px 10px', borderRadius: 6, border: 'none', background: '#dcfce7', color: '#15803d', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+                                                                        Marcar revisado
+                                                                    </button>
+                                                                    <button onClick={() => handleEliminarMensaje(r.id_reporte_chat, r.id_mensaje, id)} style={{ padding: '4px 10px', borderRadius: 6, border: 'none', background: '#fee2e2', color: '#dc2626', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+                                                                        Eliminar mensaje
+                                                                    </button>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )
+                                        )}
+
+                                        {/* TAB: Baneados */}
+                                        {gestionTab === 'baneados' && (
+                                            cargandoBan === id ? (
+                                                <p style={{ color: '#94a3b8', textAlign: 'center', padding: '20px 0' }}>Cargando baneados...</p>
+                                            ) : (baneados[id] || []).length === 0 ? (
+                                                <p style={{ color: '#94a3b8', fontStyle: 'italic', textAlign: 'center', padding: '20px 0' }}>No hay usuarios baneados en esta comunidad.</p>
+                                            ) : (
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                                                    {(baneados[id] || []).map(b => (
+                                                        <div key={b.id_ban} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', borderRadius: 10, background: '#fff5f5', border: '1px solid #fecaca' }}>
+                                                            <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#fee2e2', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                                                <span style={{ fontSize: 13, fontWeight: 800, color: '#ef4444' }}>{(b.nombre_usuario || '?').charAt(0).toUpperCase()}</span>
+                                                            </div>
+                                                            <div style={{ flex: 1, minWidth: 0 }}>
+                                                                <p style={{ fontSize: 13, fontWeight: 700, color: '#0f172a', margin: 0 }}>{b.nombre_usuario || 'ID: ' + b.id_usuario}</p>
+                                                                {b.razon && <p style={{ fontSize: 11, color: '#94a3b8', margin: 0 }}>Razón: {b.razon}</p>}
+                                                            </div>
+                                                            <button onClick={() => handleDesbanear(id, b.id_usuario)} style={{ padding: '5px 10px', borderRadius: 7, border: '1.5px solid #d1fae5', background: '#ecfdf5', color: '#10b981', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>
+                                                                Desbanear
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )
+                                        )}
+
                                     </div>
                                 </>
                             )

@@ -26,6 +26,7 @@ const obtenerConvocatorias = async (req, res) => {
         const where = buscar
             ? { nombre: { [Op.like]: `%${buscar}%` } }
             : {}
+        if (req.query.id_comunidad) where.id_comunidad = parseInt(req.query.id_comunidad)
 
         const { count, rows } = await Convocatorias.findAndCountAll({
             where,
@@ -108,4 +109,19 @@ const eliminarParticipante = async (req, res) => {
     }
 }
 
-module.exports = { crearConvocatoria, obtenerConvocatorias, eliminarConvocatoria, editarConvocatoria, obtenerParticipantesDeConvocatoria, eliminarParticipante }
+const participarConvocatoria = async (req, res) => {
+    try {
+        const { id_convocatoria } = req.params
+        const id_usuario = req.usuario.id
+        const convo = await Convocatorias.findByPk(id_convocatoria)
+        if (!convo) return res.status(404).json({ status: 404, message: "Convocatoria no encontrada" })
+        const yaParticipa = await Participante_convo.findOne({ where: { id_convocatoria, id_usuario } })
+        if (yaParticipa) return res.status(409).json({ status: 409, message: "Ya estás participando en esta convocatoria." })
+        const participante = await Participante_convo.create({ id_convocatoria, id_usuario })
+        res.status(201).json({ status: 201, message: "¡Te inscribiste correctamente!", data: participante })
+    } catch (error) {
+        res.status(500).json({ status: 500, message: error.message })
+    }
+}
+
+module.exports = { crearConvocatoria, obtenerConvocatorias, eliminarConvocatoria, editarConvocatoria, obtenerParticipantesDeConvocatoria, eliminarParticipante, participarConvocatoria }

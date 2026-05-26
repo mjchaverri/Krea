@@ -1,254 +1,252 @@
 import {
-    MessageCircle,
-    Send,
-    X,
+    MessageCircle,
+    Send,
+    X,
 } from "lucide-react";
 
 import {
-    useEffect,
-    useState,
+    useEffect,
+    useState,
 } from "react";
 
 import "../../styles/PlantillaTalentos/ChatBotBubble.css";
 
 function ChatBotBubble() {
 
-    const [open, setOpen] =
-        useState(false);
+    const [open, setOpen] =
+        useState(false);
 
-    const [input, setInput] =
-        useState("");
+    const [input, setInput] =
+        useState("");
 
-    const [loading, setLoading] =
-        useState(false);
+    const [loading, setLoading] =
+        useState(false);
 
-    const [messages, setMessages] =
-        useState(() => {
+    const [messages, setMessages] =
+        useState(() => {
 
-            const saved =
-                localStorage.getItem(
-                    "kikia-chat"
-                );
+            const saved =
+                localStorage.getItem(
+                    "kreia-chat"
+                );
 
-            return saved
-                ? JSON.parse(saved)
-                : [
-                    {
-                        role: "assistant",
+            return saved
+                ? JSON.parse(saved)
+                : [
+                    {
+                        role: "assistant",
 
-                        content:
-                            "Hola :wave: Soy KikIA.\nEstoy aquí para ayudarte a construir tu portafolio ideal.",
-                    },
-                ];
-        });
+                        content:
+                            "Hola 👋 Soy KreIA.\nEstoy aquí para ayudarte a construir tu portafolio ideal.",
+                    },
+                ];
+        });
 
-    useEffect(() => {
+    useEffect(() => {
 
-        localStorage.setItem(
-            "kikia-chat",
-            JSON.stringify(messages)
-        );
+        localStorage.setItem(
+            "kreia-chat",
+            JSON.stringify(messages)
+        );
 
-    }, [messages]);
+    }, [messages]);
 
-    const sendMessage = async () => {
+    const sendMessage = async () => {
 
-        if (!input.trim()) return;
+        if (!input.trim()) return;
 
-        const userMessage = {
-            role: "user",
-            content: input,
-        };
+        const userMessage = {
+            role: "user",
+            content: input,
+        };
 
-        setMessages((prev) => [
-            ...prev,
-            userMessage,
-        ]);
+        setMessages((prev) => [
+            ...prev,
+            userMessage,
+        ]);
 
-        const currentInput = input;
+        const currentInput = input;
 
-        setInput("");
+        setInput("");
 
-        try {
+        try {
 
-            setLoading(true);
+            setLoading(true);
 
-            const response =
-                await fetch(
-                    "http://localhost:3000/api/chatbot",
-                    {
-                        method: "POST",
+            const response =
+                await fetch(
+                    "http://localhost:3000/api/chatbot",
+                    {
+                        method: "POST",
 
-                        headers: {
-                            "Content-Type":
-                                "application/json",
-                        },
+                        headers: {
+                            "Content-Type":
+                                "application/json",
+                        },
 
-                        body: JSON.stringify({
-                            message:
-                                currentInput,
-                        }),
-                    }
-                );
+                        body: JSON.stringify({
+                            message:
+                                currentInput,
+                        }),
+                    }
+                );
 
-            const data =
-                await response.json();
+            const data =
+                await response.json();
 
-            if (!data.ok) {
+            if (!data.ok) {
 
-                throw new Error(
-                    data.message
-                );
-            }
+                throw new Error(
+                    data.message
+                );
+            }
 
-            const aiResponse =
-                data.response;
+            const aiResponse =
+                data.response;
 
-            // GUARDAR JSON ESTRUCTURADO
-            localStorage.setItem(
-                "kikia-last-response",
-                JSON.stringify(
-                    aiResponse.data
-                )
-            );
+            // GUARDAR JSON ESTRUCTURADO
+            localStorage.setItem(
+                "kreia-last-response",
+                JSON.stringify(
+                    aiResponse.data
+                )
+            );
 
-            setMessages((prev) => [
-                ...prev,
-                {
-                    role: "assistant",
+            setMessages((prev) => [
+                ...prev,
+                {
+                    role: "assistant",
 
-                    content:
-                        aiResponse.message,
-                },
-            ]);
+                    content:
+                        aiResponse.message,
+                },
+            ]);
 
-        } catch (error) {
+        } catch (error) {
 
-            console.error(error);
+            console.error(error);
 
-            setMessages((prev) => [
-                ...prev,
-                {
-                    role: "assistant",
+            setMessages((prev) => [
+                ...prev,
+                {
+                    role: "assistant",
 
-                    content:
-                        "Ocurrió un error al procesar la solicitud.",
-                },
-            ]);
+                    content:
+                        "Ocurrió un error al procesar la solicitud.",
+                },
+            ]);
 
-        } finally {
+        } finally {
 
-            setLoading(false);
-        }
-    };
+            setLoading(false);
+        }
+    };
 
-    return (
-        <>
+    return (
+        <>
 
-            <div
-                className={`chatbot-window ${
-                    open ? "open" : ""
-                }`}
-            >
+            <div
+                className={`chatbot-window ${open ? "open" : ""
+                    }`}
+            >
 
-                <div className="chatbot-header">
+                <div className="chatbot-header">
 
-                    <div>
+                    <div>
 
-                        <h4>KikIA</h4>
+                        <h4>KreIA</h4>
 
-                        <span>
-                            Asistente IA
-                        </span>
+                        <span>
+                            Asistente KreIA
+                        </span>
 
-                    </div>
+                    </div>
 
-                    <button
-                        onClick={() =>
-                            setOpen(false)
-                        }
-                    >
-                        <X size={18} />
-                    </button>
+                    <button
+                        onClick={() =>
+                            setOpen(false)
+                        }
+                    >
+                        <X size={18} />
+                    </button>
 
-                </div>
+                </div>
 
-                <div className="chatbot-body">
+                <div className="chatbot-body">
 
-                    {messages.map(
-                        (msg, index) => (
+                    {messages.map(
+                        (msg, index) => (
 
-                            <div
-                                key={index}
+                            <div
+                                key={index}
 
-                                className={`chatbot-message ${
-                                    msg.role ===
-                                    "assistant"
-                                        ? "bot"
-                                        : "user"
-                                }`}
-                            >
-                                {msg.content}
-                            </div>
-                        )
-                    )}
+                                className={`chatbot-message ${msg.role ===
+                                    "assistant"
+                                    ? "bot"
+                                    : "user"
+                                    }`}
+                            >
+                                {msg.content}
+                            </div>
+                        )
+                    )}
 
-                    {loading && (
+                    {loading && (
 
-                        <div className="chatbot-message bot">
-                            KikIA está pensando...
-                        </div>
-                    )}
+                        <div className="chatbot-message bot">
+                            KreIA está pensando...
+                        </div>
+                    )}
 
-                </div>
+                </div>
 
-                <div className="chatbot-footer">
+                <div className="chatbot-footer">
 
-                    <input
-                        type="text"
+                    <input
+                        type="text"
 
-                        placeholder="Escribe un mensaje..."
+                        placeholder="Escribe un mensaje..."
 
-                        value={input}
+                        value={input}
 
-                        onChange={(e) =>
-                            setInput(
-                                e.target.value
-                            )
-                        }
+                        onChange={(e) =>
+                            setInput(
+                                e.target.value
+                            )
+                        }
 
-                        onKeyDown={(e) => {
+                        onKeyDown={(e) => {
 
-                            if (
-                                e.key === "Enter"
-                            ) {
+                            if (
+                                e.key === "Enter"
+                            ) {
 
-                                sendMessage();
-                            }
-                        }}
-                    />
+                                sendMessage();
+                            }
+                        }}
+                    />
 
-                    <button
-                        onClick={sendMessage}
-                        disabled={loading}
-                    >
-                        <Send size={18} />
-                    </button>
+                    <button
+                        onClick={sendMessage}
+                        disabled={loading}
+                    >
+                        <Send size={18} />
+                    </button>
 
-                </div>
-            </div>
+                </div>
+            </div>
 
-            <button
-                className="chatbot-bubble"
+            <button
+                className="chatbot-bubble"
 
-                onClick={() =>
-                    setOpen(!open)
-                }
-            >
-                <MessageCircle size={28} />
-            </button>
-        </>
-    );
+                onClick={() =>
+                    setOpen(!open)
+                }
+            >
+                <MessageCircle size={28} />
+            </button>
+        </>
+    );
 }
 
 export default ChatBotBubble;

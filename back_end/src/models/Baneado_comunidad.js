@@ -1,25 +1,13 @@
 const { DataTypes, Model } = require("sequelize")
 const sequelize = require("../config/db")
 
-class Chat_Comu extends Model {}
+class Baneado_comunidad extends Model {}
 
-Chat_Comu.init({
-    id_chat_comu: {
+Baneado_comunidad.init({
+    id_ban: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-    },
-    usuario_nombre: {
-        type: DataTypes.STRING(30),
-        allowNull: false
-    },
-    Fecha: {
-        type: DataTypes.DATE,
-        allowNull: false
-    },
-    texto: {
-        type: DataTypes.TEXT,
-        allowNull: false
     },
     id_comunidad: {
         type: DataTypes.INTEGER,
@@ -28,14 +16,22 @@ Chat_Comu.init({
     },
     id_usuario: {
         type: DataTypes.INTEGER,
-        allowNull: true,
+        allowNull: false,
         references: { model: 'usuarios', key: 'id_usuario' }
-    }
+    },
+    razon: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+    },
+    nombre_usuario: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+    },
 }, {
     sequelize,
-    modelName: "Chat_Comu",
-    tableName: "chat_comu",
-    timestamps: true
+    modelName: "Baneado_comunidad",
+    tableName: "baneados_comunidad",
+    timestamps: true,
 })
 
-module.exports = Chat_Comu
+module.exports = Baneado_comunidad

@@ -8,9 +8,10 @@ const NAV_ITEMS = [
     { id: 'portafolio', icon: 'folder_special', label: 'Portafolios' },
     { id: 'comunidades', icon: 'groups', label: 'Comunidades' },
     { id: 'convocatorias', icon: 'campaign', label: 'Convocatorias' },
+    { id: 'resenas', icon: 'star', label: 'Reseñas' },
 ]
 
-function SidebarAdmin({ vistaActual, mostrandoDashboard, mostrandoUsuarios, mostrandoPortafolio, mostrandoConvocatorias, mostrandoComunidades }) {
+function SidebarAdmin({ vistaActual, mostrandoDashboard, mostrandoUsuarios, mostrandoPortafolio, mostrandoConvocatorias, mostrandoComunidades, mostrandoResenas }) {
     const [admin, setAdmin] = useState({ Nombre: 'Admin', correo: 'admin@krea.com' })
     const navigate = useNavigate()
 
@@ -25,6 +26,7 @@ function SidebarAdmin({ vistaActual, mostrandoDashboard, mostrandoUsuarios, most
         portafolio: mostrandoPortafolio,
         convocatorias: mostrandoConvocatorias,
         comunidades: mostrandoComunidades,
+        resenas: mostrandoResenas,
     }
 
     const nombreCorto = (admin.Nombre || admin.nombre_completo || 'Admin').split(' ')[0]

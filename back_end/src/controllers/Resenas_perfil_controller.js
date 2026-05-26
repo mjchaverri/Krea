@@ -80,4 +80,19 @@ const eliminarResenaPerfil = async (req, res) => {
     }
 }
 
-module.exports = { obtenerResenasPorUsuario, crearResenaPerfil, eliminarResenaPerfil }
+const obtenerTodasResenasPerfil = async (req, res) => {
+    try {
+        const resenas = await Resenas_perfil.findAll({
+            order: [['createdAt', 'DESC']],
+            include: [
+                { model: Usuario, as: 'autor', attributes: ['id_usuario', 'nombre_completo', 'nombre_usuario', 'img_perfil', 'bloqueado'] },
+                { model: Usuario, as: 'receptor', attributes: ['id_usuario', 'nombre_completo', 'nombre_usuario', 'img_perfil', 'bloqueado'] },
+            ],
+        })
+        res.status(200).json({ status: 200, message: 'OK', data: resenas })
+    } catch (error) {
+        res.status(500).json({ status: 500, message: error.message })
+    }
+}
+
+module.exports = { obtenerResenasPorUsuario, crearResenaPerfil, eliminarResenaPerfil, obtenerTodasResenasPerfil }

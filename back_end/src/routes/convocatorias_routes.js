@@ -1,6 +1,6 @@
 const express = require("express")
 const router  = express.Router()
-const { crearConvocatoria, obtenerConvocatorias, eliminarConvocatoria, editarConvocatoria, obtenerParticipantesDeConvocatoria, eliminarParticipante } = require("../controllers/Convocatorias_controllers")
+const { crearConvocatoria, obtenerConvocatorias, eliminarConvocatoria, editarConvocatoria, obtenerParticipantesDeConvocatoria, eliminarParticipante, participarConvocatoria } = require("../controllers/Convocatorias_controllers")
 const verificarToken = require("../middlewares/authMiddleware")
 const roleMiddleware = require("../middlewares/roleMiddleware")
 const { validarConvocatoria, validarEditarConvocatoria } = require("../validators/convocatoria_validators")
@@ -84,7 +84,8 @@ router.post("/", verificarToken, roleMiddleware("empresa", "admin"), validarConv
  *     responses:
  *       200: { description: Convocatoria eliminada }
  */
-router.get("/:id_convocatoria/participantes",                   verificarToken, roleMiddleware("admin"), obtenerParticipantesDeConvocatoria)
+router.post("/:id_convocatoria/participar",                     verificarToken, participarConvocatoria)
+router.get("/:id_convocatoria/participantes",                   verificarToken, roleMiddleware("admin", "empresa"), obtenerParticipantesDeConvocatoria)
 router.delete("/:id_convocatoria/participantes/:id_usuario",   verificarToken, roleMiddleware("admin"), eliminarParticipante)
 router.put("/:id_convocatoria",    verificarToken, roleMiddleware("empresa", "admin"), validarEditarConvocatoria, editarConvocatoria)
 router.delete("/:id_convocatoria", verificarToken, roleMiddleware("empresa", "admin"), eliminarConvocatoria)

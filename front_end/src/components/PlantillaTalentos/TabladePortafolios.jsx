@@ -32,15 +32,15 @@ function StatCard({ label, value, sub, icon, iconColor, badge, badgeText, badgeC
 }
 
 const TabladePortafolios = () => {
-    const [portafolios,          setPortafolios]          = useState([])
-    const [usuarios,             setUsuarios]             = useState([])
-    const [busqueda,             setBusqueda]             = useState('')
-    const [filtroEstado,         setFiltroEstado]         = useState('TODOS')
-    const [filtroCategoria,      setFiltroCategoria]      = useState('Todas')
+    const [portafolios, setPortafolios] = useState([])
+    const [usuarios, setUsuarios] = useState([])
+    const [busqueda, setBusqueda] = useState('')
+    const [filtroEstado, setFiltroEstado] = useState('TODOS')
+    const [filtroCategoria, setFiltroCategoria] = useState('Todas')
     const [portafolioSeleccionado, setPortafolioSeleccionado] = useState(null)
-    const [resenas,              setResenas]              = useState([])
-    const [pagina,               setPagina]               = useState(1)
-    const [vistaGrid,            setVistaGrid]            = useState(true)
+    const [resenas, setResenas] = useState([])
+    const [pagina, setPagina] = useState(1)
+    const [vistaGrid, setVistaGrid] = useState(true)
 
     useEffect(() => {
         async function cargarDatos() {
@@ -89,14 +89,14 @@ const TabladePortafolios = () => {
     useEffect(() => { setPagina(1) }, [busqueda, filtroEstado, filtroCategoria])
 
     // Derivados
-    const publicados  = portafolios.filter(p => p.pdf).length
-    const pendientes  = portafolios.filter(p => !p.pdf).length
+    const publicados = portafolios.filter(p => p.pdf).length
+    const pendientes = portafolios.filter(p => !p.pdf).length
 
     // Categorías únicas de los portafolios
     const categoriasUnicas = ['Todas', ...Array.from(new Set(portafolios.flatMap(p => p.categorias || []))).sort()]
 
     const portafoliosFiltrados = portafolios.filter(p => {
-        const titulo     = (p.titulo || '').toLowerCase()
+        const titulo = (p.titulo || '').toLowerCase()
         const propietario = getNombreUsuario(p).toLowerCase()
         const coincideBusqueda = titulo.includes(busqueda.toLowerCase()) || propietario.includes(busqueda.toLowerCase())
         const estado = getEstado(p)

@@ -125,7 +125,7 @@ function TodosProyectos() {
         setFiltroRating(0); setOrdenarPor("recientes"); setBusqueda("");
     };
 
-    const hayFiltros = filtroProvincia || filtroCanton || filtroDistrito || filtroRating > 0 || busqueda;
+    const hayFiltros = filtroProvincia || filtroCanton || filtroDistrito || filtroRating > 0 || busqueda || ordenarPor !== "recientes";
 
     // Genera los botones de paginación con ellipsis
     const generarPaginas = () => {

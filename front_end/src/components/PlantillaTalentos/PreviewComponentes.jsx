@@ -21,7 +21,7 @@ function PreviewComponentes({ componentes }) {
     const outerRef = useRef(null);
     const innerRef = useRef(null);
     const [scale, setScale] = useState(1);
-    const primeros = useMemo(() => (componentes || []).slice(0, 2), [componentes]);
+    const primeros = useMemo(() => (componentes || []).slice(0, 1), [componentes]);
 
     // Recalculate scale whenever outer width changes
     useLayoutEffect(() => {

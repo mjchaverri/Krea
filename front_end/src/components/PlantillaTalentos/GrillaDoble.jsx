@@ -2,6 +2,7 @@ import "../../styles/PlantillaTalentos/GrillaDoble.css";
 import EditorContenedores from "./EditorContenedores";
 import EditableBlock from "./EditableBlock";
 import { useEditable } from "./useEditable";
+import { useImagePan } from "./useImagePan";
 import { useEstilos } from "./useEstilos";
 import { useState } from "react";
 
@@ -17,6 +18,8 @@ function GrillaDoble({ onActivate, activeElement, initialData, onUpdate }) {
     const bloque1 = useEditable(initialData?.bloque1, (d) => handleUpdate('bloque1', d));
     const bloque2 = useEditable(initialData?.bloque2, (d) => handleUpdate('bloque2', d));
 
+    const pan = useImagePan(fondo.state.imageUrl, fondo.state.imagePosition, (pos) => fondo.update({ imagePosition: pos }));
+
     return (
         <div className="grillaDoble__grid"
             style={{
@@ -25,23 +28,18 @@ function GrillaDoble({ onActivate, activeElement, initialData, onUpdate }) {
                     ? `url(${fondo.state.imageUrl})`
                     : "none",
                 backgroundSize: "cover",
-                backgroundPosition: "center"
+                backgroundPosition: fondo.state.imagePosition || "50% 50%",
+                cursor: pan.cursor,
             }}
+            onMouseDown={pan.onMouseDown}
             onClick={(e) => {
+                if (pan.consumeClick()) return;
                 e.stopPropagation();
-
                 onActivate(e, {
-
                     id: "grillaDoble-fondo",
-                    
                     tipo: "fondo",
-
-                    setColorFondo: (color) =>
-                        fondo.update({ colorFondo: color }),
-
-                    setImageUrl: (url) =>
-                        fondo.update({ imageUrl: url }),
-
+                    setColorFondo: (color) => fondo.update({ colorFondo: color }),
+                    setImageUrl: (url) => fondo.update({ imageUrl: url }),
                     imageUrl: fondo.state.imageUrl,
                     colorFondo: fondo.state.colorFondo,
                 });

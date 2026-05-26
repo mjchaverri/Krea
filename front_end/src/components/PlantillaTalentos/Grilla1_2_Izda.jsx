@@ -1,6 +1,7 @@
 import "../../styles/PlantillaTalentos/Grilla1_2_Izda.css";
 import EditableBlock from "./EditableBlock";
 import { useEditable } from "./useEditable";
+import { useImagePan } from "./useImagePan";
 
 function Grilla1_2_Izda({ onActivate, activeElement, initialData, onUpdate }) {
     
@@ -13,6 +14,8 @@ function Grilla1_2_Izda({ onActivate, activeElement, initialData, onUpdate }) {
     const fondo = useEditable(initialData?.fondo, (d) => handleUpdate('fondo', d));
     const content = useEditable(initialData?.content, (d) => handleUpdate('content', d));
 
+    const pan = useImagePan(fondo.state.imageUrl, fondo.state.imagePosition, (pos) => fondo.update({ imagePosition: pos }));
+
     return (
         <div className="grilla1_2_izda__grid">
             <div
@@ -21,10 +24,13 @@ function Grilla1_2_Izda({ onActivate, activeElement, initialData, onUpdate }) {
                     backgroundColor: fondo.state.colorFondo,
                     backgroundImage: fondo.state.imageUrl ? `url(${fondo.state.imageUrl})` : "none",
                     backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    position: "relative"
+                    backgroundPosition: fondo.state.imagePosition || "50% 50%",
+                    position: "relative",
+                    cursor: pan.cursor,
                 }}
+                onMouseDown={pan.onMouseDown}
                 onClick={(e) => {
+                    if (pan.consumeClick()) return;
                     e.stopPropagation();
                     onActivate(e, {
                         id: fondo.state.id,

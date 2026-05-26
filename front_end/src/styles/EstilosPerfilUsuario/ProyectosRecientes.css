@@ -170,26 +170,50 @@
     justify-content: center;
     padding: 80px 40px;
     text-align: center;
-    background: #fff;
-    border-radius: 16px;
+    background: #ffffff;
+    border-radius: 20px;
     border: 2px dashed #e2e8f0;
+    gap: 4px;
+}
+
+.empty-state-container .empty-state-icon {
+    display: none;
+}
+
+.empty-state-container h4 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 6px;
+    letter-spacing: -0.02em;
+}
+
+.empty-state-container p {
+    font-size: 14px;
+    color: #64748b;
+    margin: 0 0 24px;
+    max-width: 340px;
+    line-height: 1.6;
 }
 
 .btn-create-empty {
     background: #0db9f2;
     color: white;
     border: none;
-    padding: 14px 32px;
-    border-radius: 8px;
+    padding: 12px 28px;
+    border-radius: 10px;
     font-weight: 700;
+    font-size: 14px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.25s;
+    box-shadow: 0 4px 14px rgba(13, 185, 242, 0.3);
+    letter-spacing: 0.01em;
 }
 
 .btn-create-empty:hover {
     background: #09a1d3;
     transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(13, 185, 242, 0.2);
+    box-shadow: 0 8px 20px rgba(13, 185, 242, 0.35);
 }
 
 /* ── pp-card: tarjeta estilo showcase ── */

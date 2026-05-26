@@ -8,6 +8,7 @@ const CardProyecto = ({
     onVerProyecto,
     promedio,
     onDelete,
+    onEditar,
     usuario,
     categorias = [],
 }) => {
@@ -33,10 +34,20 @@ const CardProyecto = ({
                     <h3 className="pf-card-title">{nombreProyecto}</h3>
                 </div>
 
+                {onEditar && (
+                    <button
+                        className="pf-card-edit"
+                        onClick={e => { e.stopPropagation(); onEditar(); }}
+                        title="Editar portafolio"
+                    >
+                        <i className="fa-solid fa-pen" />
+                    </button>
+                )}
                 {onDelete && (
                     <button
                         className="pf-card-delete"
                         onClick={e => { e.stopPropagation(); onDelete(); }}
+                        title="Eliminar portafolio"
                     >
                         <i className="fa-solid fa-trash-can" />
                     </button>

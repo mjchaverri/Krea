@@ -72,6 +72,38 @@
     100% { transform: rotate(360deg); }
 }
 
+/* ── BOTÓN QUITAR IMAGEN EN BLOQUE ── */
+.bloque-quitar-imagen {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.40);
+    backdrop-filter: blur(4px);
+    color: #fff;
+    font-size: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    transition: background 0.15s;
+    opacity: 0.7;
+}
+
+.bloque-quitar-imagen:hover {
+    background: rgba(239, 68, 68, 0.85);
+    opacity: 1;
+}
+
+/* Ocultar durante captura */
+.lienzo-container.capturando .bloque-quitar-imagen {
+    display: none !important;
+}
+
 /* ── LOADING OVERLAY PARA FONDO (componente externo) ── */
 .loading-overlay-fondo,
 .loading-overlay-child {

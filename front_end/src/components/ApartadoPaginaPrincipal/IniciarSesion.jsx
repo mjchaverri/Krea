@@ -1,20 +1,20 @@
 import React, { useState } from 'react'
 import { useNavigate } from "react-router-dom"
 import Fetch from '../../services/Fetch'
+import Swal from 'sweetalert2'
 import '../../styles/Principales/InicioSesion.css'
 
 function IniciarSesion() {
     const [correo, setCorreo] = useState("")
     const [contrasena, setContrasena] = useState("")
-    const [cargando, setCargando] = useState(false)
     const navigate = useNavigate()
 
     async function validarInicio() {
         if (!correo || !contrasena) {
-            alert("Debes ingresar correo y contraseña")
+            Swal.fire({ icon: 'warning', title: 'Campos requeridos', text: 'Debes ingresar correo y contraseña.', confirmButtonColor: '#0ea5e9' })
             return
         }
-        setCargando(true)
+        Swal.fire({ title: 'Iniciando sesión...', allowOutsideClick: false, didOpen: () => Swal.showLoading() })
         try {
             const data = await Fetch.postData('usuarios/login', { correo, contrasena })
 
@@ -30,17 +30,16 @@ function IniciarSesion() {
             }))
             localStorage.setItem('idUsuario', data.usuario.id_usuario)
 
-            alert("Ingreso Exitoso")
             if (data.usuario.id_rol === 1) {
                 localStorage.setItem('rol', 'Admin')
+                await Swal.fire({ icon: 'success', title: '¡Bienvenido!', text: 'Ingreso exitoso.', confirmButtonColor: '#0ea5e9', timer: 1500, showConfirmButton: false })
                 navigate("/Admin")
             } else {
+                await Swal.fire({ icon: 'success', title: '¡Bienvenido!', text: 'Ingreso exitoso.', confirmButtonColor: '#0ea5e9', timer: 1500, showConfirmButton: false })
                 navigate("/principal")
             }
         } catch (error) {
-            alert(error.message || "Correo o contraseña incorrectos")
-        } finally {
-            setCargando(false)
+            Swal.fire({ icon: 'error', title: 'Error al iniciar sesión', text: error.message || 'Correo o contraseña incorrectos.', confirmButtonColor: '#0ea5e9' })
         }
     }
 
@@ -82,8 +81,8 @@ function IniciarSesion() {
                             />
                         </div>
 
-                        <button className='BotonEntrar' onClick={validarInicio} disabled={cargando}>
-                            {cargando ? 'Entrando...' : 'Entrar ahora'}
+                        <button className='BotonEntrar' onClick={validarInicio}>
+                            Entrar ahora
                         </button>
 
                         <div className='RegistroPrompt'>

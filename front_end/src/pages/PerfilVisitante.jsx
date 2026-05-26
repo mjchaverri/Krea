@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import ResenasPerfilUsuario from '../components/PerfilUsuario/ResenasPerfilUsuario';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../components/navbar/Navbar';
 import Footer from '../components/ApartadoPaginaPrincipal/Footer';
@@ -61,23 +62,6 @@ function PerfilVisitante() {
     useEffect(() => {
         cargarDatos();
     }, [usuarioId]);
-
-    // Reseñas recibidas en los portafolios de este usuario
-    const resenasDelUsuario = useMemo(() => {
-        const idsPortafolios = new Set(portafolios.map((p) => p.id));
-        return todasResenas.filter((r) => idsPortafolios.has(r.portafolioId));
-    }, [portafolios, todasResenas]);
-
-    // Distribución de estrellas — misma lógica que ResenasUsuario
-    const promedio = useMemo(() => calcularPromedio(resenasDelUsuario), [resenasDelUsuario]);
-
-    const distribucion = useMemo(() => {
-        const dist = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-        resenasDelUsuario.forEach((r) => dist[r.rating]++);
-        return dist;
-    }, [resenasDelUsuario]);
-
-    const total = resenasDelUsuario.length || 1;
 
     // Reseñas del proyecto actualmente abierto en el modal
     const resenasProyecto = useMemo(() => {
@@ -144,49 +128,9 @@ function PerfilVisitante() {
                 <SeccionesPerfil />
             </div>
 
-            {/* RESEÑAS — misma estructura visual que ResenasUsuario.jsx
-                pero parametrizada por los portafolios del usuario visitado */}
-            <div className="perfil-resenas" style={{ maxWidth: '1100px', margin: '0 auto', padding: '0 20px' }}>
-                <div className="resenas-container">
-                    {/* Score */}
-                    <div className="resenas-score">
-                        <h2>{promedio}</h2>
-                        <p>Promedio de {resenasDelUsuario.length} valoraciones</p>
-                        {[5, 4, 3, 2, 1].map((star) => (
-                            <div key={star} className="barra">
-                                <span>{star}</span>
-                                <div className="barra-bg">
-                                    <div
-                                        className="barra-fill"
-                                        style={{ width: `${(distribucion[star] / total) * 100}%` }}
-                                    />
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Lista */}
-                    <div className="resenas-list">
-                        <h4>Reseñas de Clientes</h4>
-                        {resenasDelUsuario.length === 0 ? (
-                            <p style={{ color: '#777', fontStyle: 'italic' }}>
-                                Este usuario aún no tiene reseñas.
-                            </p>
-                        ) : (
-                            resenasDelUsuario.map((r, i) => (
-                                <div key={i} className="resena-card">
-                                    <div className="resena-stars">
-                                        {'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}
-                                    </div>
-                                    <p className="resena-text">{r.comentario}</p>
-                                    <span className="resena-user">
-                                        {r.fecha ? new Date(r.fecha).toLocaleDateString() : ''}
-                                    </span>
-                                </div>
-                            ))
-                        )}
-                    </div>
-                </div>
+            {/* RESEÑAS DE PERFIL */}
+            <div className="perfil-resenas">
+                <ResenasPerfilUsuario usuarioId={usuarioId} isOwner={false} />
             </div>
 
             {/* PROYECTOS — usa CardProyecto + ModalProyecto, igual que ProyectosRecientes

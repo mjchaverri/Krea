@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import '../../styles/EstilosSidebar/SidebarComunidades.css'
 import Fetch from '../../services/Fetch'
+import Swal from 'sweetalert2'
 
 
 const ICONOS = ['🎨', '🎵', '💻', '📸', '✍️', '🎭', '🎬', '🏛️', '🌿', '🎧', '🖌️', '📐', '🧵', '🎙️', '🖼️', '🎮']
@@ -69,7 +70,7 @@ function SidebarComunidades({
             setForm({ nombre: '', descripcion: '', categoria: CATEGORIAS_MODAL[0], icono: ICONOS[0], color: COLORES[0], banner: '' })
         } catch (err) {
             console.error(err)
-            alert(err.message || 'Error al crear la comunidad')
+            Swal.fire({ icon: 'error', title: 'Error', text: err.message || 'No se pudo crear la comunidad.', confirmButtonColor: '#0ea5e9' })
         } finally {
             setGuardando(false)
         }

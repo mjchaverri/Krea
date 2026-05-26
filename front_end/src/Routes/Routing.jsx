@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import Inicio from "../pages/Inicio"
 import Principal from "../pages/Principal"
 import PerfilUsuario from "../pages/PerfilUsuario"
@@ -17,29 +17,25 @@ import TodosProyectos from "../pages/TodosProyectos"
 import FormularioConvo from "../pages/FormularioConvo"
 import PaginaComunidades from "../pages/PaginaComunidades"
 
+const router = createBrowserRouter([
+    { path: "/",               element: <Inicio /> },
+    { path: "/Iniciar",        element: <PaguinaIniciar /> },
+    { path: "/Registro",       element: <PaginaRegistro /> },
+    { path: "/principal",      element: <RutaPrivada><Principal /></RutaPrivada> },
+    { path: "/perfil-usuario", element: <RutaPrivada><PerfilUsuario /></RutaPrivada> },
+    { path: "/pagina-contacto",element: <PaginaContacto /> },
+    { path: "/sobre-nosotros", element: <SobreNosotros /> },
+    { path: "/portafolio",     element: <RutaPrivada><Portafolio /></RutaPrivada> },
+    { path: "/Admin",          element: <RutaPrivadaAdmin><Admin /></RutaPrivadaAdmin> },
+    { path: "/Funcionalidad",  element: <RutaPrivada><Funcionalidad /></RutaPrivada> },
+    { path: "/Consejos",       element: <RutaPrivada><PaginaConsejos /></RutaPrivada> },
+    { path: "/todos-proyectos",element: <TodosProyectos /> },
+    { path: "/perfil/:usuarioId", element: <PerfilVisitante /> },
+    { path: "/FormularioConvo",element: <RutaPrivadaAdmin><FormularioConvo /></RutaPrivadaAdmin> },
+    { path: "/comunidades",    element: <RutaPrivada><PaginaComunidades /></RutaPrivada> },
+])
+
 function Routing() {
-    return (
-        <Router>
-            <Routes>
-                <Route path="/" element={<Inicio />} />
-                <Route path="/Iniciar" element={<PaguinaIniciar />} />
-                <Route path="/Registro" element={<PaginaRegistro />} />
-                <Route path="/principal" element={<RutaPrivada children={<Principal />} />} />
-                <Route path="/perfil-usuario" element={<RutaPrivada children={<PerfilUsuario />} />} />
-                <Route path="/pagina-contacto" element={<PaginaContacto />} />
-                <Route path="/sobre-nosotros" element={<SobreNosotros />} />
-                <Route path="Iniciar" element={<PaguinaIniciar />} />
-                <Route path="/Registro" element={<PaginaRegistro />} />
-                <Route path="/portafolio" element={<RutaPrivada children={<Portafolio />} />} />
-                <Route path="/Admin" element={<RutaPrivadaAdmin children={<Admin />} />} />
-                <Route path="/Funcionalidad" element={<RutaPrivada children={<Funcionalidad />} />} />
-                <Route path="/Consejos" element={<RutaPrivada children={<PaginaConsejos />} />} />
-                <Route path="/todos-proyectos" element={<TodosProyectos />} />
-                <Route path="/perfil/:usuarioId" element={<PerfilVisitante />} />
-                <Route path="/FormularioConvo" element={<RutaPrivadaAdmin children={<FormularioConvo />} />} />
-                <Route path="/comunidades" element={<RutaPrivada children={<PaginaComunidades />} />} />
-            </Routes>
-        </Router>
-    )
+    return <RouterProvider router={router} />
 }
 export default Routing

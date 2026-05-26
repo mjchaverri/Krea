@@ -1,4 +1,4 @@
-const { Portafolios } = require("../index")
+const { Portafolios, Usuario } = require("../index")
 const { validationResult } = require("express-validator")
 const { Op } = require("sequelize")
 
@@ -19,7 +19,7 @@ const crearPortafolio = async (req, res) => {
 const obtenerPortafolios = async (req, res) => {
     try {
         const page = Math.max(parseInt(req.query.page) || 1, 1)
-        const limit = Math.min(parseInt(req.query.limit) || 10, 100)
+        const limit = Math.min(parseInt(req.query.limit) || 10, 500)
         const offset = (page - 1) * limit
         const { buscar } = req.query
 
@@ -27,7 +27,16 @@ const obtenerPortafolios = async (req, res) => {
             ? { titulo: { [Op.like]: `%${buscar}%` } }
             : {}
 
-        const { count, rows } = await Portafolios.findAndCountAll({ where, limit, offset, order: [["createdAt", "DESC"]] })
+        const { count, rows } = await Portafolios.findAndCountAll({
+            where,
+            limit,
+            offset,
+            order: [["createdAt", "DESC"]],
+            include: [{
+                model: Usuario,
+                attributes: ['id_usuario', 'nombre_completo', 'img_perfil', 'provincia', 'canton', 'distrito'],
+            }],
+        })
         res.status(200).json({
             status: 200,
             message: "OK",
@@ -46,7 +55,15 @@ const obtenerPortafoliosPorUsuario = async (req, res) => {
         const limit = Math.min(parseInt(req.query.limit) || 10, 100)
         const offset = (page - 1) * limit
 
-        const { count, rows } = await Portafolios.findAndCountAll({ where: { id_usuario }, limit, offset })
+        const { count, rows } = await Portafolios.findAndCountAll({
+            where: { id_usuario },
+            limit,
+            offset,
+            include: [{
+                model: Usuario,
+                attributes: ['id_usuario', 'nombre_completo', 'img_perfil', 'provincia', 'canton', 'distrito'],
+            }],
+        })
         res.status(200).json({
             status: 200,
             message: "OK",

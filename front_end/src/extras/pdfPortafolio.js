@@ -1,20 +1,14 @@
-import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
-export const generarPDFBlob = async (ref) => {
-    const canvas = await html2canvas(ref.current, {
-        scale: 1, // 🔥 reduce peso
-        useCORS: true
-    });
-
-    // 🔥 usar JPEG en vez de PNG (mucho más liviano)
+// Acepta un HTMLCanvasElement ya renderizado (generado por capturarCanvas)
+export const generarPDFBlob = async (canvas) => {
     const imgData = canvas.toDataURL("image/jpeg", 0.7);
 
     const pdf = new jsPDF({
         orientation: "p",
         unit: "mm",
         format: "a4",
-        compress: true // 🔥 compresión activa
+        compress: true,
     });
 
     const pageWidth = pdf.internal.pageSize.getWidth();

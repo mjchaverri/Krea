@@ -112,6 +112,30 @@
   color: #0ea5e9;
 }
 
+/* BOTÓN DESCARGAR PDF — estilo secundario */
+.btn-download {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 14px;
+  border: 1.5px solid #0DB9F2;
+  background: transparent;
+  color: #0DB9F2;
+
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-download:hover {
+  background: #e0f7fd;
+  transform: translateY(-1px);
+}
+
 /* BOTÓN GUARDAR — estilo primario (BtnRegister) */
 .btn-save {
   display: flex;

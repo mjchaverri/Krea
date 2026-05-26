@@ -3,6 +3,7 @@ export function normalizarPortafolio(p) {
     if (p.componentes_json) {
         try { componentes = JSON.parse(p.componentes_json) } catch (_) { componentes = [] }
     }
+    const u = p.Usuario || p.usuario || null
     return {
         id:          p.id_portafolio,
         titulo:      p.titulo,
@@ -11,7 +12,15 @@ export function normalizarPortafolio(p) {
         imgPortada:  p.img_portada,
         usuarioId:   p.id_usuario,
         componentes,
-        categorias:  p.categorias  || [],
+        categorias:  p.categorias || [],
+        usuario: u ? {
+            id:         u.id_usuario,
+            Nombre:     u.nombre_completo,
+            img:        u.img_perfil,
+            Provincias: u.provincia,
+            Canton:     u.canton,
+            Distrito:   u.distrito,
+        } : null,
     }
 }
 
@@ -40,6 +49,22 @@ export function normalizarUsuario(u) {
         descripcion:    u.descripcion,
         id_rol:         u.id_rol,
         createdAt:      u.createdAt,
+    }
+}
+
+export function normalizarResenaPerfil(r) {
+    return {
+        id:         r.id_resena_perfil,
+        receptorId: r.id_usuario_receptor,
+        autorId:    r.id_usuario_autor,
+        rating:     r.calificacion,
+        comentario: r.comentarios,
+        fecha:      r.createdAt,
+        autor: r.autor ? {
+            id:     r.autor.id_usuario,
+            nombre: r.autor.nombre_completo,
+            img:    r.autor.img_perfil,
+        } : null,
     }
 }
 

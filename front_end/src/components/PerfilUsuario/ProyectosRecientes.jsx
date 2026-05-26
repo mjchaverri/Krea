@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from 'react'
 import CardProyecto from './CardProyecto';
 import ModalProyecto from './ModalProyecto';
 import Fetch from '../../services/Fetch';
+import Swal from 'sweetalert2';
 import { normalizarPortafolio, normalizarResena } from '../../utils/normalizers';
 import { calcularPromedio } from '../../utils/calcularPromedio';
 import { useNavigate } from "react-router-dom";
@@ -12,15 +13,20 @@ function ProyectosRecientes() {
     const [todasResenas, setTodasResenas] = useState([])
     const [proyectoSeleccionado, setProyectoSeleccionado] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
     const [visibleCount, setVisibleCount] = useState(3)
 
     const navigate = useNavigate()
 
     const cargarDatos = async () => {
         setLoading(true)
+        setError(null)
         try {
             const usuario = JSON.parse(localStorage.getItem("UsuarioActivo"))
-            if (!usuario?.id) return
+            if (!usuario?.id) {
+                setLoading(false)
+                return
+            }
 
             const [resP, resR] = await Promise.all([
                 Fetch.getData(`portafolios/usuario/${usuario.id}?limit=50`),
@@ -29,23 +35,38 @@ function ProyectosRecientes() {
 
             setProyectos((resP || []).map(normalizarPortafolio))
             setTodasResenas((resR || []).map(normalizarResena))
-        } catch (error) {
-            console.error(error)
+        } catch (err) {
+            console.error(err)
+            setError("No se pudieron cargar los proyectos.")
         } finally {
-            setTimeout(() => setLoading(false), 800)
+            setLoading(false)
         }
     }
 
+    const handleEditarPortfolio = (proyecto) => {
+        navigate("/portafolio", { state: { proyectoEditando: proyecto } });
+    };
+
     const handleDeletePortfolio = async (id) => {
-        const confirmar = window.confirm("¿Estás seguro de que quieres eliminar este portafolio? Esta acción no se puede deshacer.");
-        if (!confirmar) return;
+        const result = await Swal.fire({
+            title: '¿Eliminar portafolio?',
+            text: 'Esta acción no se puede deshacer.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#6b7280',
+        });
+        if (!result.isConfirmed) return;
 
         try {
             await Fetch.deleteData(`portafolios/${id}`);
             setProyectos((prev) => prev.filter((p) => p.id !== id));
+            Swal.fire({ icon: 'success', title: 'Eliminado', text: 'El portafolio fue eliminado correctamente.', confirmButtonColor: '#0ea5e9', timer: 2000, showConfirmButton: false });
         } catch (error) {
             console.error("Error al eliminar portafolio:", error);
-            alert("No se pudo eliminar el portafolio. Intenta de nuevo.");
+            Swal.fire({ icon: 'error', title: 'Error', text: 'No se pudo eliminar el portafolio. Intenta de nuevo.', confirmButtonColor: '#0ea5e9' });
         }
     };
 
@@ -71,6 +92,7 @@ function ProyectosRecientes() {
                     categorias={proyecto.categorias || []}
                     promedio={promedio}
                     onVerProyecto={() => setProyectoSeleccionado(proyecto)}
+                    onEditar={() => handleEditarPortfolio(proyecto)}
                     onDelete={() => handleDeletePortfolio(proyecto.id)}
                 />
             )
@@ -100,7 +122,6 @@ function ProyectosRecientes() {
 
             <div className="proyectos-grid">
                 {loading ? (
-                    // Skeleton
                     Array(3).fill(0).map((_, i) => (
                         <div key={i} className="proyecto-card-skeleton">
                             <div className="skeleton-image"></div>
@@ -108,8 +129,16 @@ function ProyectosRecientes() {
                             <div className="skeleton-text body"></div>
                         </div>
                     ))
+                ) : error ? (
+                    <div className="empty-state-container">
+                        <div className="empty-state-icon">⚠️</div>
+                        <h4>Error al cargar proyectos</h4>
+                        <p>{error}</p>
+                        <button className="btn-create-empty" onClick={cargarDatos}>
+                            Reintentar
+                        </button>
+                    </div>
                 ) : proyectos.length === 0 ? (
-                    // Empty State
                     <div className="empty-state-container">
                         <div className="empty-state-icon">📁</div>
                         <h4>Este usuario aún no tiene proyectos</h4>

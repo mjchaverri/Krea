@@ -12,7 +12,10 @@ function BarraHerramientas({ activeElement, onDeshacer, onRehacer, puedeDeshacer
     const [localTextPosition, setLocalTextPosition] = useState("center");
     const [localColorTexto, setLocalColorTexto] = useState("#1a202c");
     const [localImageUrl, setLocalImageUrl] = useState("");
+    const [localColorFondo, setLocalColorFondo] = useState("");
     const [localTexto, setLocalTexto] = useState("");
+    const [localFontSize, setLocalFontSize] = useState("16px");
+    const [localFontFamily, setLocalFontFamily] = useState("sans-serif");
 
     const uploadId = useRef(`barra-upload-${Date.now()}`).current;
 
@@ -25,6 +28,9 @@ function BarraHerramientas({ activeElement, onDeshacer, onRehacer, puedeDeshacer
             setLocalTextPosition(activeElement.textPosition || "center");
             setLocalColorTexto(activeElement.colorTexto || "#1a202c");
             setLocalImageUrl(activeElement.imageUrl || "");
+            setLocalColorFondo(activeElement.colorFondo || "");
+            setLocalFontSize(activeElement.fontSize || "16px");
+            setLocalFontFamily(activeElement.fontFamily || "sans-serif");
             const textoInicial = activeElement.texto || "";
             setLocalTexto(textoInicial);
             // Muestra opciones de texto si ya hay texto escrito
@@ -108,11 +114,25 @@ function BarraHerramientas({ activeElement, onDeshacer, onRehacer, puedeDeshacer
                 <input
                     type="color"
                     className="barra-color-input"
-                    onChange={(e) => activeElement.setColorFondo?.(e.target.value)}
+                    onChange={(e) => {
+                        setLocalColorFondo(e.target.value);
+                        activeElement.setColorFondo?.(e.target.value);
+                    }}
                 />
                 <i className="fa-solid fa-palette"></i>
                 <span className="barra-label">Fondo</span>
             </label>
+
+            {/* Quitar color de fondo — solo visible cuando hay un color */}
+            {localColorFondo && (
+                <button
+                    className="barra-btn barra-btn--sincolor"
+                    title="Sin color de fondo (transparente)"
+                    onClick={() => { setLocalColorFondo(""); activeElement.setColorFondo?.(""); }}
+                >
+                    <span className="barra-no-color-icon" />
+                </button>
+            )}
 
             {/* Imagen de fondo */}
             <label className="barra-btn barra-btn--labeled" htmlFor={uploadId} title="Imagen de fondo">
@@ -120,13 +140,6 @@ function BarraHerramientas({ activeElement, onDeshacer, onRehacer, puedeDeshacer
                 <i className="fa-solid fa-image"></i>
                 <span className="barra-label">Imagen</span>
             </label>
-
-            {/* Quitar imagen */}
-            {localImageUrl && (
-                <button className="barra-btn barra-btn--danger" title="Quitar imagen" onClick={handleQuitarImagen}>
-                    <i className="fa-solid fa-xmark"></i>
-                </button>
-            )}
 
             {/* Solo para bloques */}
             {activeElement.tipo === "bloque" && (
@@ -154,6 +167,37 @@ function BarraHerramientas({ activeElement, onDeshacer, onRehacer, puedeDeshacer
                                 <i className="fa-solid fa-font" style={{ color: localColorTexto }}></i>
                                 <span className="barra-label">Color texto</span>
                             </label>
+
+                            {/* Tamaño de fuente */}
+                            <select
+                                className="barra-select"
+                                value={localFontSize}
+                                onChange={(e) => {
+                                    setLocalFontSize(e.target.value);
+                                    activeElement.setFontSize?.(e.target.value);
+                                }}
+                                title="Tamaño de letra"
+                            >
+                                {["12px","14px","16px","18px","20px","24px","28px","32px","40px","48px"].map(s => (
+                                    <option key={s} value={s}>{s.replace("px","")}</option>
+                                ))}
+                            </select>
+
+                            {/* Tipografía */}
+                            <button
+                                className={`barra-btn barra-btn--font ${localFontFamily === "sans-serif" ? "barra-btn--active" : ""}`}
+                                title="Sans-serif"
+                                onClick={() => { setLocalFontFamily("sans-serif"); activeElement.setFontFamily?.("sans-serif"); }}
+                                style={{ fontFamily: "inherit", fontSize: "13px", fontWeight: 600 }}
+                            >Aa</button>
+                            <button
+                                className={`barra-btn barra-btn--font ${localFontFamily === "serif" ? "barra-btn--active" : ""}`}
+                                title="Serif"
+                                onClick={() => { setLocalFontFamily("serif"); activeElement.setFontFamily?.("serif"); }}
+                                style={{ fontFamily: "Georgia, serif", fontSize: "13px", fontWeight: 600 }}
+                            >Aa</button>
+
+                            <div className="barra-divider" />
 
                             {/* Negrita */}
                             <button

@@ -30,6 +30,7 @@ const reporte_convoRoutes = require("./routes/Reportes_convo_routes")
 const miembrosRoutes = require("./routes/miembros_routes")
 const seguidosRoutes = require("./routes/seguidos_routes")
 const configuracionRoutes = require("./routes/configuracion_routes")
+const resenas_perfilRoutes = require("./routes/resenas_perfil_routes")
 
 // ── Rutas ───────────────────────────────────────────────────────
 app.use("/usuarios", usuarioRoutes)
@@ -49,6 +50,7 @@ app.use("/reporte-convo", reporte_convoRoutes)
 app.use("/miembros", miembrosRoutes)
 app.use("/seguidos", seguidosRoutes)
 app.use("/configuracion", configuracionRoutes)
+app.use("/resenas-perfil", resenas_perfilRoutes)
 app.use("/api/chatbot", chatbotRoutes);
 
 setupSwagger(app)

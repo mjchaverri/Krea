@@ -42,10 +42,21 @@ function GrillaDoble({ onActivate, activeElement, initialData, onUpdate }) {
                     setImageUrl: (url) =>
                         fondo.update({ imageUrl: url }),
 
-                    imageUrl: fondo.state.imageUrl   
+                    imageUrl: fondo.state.imageUrl,
+                    colorFondo: fondo.state.colorFondo,
                 });
             }}
         >
+
+            {fondo.state.imageUrl && (
+                <button
+                    className="bloque-quitar-imagen"
+                    onClick={(e) => { e.stopPropagation(); fondo.update({ imageUrl: '' }); }}
+                    title="Quitar imagen"
+                >
+                    <i className="fa-solid fa-xmark" />
+                </button>
+            )}
 
             <EditableBlock
                 className="grillaDoble__image"

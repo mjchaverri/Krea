@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
 import '../../styles/Principales/Comunidades.css'
 import Fetch from '../../services/Fetch'
+import Swal from 'sweetalert2'
 import ModalAdminComunidad from './ModalAdminComunidad'
 
 // Normaliza una comunidad del backend al formato que usa el frontend
@@ -210,7 +211,7 @@ function ChatComunidad({ comunidad, usuario, onVolver }) {
     }
 
     const handleParticipar = (msg) => {
-        alert(`¡Te inscribiste en: ${msg.convocatoriaNombre || 'esta convocatoria'}!`)
+        Swal.fire({ icon: 'success', title: '¡Inscripción exitosa!', text: `Te inscribiste en: ${msg.convocatoriaNombre || 'esta convocatoria'}`, confirmButtonColor: '#0ea5e9' })
     }
 
     const formatHora = (iso) =>

@@ -15,8 +15,8 @@ function ProjectShowcase({ showcaseRef }) {
         const cargarDatos = async () => {
             try {
                 const [resP, resR] = await Promise.all([
-                    Fetch.getData("portafolios?limit=50"),
-                    Fetch.getData("resenas?limit=100"),
+                    Fetch.getData("portafolios?limit=500").catch(() => []),
+                    Fetch.getData("resenas?limit=500").catch(() => []),
                 ]);
                 setDatos({
                     portafolios: (resP || []).map(normalizarPortafolio),
@@ -55,20 +55,19 @@ function ProjectShowcase({ showcaseRef }) {
     const portafoliosProcesados = useMemo(() => {
         if (!datos.portafolios.length) return [];
         return datos.portafolios
-            .slice()
             .map(p => {
                 const resenasPf = datos.resenas.filter(r => String(r.portafolioId) === String(p.id));
                 const avgRating = resenasPf.length > 0
                     ? resenasPf.reduce((sum, r) => sum + (r.rating || 0), 0) / resenasPf.length
-                    : null;
-                return { ...p, avgRating, totalResenas: resenasPf.length };
+                    : 0;
+                return {
+                    ...p,
+                    user:         p.usuario || { Nombre: 'Usuario', img: '' },
+                    avgRating,
+                    totalResenas: resenasPf.length,
+                };
             })
-            .sort((a, b) => {
-                const ra = a.avgRating ?? -1;
-                const rb = b.avgRating ?? -1;
-                if (rb !== ra) return rb - ra;
-                return b.totalResenas - a.totalResenas;
-            });
+            .sort((a, b) => b.avgRating - a.avgRating || b.totalResenas - a.totalResenas);
     }, [datos]);
 
     const filteredProjects = useMemo(() => {
@@ -120,7 +119,7 @@ function ProjectShowcase({ showcaseRef }) {
                         nombreProyecto={project.titulo}
                         componentes={project.componentes}
                         categorias={project.categorias || []}
-                        usuario={{ Nombre: project.nombreUsuario || "Usuario", img: "" }}
+                        usuario={project.user}
                         promedio={project.avgRating}
                         onVerProyecto={() => navigate('/Registro')}
                     />

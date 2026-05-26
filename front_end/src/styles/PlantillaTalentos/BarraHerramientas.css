@@ -145,6 +145,60 @@
     pointer-events: none;
 }
 
+/* Sin color de fondo — círculo con barra diagonal roja */
+.barra-no-color-icon {
+    display: block;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 1.5px solid #d1d5db;
+    background: #fff;
+    position: relative;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.barra-no-color-icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -2px;
+    right: -2px;
+    height: 1.5px;
+    background: #ef4444;
+    transform: translateY(-50%) rotate(-45deg);
+}
+
+.barra-btn--sincolor:hover .barra-no-color-icon {
+    border-color: #9ca3af;
+}
+
+/* SELECT de tamaño de fuente */
+.barra-select {
+    height: 30px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 0 6px;
+    font-size: 12px;
+    color: #374151;
+    background: #fff;
+    cursor: pointer;
+    outline: none;
+    flex-shrink: 0;
+}
+
+.barra-select:hover {
+    border-color: #9ca3af;
+}
+
+/* Botón tipografía */
+.barra-btn--font {
+    width: 32px;
+    height: 30px;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
 /* HINT cuando nada está seleccionado */
 .barra-hint {
     font-size: 12px;

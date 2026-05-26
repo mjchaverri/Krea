@@ -12,7 +12,8 @@ export function useEditable(initialState = null, onUpdate = null) {
     align: "left",
     textPosition: "center",
     childColorFondo: "",
-    childImageUrl: ""
+    childImageUrl: "",
+    fontFamily: "sans-serif"
   };
 
   const [state, setState] = useState(initialState || defaultState);

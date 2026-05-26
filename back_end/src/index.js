@@ -20,6 +20,7 @@ const Chat_Comu = require("./models/Chat_Comu")
 const Chat_Miembros = require("./models/Chat_Miembros")
 const Seguidos = require("./models/Seguidos")
 const Configuracion = require("./models/Configuracion")
+const Resenas_perfil = require("./models/Resenas_perfil")
 
 // ── Usuarios ─────────────────────────────────────────────────── //para commit
 // Un usuario tiene un rol
@@ -31,13 +32,19 @@ Roles.hasMany(Usuario, { foreignKey: "id_rol" })
 Usuario.hasMany(Portafolios, { foreignKey: "id_usuario" })
 Portafolios.belongsTo(Usuario, { foreignKey: "id_usuario" })
 
-// ── Reseñas ─────────────────────────────────────────────────────
+// ── Reseñas de portafolio ────────────────────────────────────────
 // Un usuario puede escribir muchas reseñas
 Usuario.hasMany(Resenas, { foreignKey: "id_usuario" })
 Resenas.belongsTo(Usuario, { foreignKey: "id_usuario" })
 // Un portafolio puede tener muchas reseñas
 Portafolios.hasMany(Resenas, { foreignKey: "id_portafolio" })
 Resenas.belongsTo(Portafolios, { foreignKey: "id_portafolio" })
+
+// ── Reseñas de perfil ────────────────────────────────────────────
+Usuario.hasMany(Resenas_perfil, { foreignKey: "id_usuario_autor",    as: "resenasEscritas"  })
+Resenas_perfil.belongsTo(Usuario, { foreignKey: "id_usuario_autor",    as: "autor"    })
+Usuario.hasMany(Resenas_perfil, { foreignKey: "id_usuario_receptor", as: "resenasRecibidas" })
+Resenas_perfil.belongsTo(Usuario, { foreignKey: "id_usuario_receptor", as: "receptor" })
 
 // ── Componentes del portafolio ──────────────────────────────────
 // Un portafolio tiene muchos componentes
@@ -147,5 +154,6 @@ module.exports = {
     Chat_Comu,
     Chat_Miembros,
     Seguidos,
-    Configuracion
+    Configuracion,
+    Resenas_perfil,
 }

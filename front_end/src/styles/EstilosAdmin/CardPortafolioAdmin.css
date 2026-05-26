@@ -1,0 +1,162 @@
+.pfa-card {
+    background: #fff;
+    border: 1px solid #e8edf2;
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.pfa-card:hover {
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    border-color: #cbd5e1;
+}
+
+/* ── Thumbnail ── */
+.pfa-thumb {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    background: #f8fafc;
+}
+
+.pfa-thumb-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.pfa-card:hover .pfa-thumb-overlay {
+    opacity: 1;
+}
+
+.pfa-thumb-ver {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    background: rgba(255,255,255,0.15);
+    padding: 8px 16px;
+    border-radius: 8px;
+    backdrop-filter: blur(4px);
+}
+
+/* ── Body ── */
+.pfa-body {
+    padding: 12px 14px 8px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.pfa-body-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.pfa-titulo {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+}
+
+.pfa-estado {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.pfa-estado--pub  { background: #dcfce7; color: #16a34a; }
+.pfa-estado--pend { background: #fef3c7; color: #d97706; }
+
+.pfa-propietario {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #64748b;
+    margin: 0;
+}
+
+.pfa-cats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.pfa-cat {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 5px;
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.pfa-cat--more {
+    background: #e0f2fe;
+    color: #0284c7;
+}
+
+/* ── Acciones ── */
+.pfa-acciones {
+    display: flex;
+    border-top: 1px solid #f1f5f9;
+}
+
+.pfa-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 9px 0;
+    border: none;
+    background: none;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.pfa-btn .material-symbols-outlined {
+    font-size: 16px;
+}
+
+.pfa-btn--ver {
+    color: #0ea5e9;
+    border-right: 1px solid #f1f5f9;
+}
+
+.pfa-btn--ver:hover {
+    background: #f0f9ff;
+}
+
+.pfa-btn--del {
+    color: #94a3b8;
+}
+
+.pfa-btn--del:hover {
+    background: #fef2f2;
+    color: #ef4444;
+}

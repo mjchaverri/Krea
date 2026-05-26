@@ -20,7 +20,8 @@ const COMPONENT_REGISTRY = [
             "presentaciones personales",
             "proyectos únicos",
             "diseño minimalista",
-            "imagen de fondo"
+            "imagen de fondo",
+            "Imagenes principales"
         ],
 
         allows: [
@@ -30,7 +31,7 @@ const COMPONENT_REGISTRY = [
         ],
 
         restrictions: [
-            "solo un bloque principal",
+            "solo un bloque principal,donde solo se permite Una unica imagen, una unica frase o un unico color",
             "contenido centrado",
         ],
 
@@ -85,12 +86,13 @@ const COMPONENT_REGISTRY = [
             "Titulo principal o frase corta e imagen principal",
             "Imagen de fondo con titulo principal o frase corta",
             "Titulo principal o frase corta y color de fondo",
-            "Imagen principal con texto o frase corta",
+            " Permite una Imagen principal, adentro que puede incluir texto o frase corta",
             "Imagen principal y color de fondo",
             "Color de fondo y texto",
             "Combinaciones de 3",
             "landing pages",
             "proyectos destacados",
+            "Permite un largo hasta de 1920px y un ancho de 550px en las imagenes En el seguno bloque siempre se recomienda que tenga una imagen que sea mas ancha que larga ",
         ],
 
         allows: [
@@ -102,6 +104,10 @@ const COMPONENT_REGISTRY = [
         restrictions: [
             "requiere bloqueTop",
             "requiere bloqueBottom",
+            "No permite mas de 3 imagenes, una como portada,como fondo y otra como elemento principal",
+            "No se recominda si la imagen es hacia el largo ",
+            "No recomandar si el ancho de la foto es mayor de 1920px y el largo supere 550px"
+
         ],
 
         fields: {
@@ -154,6 +160,15 @@ const COMPONENT_REGISTRY = [
             "storytelling",
             "portafolios editoriales",
             "galerías visuales",
+            "Titulo principal o frase corta e imagen principal",
+            "Imagen de fondo o color de fondo",
+            "Titulo principal o frase corta y color de fondo",
+            " Permite dos Imagen principal, adentro puede incluir texto o frase corta",
+            "Imagen principal y color de fondo",
+            "Combinaciones de 4",
+            "landing pages",
+            "proyectos destacados",
+            "Permite un largo hasta de 1000px y un ancho de 800px en las imagenes "
         ],
 
         allows: [
@@ -166,6 +181,9 @@ const COMPONENT_REGISTRY = [
             "requiere bloqueTop",
             "requiere bloqueMid",
             "requiere bloqueBottom",
+            "No se recomienda si el ancho de la imagen es mayor de 1000px y el largo supere 800px",
+            "No puede contener mas de 2 imagenes principales y en total 4 imagenes ",
+            "Los dos bloques principales permiten las mismas medidas en ambas columnas, no permite que las medidas sean diferentes"
         ],
 
         fields: {
@@ -226,6 +244,17 @@ bloque central destacado y dos bloques inferiores.
             "revistas digitales",
             "branding",
             "portafolios modernos",
+            "Titulo principal o frase corta e imagen principal",
+            "Imagen de fondo o color de fondo",
+            "Titulo principal o frase corta y color de fondo",
+            " Permite tres imagenes principales, adentro puede incluir texto o frase corta",
+            "Imagen principal y color de fondo",
+            "Combinaciones de 5",
+            "landing pages",
+            "proyectos destacados",
+            "Para la imagen de fondo no puede superar los 1920px de ancho y 600px de largo",
+            "Para las imagenes principales no puede superar los 600px de ancho y 600px de largo",
+
         ],
 
         allows: [
@@ -239,6 +268,9 @@ bloque central destacado y dos bloques inferiores.
             "requiere bloqueMid",
             "requiere bloqueBottom1",
             "requiere bloqueBottom2",
+            "No puede contener mas de 3 imagenes principales y en total 5 imagenes",
+            "No se recominda si el ancho de la imagen es mayor de 700px y el largo supere 700px",
+
         ],
 
         fields: {
@@ -304,6 +336,17 @@ Ideal para galerías modernas y proyectos creativos.
             "branding",
             "showcases",
             "portafolios visuales",
+            "Titulo principal o frase corta e imagen principal",
+            "Imagen de fondo o color de fondo",
+            "Titulo principal o frase corta y color de fondo",
+            " Permite cuatro imagenes principales, adentro puede incluir texto o frase corta",
+            "Imagen principal y color de fondo",
+            "Combinaciones de 6",
+            "landing pages",
+            "proyectos destacados",
+            "Para la imagen de fondo no puede superar los 1920px de ancho y 600px de largo",
+            "Para las imagenes principales no puede superar los 300px de ancho y 500px de largo",
+            "Este solo se recomienda cuando son imagenes verticales y pequeñas, ya que este no permite imagenes horizontales",
         ],
 
         allows: [
@@ -318,6 +361,9 @@ Ideal para galerías modernas y proyectos creativos.
             "requiere bloque2",
             "requiere bloque3",
             "requiere bloque4",
+            "No se recomienda si el ancho de la imagen es mayor de 300px y el largo supere 500px",
+            "No puede contener mas de 4 imagenes principales y en total 6 imagenes",
+            "No se recomienda si son imagenes horizontales, ya que no permite un buen resultado",
         ],
 
         fields: {
@@ -381,15 +427,21 @@ Ideal para galerías modernas y proyectos creativos.
         category: "grid",
 
         descripcion: `
-Layout de dos columnas visuales.
-Ideal para comparación de proyectos
-o presentación dual.
+  Layout de dos columnas visuales.
+  Ideal para comparación de proyectos
+  o presentación dual.
 `,
 
         idealFor: [
             "comparativas",
             "proyectos duales",
             "galerías",
+            "imagen de fondo o color de fondo",
+            "Dos componentes para imagenes, los cuales pueden incluir texto o frase corta o tambien contener un color",
+            "Permite en total 3 imagenes, 2 principales y una de fondo",
+            "Para la imagen de fondo no puede superar los 1920px de ancho y 600px de largo",
+            "Para las imagenes principales no puede superar los 900px de ancho y 600px de largo",
+            "Se recomiendan para imagenes horizontales para obtener un mejor resultado",
         ],
 
         allows: [
@@ -401,6 +453,9 @@ o presentación dual.
         restrictions: [
             "requiere bloque1",
             "requiere bloque2",
+            "No puede contener mas de 3 imagenes, 2 principales y una de fondo",
+            "No se recomienda si el ancho de la imagen es mayor de 900px y el largo supere 600px",
+            "No se recomienda si son imagenes verticales, ya que no permite un buen resultado"
         ],
 
         fields: {
@@ -457,6 +512,12 @@ o galerías organizadas.
             "portafolios",
             "cards visuales",
             "showcases",
+            "imagen de fondo o color de fondo",
+            "Tres componentes para imagenes, los cuales pueden incluir texto o frase corta o tambien contener un color",
+            "Permite en total 4 imagenes, 3 principales y una de fondo",
+            "Para la imagen de fondo no puede superar los 1920px de ancho y 600px de largo",
+            "Para las imagenes principales no puede superar los 700px de ancho y 500px de largo",
+            "Se recomiendan para imagenes horizontales para obtener un mejor resultado",
         ],
 
         allows: [
@@ -469,6 +530,9 @@ o galerías organizadas.
             "requiere bloque1",
             "requiere bloque2",
             "requiere bloque3",
+            "No puede contener mas de 4 imagenes, 3 principales y una de fondo",
+            "No se recomienda si el ancho de la imagen es mayor de 700px y el largo supere 500px",
+            "No se recomienda si son imagenes verticales, ya que no permite un buen resultado"
         ],
 
         fields: {

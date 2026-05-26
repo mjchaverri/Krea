@@ -6,6 +6,47 @@ const {
     generateResponse,
 } = require("./ai.service");
 
+const extractJSON = (text) => {
+
+    try {
+
+        const firstBrace =
+            text.indexOf("{");
+
+        const lastBrace =
+            text.lastIndexOf("}");
+
+        if (
+            firstBrace === -1 ||
+            lastBrace === -1
+        ) {
+
+            throw new Error(
+                "No JSON encontrado"
+            );
+        }
+
+        const jsonString =
+            text.slice(
+                firstBrace,
+                lastBrace + 1
+            );
+
+        return JSON.parse(jsonString);
+
+    } catch (error) {
+
+        console.error(
+            "JSON EXTRACT ERROR:",
+            error
+        );
+
+        throw new Error(
+            "Error procesando JSON IA"
+        );
+    }
+};
+
 const selectPortfolioComponents =
     async (message) => {
 
@@ -16,12 +57,20 @@ const selectPortfolioComponents =
                     message
                 );
 
-            const response =
+            const rawResponse =
                 await generateResponse(
                     prompt
                 );
 
-            return response;
+            console.log(
+                "RAW IA RESPONSE:",
+                rawResponse
+            );
+
+            const parsed =
+                extractJSON(rawResponse);
+
+            return parsed;
 
         } catch (error) {
 

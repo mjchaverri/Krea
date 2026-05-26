@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import Fetch from "../../services/Fetch";
 import { normalizarResenaPerfil } from "../../utils/normalizers";
 import { calcularPromedio } from "../../utils/calcularPromedio";
+import Paginacion from "../Administrador/Paginacion";
 import "../../styles/EstilosPerfilUsuario/ResenasUsuario.css";
 import "../../styles/EstilosPerfilUsuario/ResenasPerfilUsuario.css";
 
@@ -36,10 +37,13 @@ function EstrellasSelectorInput({ value, onChange }) {
     );
 }
 
-function ResenasPerfilUsuario({ usuarioId, isOwner }) {
+const LIMITE = 6;
+
+function ResenasPerfilUsuario({ usuarioId, isOwner, onCountChange }) {
     const [resenas, setResenas]         = useState([]);
     const [pagina, setPagina]           = useState(1);
-    const [hayMas, setHayMas]           = useState(false);
+    const [totalPaginas, setTotalPaginas] = useState(1);
+    const [totalResenas, setTotalResenas] = useState(0);
     const [cargando, setCargando]       = useState(true);
     const [enviando, setEnviando]       = useState(false);
     const [rating, setRating]           = useState(0);
@@ -50,14 +54,18 @@ function ResenasPerfilUsuario({ usuarioId, isOwner }) {
     const usuarioActivo = JSON.parse(localStorage.getItem("UsuarioActivo") || "null");
     const puedeEscribir = !isOwner && !!usuarioActivo;
 
-    const cargar = useCallback(async (pag = 1, acumular = false) => {
+    const cargar = useCallback(async (pag = 1) => {
         setCargando(true);
         try {
-            const res = await Fetch.getData(`resenas-perfil/usuario/${usuarioId}?page=${pag}&limit=5`);
+            const res = await Fetch.getData(`resenas-perfil/usuario/${usuarioId}?page=${pag}&limit=${LIMITE}`);
             const lista = (res?.data || res || []).map(normalizarResenaPerfil);
-            setResenas(prev => acumular ? [...prev, ...lista] : lista);
-            setHayMas((res?.meta?.pages || 1) > pag);
+            const pages = res?.meta?.pages || 1;
+            const total = res?.meta?.total ?? lista.length;
+            setResenas(lista);
             setPagina(pag);
+            setTotalPaginas(pages);
+            setTotalResenas(total);
+            if (onCountChange) onCountChange(total);
         } catch (e) {
             console.error("Error cargando reseñas de perfil:", e);
         } finally {
@@ -66,8 +74,6 @@ function ResenasPerfilUsuario({ usuarioId, isOwner }) {
     }, [usuarioId]);
 
     useEffect(() => { cargar(1); }, [cargar]);
-
-    const cargarMas = () => cargar(pagina + 1, true);
 
     const enviar = async (e) => {
         e.preventDefault();
@@ -86,6 +92,7 @@ function ResenasPerfilUsuario({ usuarioId, isOwner }) {
             setComentario("");
             setExito("¡Reseña enviada!");
             cargar(1);
+            setPagina(1);
         } catch (err) {
             setError(err.message || "Error al enviar la reseña.");
         } finally {
@@ -94,6 +101,7 @@ function ResenasPerfilUsuario({ usuarioId, isOwner }) {
     };
 
     const promedio = useMemo(() => calcularPromedio(resenas), [resenas]);
+    const totalParaDistribucion = resenas.length || 1;
 
     const distribucion = useMemo(() => {
         const dist = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
@@ -101,7 +109,7 @@ function ResenasPerfilUsuario({ usuarioId, isOwner }) {
         return dist;
     }, [resenas]);
 
-    const total = resenas.length || 1;
+    const total = totalParaDistribucion;
 
     return (
         <div className="resenas-container">
@@ -185,11 +193,15 @@ function ResenasPerfilUsuario({ usuarioId, isOwner }) {
                     ))
                 )}
 
-                {hayMas && (
-                    <div style={{ textAlign: "center", marginTop: "16px" }}>
-                        <button className="rp-btn-mas" onClick={cargarMas} disabled={cargando}>
-                            {cargando ? "Cargando..." : "Cargar más reseñas"}
-                        </button>
+                {totalPaginas > 1 && (
+                    <div style={{ marginTop: "24px" }}>
+                        <Paginacion
+                            pagina={pagina}
+                            totalPaginas={totalPaginas}
+                            onChange={p => cargar(p)}
+                            totalItems={totalResenas}
+                            itemsMostrados={resenas.length}
+                        />
                     </div>
                 )}
             </div>

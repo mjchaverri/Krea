@@ -1,24 +1,25 @@
 import React from 'react'
 import "../../styles/EstilosPerfilUsuario/SeccionesPerfil.css"
 
-function SeccionesPerfil() {
+function SeccionesPerfil({ activeTab, onTabChange, resenasCount = 0 }) {
     return (
         <div className="tabs-container">
             <div className="tabs">
 
-                <div className="tab active">
+                <div
+                    className={`tab ${activeTab === 'proyectos' ? 'active' : ''}`}
+                    onClick={() => onTabChange('proyectos')}
+                >
                     <span className="fa-solid fa-table-cells"></span>
                     <h6>Proyectos</h6>
                 </div>
 
-                <div className="tab">
+                <div
+                    className={`tab ${activeTab === 'resenas' ? 'active' : ''}`}
+                    onClick={() => onTabChange('resenas')}
+                >
                     <span className="fa-solid fa-star"></span>
-                    <h6>Reseñas (42)</h6>
-                </div>
-
-                <div className="tab">
-                    <span className="fa-solid fa-circle-info"></span>
-                    <h6>Sobre mí</h6>
+                    <h6>Reseñas ({resenasCount})</h6>
                 </div>
 
             </div>

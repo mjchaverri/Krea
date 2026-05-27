@@ -1,194 +1,104 @@
-// services/portfolioBuilder.service.js
+const { generateResponse } = require("./ai.service");
 
-const {
-    buildPortfolioPrompt,
-} = require("../context/portafolioBuilder.prompt");
+// =====================================================
+// LIMPIAR RESPUESTA IA
+// =====================================================
 
-const {
-    generateResponse,
-} = require("./ai.service");
+const cleanResponse = (text) => {
+    return text
+        .replace(/```json/g, "")
+        .replace(/```/g, "")
+        .trim();
+};
 
-const {
-    COMPONENT_REGISTRY,
-} = require("../context/componentRegistry");
+// =====================================================
+// PARSE SEGURO
+// =====================================================
 
-const extractJSON = (text) => {
+const safeParse = (text) => {
+    try {
+        return JSON.parse(text);
+    } catch (e) {
+        console.warn("⚠️ JSON inválido, intentando reparar...");
+
+        try {
+            const fixed = text
+                .replace(/,\s*}/g, "}")
+                .replace(/,\s*]/g, "]");
+
+            return JSON.parse(fixed);
+        } catch {
+            console.error("❌ No se pudo reparar JSON");
+            return [];
+        }
+    }
+};
+
+// =====================================================
+// GENERAR PORTAFOLIO
+// =====================================================
+
+const generatePortfolio = async ({
+    userMessage,
+    selectedComponents,
+    colores,
+}) => {
 
     try {
 
-        if (!text) {
-            throw new Error("Respuesta vacía");
-        }
+        const prompt = `
+Devuelve SOLO un ARRAY JSON válido.
 
-        // =====================================
-        // LIMPIEZA AGRESIVA
-        // =====================================
+FORMATO:
 
-        let cleanText = String(text)
+[
+  {
+    "id": "comp-1",
+    "type": "Hero",
+    "data": {
+      "titulo": "Texto",
+      "descripcion": "Texto",
+      "colorFondo": "#FFFFFF"
+    }
+  }
+]
 
-            // BOM
-            .replace(/^\uFEFF/, "")
+REGLAS:
+- SOLO ARRAY []
+- NO markdown
+- NO texto fuera
+- mínimo 2 bloques
+- usar colores
+- usar componentes
 
-            // NBSP
-            .replace(/\u00A0/g, " ")
+Colores:
+${JSON.stringify(colores)}
 
-            // Zero width chars
-            .replace(/[\u200B-\u200D\uFEFF]/g, "")
+Componentes:
+${JSON.stringify(selectedComponents)}
 
-            // tabs raros
-            .replace(/\t/g, " ")
+Contexto:
+${userMessage}
+`;
 
-            // normalizar saltos
-            .replace(/\r/g, "")
+        let response = await generateResponse(prompt);
 
-            .trim();
+        console.log("RAW PORTFOLIO RESPONSE:", response);
 
-        // =====================================
-        // EXTRAER Y REPARAR JSON
-        // =====================================
+        response = cleanResponse(response);
 
-        // El builder siempre devuelve un array — buscar desde el primer [
-        const arrayStart = cleanText.indexOf("[");
-        if (arrayStart === -1) {
-            throw new Error("No se encontró array JSON");
-        }
+        const parsed = safeParse(response);
 
-        let jsonString = cleanText.slice(arrayStart);
+        if (!Array.isArray(parsed)) return [];
 
-        // Fix comas flotantes
-        jsonString = jsonString
-            .replace(/,\s*}/g, "}")
-            .replace(/,\s*]/g, "]");
-
-        // Intentar parse directo
-        try {
-            return JSON.parse(jsonString);
-        } catch {
-            // Reparar: contar aperturas vs cierres y cerrar lo que falta
-            let openBraces = 0;
-            let openBrackets = 0;
-            let inString = false;
-            let escape = false;
-
-            for (const ch of jsonString) {
-                if (escape) { escape = false; continue; }
-                if (ch === "\\") { escape = true; continue; }
-                if (ch === '"') { inString = !inString; continue; }
-                if (inString) continue;
-                if (ch === "{") openBraces++;
-                else if (ch === "}") openBraces--;
-                else if (ch === "[") openBrackets++;
-                else if (ch === "]") openBrackets--;
-            }
-
-            // Quitar coma final suelta
-            jsonString = jsonString.trimEnd().replace(/,\s*$/, "");
-
-            // Cerrar estructuras abiertas
-            for (let i = 0; i < openBraces; i++) jsonString += "}";
-            for (let i = 0; i < openBrackets; i++) jsonString += "]";
-
-            return JSON.parse(jsonString);
-        }
+        return parsed;
 
     } catch (error) {
 
-        console.error(
-            "PORTFOLIO JSON ERROR:",
-            error.message
-        );
-
-        console.error(
-            "RAW RESPONSE:",
-            text
-        );
-
-        throw new Error(
-            "Error procesando portfolio JSON"
-        );
-    }
-};
-
-const validatePortfolioStructure = (
-    portfolio
-) => {
-
-    if (!Array.isArray(portfolio)) {
+        console.error("PORTFOLIO BUILDER ERROR:", error);
         return [];
     }
-
-    const validTypes =
-        COMPONENT_REGISTRY.map(
-            component => component.type
-        );
-
-    const validTypesLower = validTypes.map(t => t.toLowerCase());
-
-    return portfolio
-        .map(component => {
-            // normalizar type si la IA usó mayúsculas/minúsculas distintas
-            if (component.type && !validTypes.includes(component.type)) {
-                const idx = validTypesLower.indexOf(component.type.toLowerCase());
-                if (idx !== -1) component.type = validTypes[idx];
-            }
-            return component;
-        })
-        .filter(component => {
-            if (!component.type) return false;
-            if (!validTypes.includes(component.type)) return false;
-            if (!component.data) return false;
-            return true;
-        });
 };
-
-const generatePortfolio =
-    async ({
-        userMessage,
-        selectedComponents,
-        colores,
-    }) => {
-
-        try {
-
-            const prompt =
-                buildPortfolioPrompt({
-                    userMessage,
-                    selectedComponents,
-                    colores,
-                });
-
-            const rawResponse =
-                await generateResponse(
-                    prompt
-                );
-
-            console.log(
-                "RAW PORTFOLIO RESPONSE:",
-                rawResponse
-            );
-
-            const parsedPortfolio =
-                extractJSON(rawResponse);
-
-            const validatedPortfolio =
-                validatePortfolioStructure(
-                    parsedPortfolio
-                );
-
-            return validatedPortfolio;
-
-        } catch (error) {
-
-            console.error(
-                "PORTFOLIO BUILDER ERROR:",
-                error.message
-            );
-
-            throw new Error(
-                "Error generando portfolio"
-            );
-        }
-    };
 
 module.exports = {
     generatePortfolio,

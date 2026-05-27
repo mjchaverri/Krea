@@ -23,8 +23,7 @@ const buildPortfolioPrompt = ({
         COMPONENT_REGISTRY
             .filter(component =>
                 selectedComponents.some(
-                    selected =>
-                        selected.type === component.type
+                    selected => selected.type === component.type
                 )
             )
             .map((component, i) => {
@@ -35,20 +34,35 @@ const buildPortfolioPrompt = ({
 
     const c = colores || {};
 
-    return `Rellena el array JSON de abajo. SOLO devuelve el array. Sin texto extra, sin markdown.
+    return `Rellena el array JSON de abajo. SOLO devuelve el array.
 
-TRABAJO DEL USUARIO: ${userMessage}
+TRABAJO DEL USUARIO:
+${userMessage}
 
 INSTRUCCIONES:
-1. Copia el array de PLANTILLA exactamente.
-2. Reemplaza cada valor "texto" con contenido relevante al trabajo del usuario (4-10 palabras descriptivas).
-3. NO añadas ni quites objetos del array. NO inventes tipos nuevos.
-4. imageUrl siempre "".
-5. Aplica estos colores en colorFondo y colorTexto de cada objeto:
-   - Fondo principal: ${c.fondo || "#FFFFFF"} → texto: ${c.texto || "#0F172A"}
-   - Fondo secundario: ${c.fondo2 || "#F8FAFC"} → texto: ${c.texto || "#0F172A"}
-   - Fondo acento: ${c.acento || "#0EA5E9"} → texto: ${esColorClaro(c.acento) ? "#0F172A" : "#FFFFFF"}
-   - fontFamily de todos los campos: "${c.tipografia || "Inter, sans-serif"}"
+
+1. Copia el array exactamente.
+2. Genera contenido creativo:
+   - evita frases genéricas
+   - usa lenguaje con personalidad
+   - mezcla frases cortas y expresivas
+3. Usa tono acorde al perfil (creativo, tech, artístico, etc.)
+4. Puedes usar estilo marca personal
+
+IMÁGENES:
+imageUrl puede ser:
+- ""
+- "AI_GENERATE: descripción visual detallada"
+- "USER_UPLOAD: tipo de imagen necesaria"
+
+COLORES:
+- Fondo principal: ${c.fondo || "#FFFFFF"}
+- Fondo secundario: ${c.fondo2 || "#F8FAFC"}
+- Acento: ${c.acento || "#0EA5E9"}
+- Texto: ${c.texto || "#0F172A"}
+
+TIPOGRAFÍA:
+- ${c.tipografia || "Inter, sans-serif"}
 
 PLANTILLA:
 [${registryInfo}]`;

@@ -1,23 +1,25 @@
 const {
     selectPortfolioComponents,
-} = require(
-    "../services/portafolioGenerator.service"
-);
+} = require("../services/portafolioGenerator.service");
 
 const {
     generatePortfolio,
-} = require(
-    "../services/portfolioBuilder.service"
-);
+} = require("../services/portfolioBuilder.service");
 
-// Palabras que indican saludo/off-topic
+// =====================================================
+// PALABRAS DE CONTROL
+// =====================================================
+
 const SALUDOS = [
     "hola", "hi", "hello", "holi", "hey", "buenas",
     "buen dia", "buenos dias", "buenas tardes", "buenas noches",
     "confirmar", "quedarse con este estilo", "quiero probar otro estilo",
 ];
 
-// Construye el contexto de profesión filtrando saludos y mensajes de acción UI
+// =====================================================
+// HELPERS
+// =====================================================
+
 const buildProfesionContext = (historialLimpio, message) => {
 
     const estilosKeywords = [
@@ -42,14 +44,27 @@ const buildProfesionContext = (historialLimpio, message) => {
         .map(m => m.content.trim())
         .filter(c => {
             if (esAccionUI(c)) return false;
+
             const lower = c.toLowerCase();
-            const esEstilo = estilosKeywords.some(k => lower === k || lower === k + "!" || lower.startsWith(k + " "));
-            return c.length > 5 && !SALUDOS.some(s => lower === s || lower === s + "!") && !esEstilo;
+
+            const esEstilo = estilosKeywords.some(k =>
+                lower === k || lower.startsWith(k)
+            );
+
+            return (
+                c.length > 5 &&
+                !SALUDOS.includes(lower) &&
+                !esEstilo
+            );
         });
 
     const msgLower = message.toLowerCase().trim();
-    const msgEsEstilo = estilosKeywords.some(k => msgLower === k || msgLower.startsWith(k + " "));
-    const msgEsSaludo = SALUDOS.some(s => msgLower === s || msgLower === s + "!");
+
+    const msgEsEstilo = estilosKeywords.some(k =>
+        msgLower === k || msgLower.startsWith(k)
+    );
+
+    const msgEsSaludo = SALUDOS.includes(msgLower);
 
     if (!msgEsEstilo && !msgEsSaludo && !esAccionUI(message) && message.length > 5) {
         mensajesProfesion.push(message);
@@ -60,10 +75,38 @@ const buildProfesionContext = (historialLimpio, message) => {
         : message;
 };
 
-const sendMessage = async (
-    req,
-    res
-) => {
+// =====================================================
+// PROCESAR IMÁGENES (AI + USER UPLOAD)
+// =====================================================
+
+const processImages = (portfolio = []) => {
+    return portfolio.map(block => {
+
+        const data = block.data || {};
+
+        if (typeof data.imageUrl === "string") {
+
+            if (data.imageUrl.startsWith("USER_UPLOAD")) {
+                data.needsUpload = true;
+            }
+
+            if (data.imageUrl.startsWith("AI_GENERATE")) {
+                data.aiPrompt = data.imageUrl.replace("AI_GENERATE:", "").trim();
+            }
+        }
+
+        return {
+            ...block,
+            data,
+        };
+    });
+};
+
+// =====================================================
+// CONTROLADOR PRINCIPAL
+// =====================================================
+
+const sendMessage = async (req, res) => {
 
     try {
 
@@ -89,7 +132,7 @@ const sendMessage = async (
             : [];
 
         // =====================================================
-        // ACCIÓN: CONFIRMAR — el usuario aprueba el estilo
+        // CONFIRMAR
         // =====================================================
 
         if (message === "confirmar") {
@@ -101,7 +144,7 @@ const sendMessage = async (
         }
 
         // =====================================================
-        // ACCIÓN: ELEGIR — el usuario clicó una opción de estilo
+        // ELEGIR ESTILO → GENERAR PORTAFOLIO
         // =====================================================
 
         if (message.startsWith("elegir:")) {
@@ -118,34 +161,43 @@ const sendMessage = async (
 
             const profDesc = buildProfesionContext(historialLimpio, "");
 
-            const portfolio = await generatePortfolio({
+            const portfolioRaw = await generatePortfolio({
                 userMessage: profDesc || "portafolio profesional",
                 selectedComponents: opcionSeleccionada.componentesSeleccionados,
                 colores: opcionSeleccionada.colores,
             });
 
+            const portfolio = processImages(portfolioRaw);
+
             return res.status(200).json({
                 ok: true,
                 message: portfolio.length > 0
-                    ? "¿Te gusta este estilo? Puedes quedarte con él o probar otra opción."
-                    : "Hubo un problema generando la vista previa. Intenta con otra opción.",
+                    ? "¿Te gusta este estilo? Puedes confirmarlo o probar otro."
+                    : "Hubo un problema generando la vista previa.",
                 portfolio,
                 esPreview: portfolio.length > 0,
             });
         }
 
         // =====================================================
-        // PASO 1 — SELECCIONAR COMPONENTES / INTENT
+        // PASO 1 → IA (SIEMPRE DEBE DAR OPCIONES)
         // =====================================================
 
-        const selectedResponse =
-            await selectPortfolioComponents(
-                message,
-                historialLimpio
-            );
+        const selectedResponse = await selectPortfolioComponents(
+            message,
+            historialLimpio
+        );
+
+        // fallback defensivo (por si la IA falla)
+        if (!selectedResponse || !selectedResponse.intencion) {
+            return res.status(500).json({
+                ok: false,
+                message: "Error interpretando la solicitud",
+            });
+        }
 
         // =====================================================
-        // RESPUESTAS SIN PORTAFOLIO
+        // RESPUESTAS SIMPLES
         // =====================================================
 
         if (
@@ -155,60 +207,73 @@ const sendMessage = async (
             return res.status(200).json({
                 ok: true,
                 message: selectedResponse.message,
-                selectedComponents: [],
+                opciones: [],
                 portfolio: [],
             });
         }
 
+        // 🔥 SIEMPRE OPCIONES
         if (selectedResponse.intencion === "opciones") {
             return res.status(200).json({
                 ok: true,
                 message: selectedResponse.message,
-                opciones: selectedResponse.opciones,
-                selectedComponents: [],
+                opciones: selectedResponse.opciones || [],
                 portfolio: [],
             });
         }
 
         // =====================================================
-        // PASO 2 — GENERAR PORTAFOLIO
+        // SEGURIDAD: NO GENERAR PORTAFOLIO SIN ELEGIR
+        // =====================================================
+
+        if (selectedResponse.intencion === "portafolio" && !opcionSeleccionada) {
+            return res.status(200).json({
+                ok: true,
+                message: "Primero elige un estilo para continuar.",
+                opciones: [],
+                portfolio: [],
+            });
+        }
+
+        // =====================================================
+        // GENERACIÓN DIRECTA (fallback)
         // =====================================================
 
         const contextoCompleto = buildProfesionContext(historialLimpio, message);
 
-        // Para portafolio directo (sin pasar por opciones) usamos colores del tema por defecto
         const coloresDefault = {
-            fondo: "#FFFFFF", fondo2: "#F8FAFC",
-            acento: "#0EA5E9", texto: "#0F172A",
+            fondo: "#FFFFFF",
+            fondo2: "#F8FAFC",
+            acento: "#0EA5E9",
+            texto: "#0F172A",
             tipografia: "Inter, sans-serif",
         };
 
-        const portfolio =
-            await generatePortfolio({
-                userMessage: contextoCompleto,
-                selectedComponents: selectedResponse.data.componentesSeleccionados,
-                colores: selectedResponse.data.colores || coloresDefault,
-            });
+        const portfolioRaw = await generatePortfolio({
+            userMessage: contextoCompleto,
+            selectedComponents: selectedResponse.data?.componentesSeleccionados || [],
+            colores: selectedResponse.data?.colores || coloresDefault,
+        });
 
-        const mensajeFinal = portfolio.length === 0
-            ? "Hubo un problema generando el portafolio. ¿Puedes describir de nuevo qué tipo de portafolio quieres?"
-            : selectedResponse.message;
+        const portfolio = processImages(portfolioRaw);
 
         return res.status(200).json({
             ok: true,
-            message: mensajeFinal,
-            selectedComponents: selectedResponse.data.componentesSeleccionados,
+            message: selectedResponse.message || "Aquí tienes tu portafolio",
+            selectedComponents: selectedResponse.data?.componentesSeleccionados || [],
             portfolio,
         });
 
     } catch (error) {
 
-        console.error("CHATBOT ERROR:", error.message);
+        console.error("CHATBOT ERROR:", error);
 
         return res.status(500).json({
             ok: false,
             message: "Error interno del servidor",
-            detail: process.env.NODE_ENV === "development" ? error.message : undefined,
+            detail: process.env.NODE_ENV === "development"
+                ? error.message
+                : undefined,
         });
     }
 };

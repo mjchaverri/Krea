@@ -1,5 +1,6 @@
 const {
     buildComponentSelectorPrompt,
+    SELECTOR_SYSTEM_MESSAGE,
 } = require("../prompts/componentSelector.prompt");
 
 const {
@@ -126,18 +127,22 @@ const validateComponents = (
 */
 
 const selectPortfolioComponents =
-    async (message) => {
+    async (message, historial = []) => {
+
+        const turnosUsuario = historial.filter(m => m.role === "user").length;
 
         try {
 
             const prompt =
                 buildComponentSelectorPrompt(
-                    message
+                    message,
+                    historial
                 );
 
             const rawResponse =
                 await generateResponse(
-                    prompt
+                    prompt,
+                    SELECTOR_SYSTEM_MESSAGE
                 );
 
             console.log(
@@ -148,14 +153,128 @@ const selectPortfolioComponents =
             const parsed =
                 extractJSON(rawResponse);
 
+            if (!parsed || !parsed.message) {
+                throw new Error("Estructura IA inválida");
+            }
+
+            const estilosKeywords = [
+                "oscuro", "claro", "blanco", "negro", "minimalista", "vibrante",
+                "elegante", "moderno", "editorial", "creativo", "tech", "corporativo",
+                "colorido", "cálido", "calido", "natural", "profesional", "premium",
+            ];
+
+            const mensajesUsuarioHistorial = historial
+                .filter(m => m.role === "user")
+                .map(m => m.content.toLowerCase().trim());
+
+            const usuarioYaMencionoEstilo = mensajesUsuarioHistorial.some(msg =>
+                estilosKeywords.some(k => msg.includes(k))
+            );
+
+            // "chat" → respuesta de bienvenida fija
+            if (parsed.intencion === "chat") {
+                parsed.message = "¡Hola! Soy KreIA, tu asistente para crear portafolios visuales.\n\n¿Cuál es tu profesión o qué tipo de trabajo quieres mostrar en tu portafolio?";
+                return parsed;
+            }
+
+            // "preguntar" → texto fijo preguntando por estilo (turno 0-1)
+            if (parsed.intencion === "preguntar") {
+                parsed.message = "Entendido. ¿Qué estilo visual prefieres para tu portafolio?\n\nPuedes decirme algo como: oscuro y elegante, claro y limpio, colorido y creativo, editorial y premium, o cualquier preferencia que tengas.";
+                return parsed;
+            }
+
+            // Turno >= 4: forzar portafolio si la IA sigue sin decidir
+            // (da espacio para: saludo → profesión → estilo → opciones → portafolio)
+            if (turnosUsuario >= 4 && parsed.intencion !== "portafolio" && parsed.intencion !== "opciones") {
+                parsed.intencion = "portafolio";
+                if (!parsed.data || !Array.isArray(parsed.data?.componentesSeleccionados)) {
+                    parsed.data = {
+                        theme: "clean-blanco",
+                        componentesSeleccionados: [
+                            { type: "Estructura1", razon: "apertura" },
+                            { type: "GrillaDoble", razon: "proyectos" },
+                            { type: "Estructura1_2", razon: "detalle" },
+                        ],
+                    };
+                }
+            }
+
+            // Turno 1 + portafolio sin estilo → mostrar opciones en cambio
+            if (turnosUsuario === 1 && parsed.intencion === "portafolio" && !usuarioYaMencionoEstilo) {
+                parsed.intencion = "opciones";
+            }
+
+            // Manejar intent "opciones" — validar y limpiar
+            if (parsed.intencion === "opciones") {
+
+                // Detectar preferencia del usuario para elegir el fallback correcto
+                const textoUsuario = mensajesUsuarioHistorial.concat(
+                    [message.toLowerCase()]
+                ).join(" ");
+
+                const FALLBACK_GROUPS = {
+                    colorido: [
+                        { nombre: "Arte & Ilustración",  descripcion: "Fondos cálidos y coloridos. Expresivo y creativo.",        colores: { fondo: "#FEF3C7", fondo2: "#FDF2F8", acento: "#EC4899", texto: "#1C1917", tipografia: "serif" },                componentesSeleccionados: [{ type: "Estructura1", razon: "apertura" }, { type: "Estructura1_4", razon: "mosaico" }, { type: "GrillaTriple", razon: "galería" }] },
+                        { nombre: "Vibrante & Creativo", descripcion: "Colores saturados y atrevidos. Energético y llamativo.",   colores: { fondo: "#F0FFF4", fondo2: "#DCFCE7", acento: "#22C55E", texto: "#14532D", tipografia: "Inter, sans-serif" },    componentesSeleccionados: [{ type: "Estructura1", razon: "apertura" }, { type: "GrillaDoble",   razon: "proyectos" }, { type: "GrillaTriple", razon: "galería" }] },
+                        { nombre: "Cálido & Expresivo",  descripcion: "Naranjas y rojos vivos sobre fondo cálido. Llamativo.",   colores: { fondo: "#FFF7ED", fondo2: "#FFEDD5", acento: "#F97316", texto: "#7C2D12", tipografia: "Georgia, serif" },        componentesSeleccionados: [{ type: "Estructura1", razon: "apertura" }, { type: "Estructura1_3", razon: "editorial" }, { type: "GrillaDoble", razon: "galería" }] },
+                    ],
+                    oscuro: [
+                        { nombre: "Minimalista Oscuro",   descripcion: "Fondo negro, tipografía elegante. Premium y sofisticado.",  colores: { fondo: "#0F172A", fondo2: "#1E293B", acento: "#CBD5E1", texto: "#F1F5F9", tipografia: "Georgia, serif" },          componentesSeleccionados: [{ type: "Estructura1", razon: "apertura" }, { type: "Estructura1_3", razon: "editorial" }, { type: "GrillaDoble", razon: "galería" }] },
+                        { nombre: "Fotográfico Elegante", descripcion: "Fondo oscuro con acento dorado. Artístico y sofisticado.", colores: { fondo: "#111827", fondo2: "#1F2937", acento: "#F59E0B", texto: "#FEF3C7", tipografia: "Playfair Display, serif" }, componentesSeleccionados: [{ type: "Estructura1", razon: "apertura" }, { type: "GrillaTriple", razon: "galería" }, { type: "GrillaDoble", razon: "detalle" }] },
+                        { nombre: "Tecnología Moderna",   descripcion: "Oscuro con acentos cian/azul. Futurista y técnico.",       colores: { fondo: "#020617", fondo2: "#0F172A", acento: "#0EA5E9", texto: "#E0F2FE", tipografia: "monospace" },               componentesSeleccionados: [{ type: "Estructura1", razon: "apertura" }, { type: "GrillaDoble", razon: "proyectos" }, { type: "Estructura1_2", razon: "detalle" }] },
+                    ],
+                    claro: [
+                        { nombre: "Clean & Moderno",   descripcion: "Fondos blancos y tipografía limpia. Profesional.",  colores: { fondo: "#FFFFFF", fondo2: "#F8FAFC", acento: "#3B82F6", texto: "#0F172A", tipografia: "Inter, sans-serif" },    componentesSeleccionados: [{ type: "Estructura1", razon: "apertura" }, { type: "GrillaDoble", razon: "proyectos" }, { type: "Estructura1_2", razon: "detalle" }] },
+                        { nombre: "Índigo & Cristal",   descripcion: "Azules suaves y acentos índigo. Fresco y profesional.", colores: { fondo: "#F8FAFC", fondo2: "#EFF6FF", acento: "#6366F1", texto: "#1E293B", tipografia: "Roboto, sans-serif" }, componentesSeleccionados: [{ type: "Estructura1", razon: "apertura" }, { type: "Estructura1_3", razon: "editorial" }, { type: "GrillaDoble", razon: "galería" }] },
+                        { nombre: "Natural & Verde",    descripcion: "Verde esmeralda sobre fondo neutro. Fresco y moderno.", colores: { fondo: "#FAFAFA", fondo2: "#F5F5F5", acento: "#10B981", texto: "#171717", tipografia: "Inter, sans-serif" },  componentesSeleccionados: [{ type: "Estructura1", razon: "apertura" }, { type: "GrillaDoble", razon: "proyectos" }, { type: "Estructura1_2", razon: "detalle" }] },
+                    ],
+                };
+
+                const esColorido = /colorid|vibrant|creativ|atrevid|alegr|expresiv|color/i.test(textoUsuario);
+                const esOscuro   = /oscur|elegan|premium|sofistic|dark|negr|minimalista/i.test(textoUsuario);
+                const esClaro    = /clar|limpi|blanco|profesional|moderno|clean/i.test(textoUsuario);
+
+                const opcionesDefault = esColorido ? FALLBACK_GROUPS.colorido
+                    : esOscuro   ? FALLBACK_GROUPS.oscuro
+                    : esClaro    ? FALLBACK_GROUPS.claro
+                    : [
+                        FALLBACK_GROUPS.claro[0],
+                        FALLBACK_GROUPS.oscuro[0],
+                        FALLBACK_GROUPS.colorido[0],
+                    ];
+
+                if (!Array.isArray(parsed.opciones) || parsed.opciones.length === 0) {
+                    parsed.opciones = opcionesDefault;
+                    parsed.message = "Aquí tienes 3 propuestas de estilo para tu portafolio:";
+                } else {
+                    // Validar colores y componentes de cada opción
+                    parsed.opciones = parsed.opciones
+                        .filter(o => o && o.colores && o.colores.fondo && o.colores.acento)
+                        .map(o => ({
+                            ...o,
+                            componentesSeleccionados: validateComponents(
+                                Array.isArray(o.componentesSeleccionados)
+                                    ? o.componentesSeleccionados
+                                    : []
+                            ),
+                        }))
+                        .filter(o => o.componentesSeleccionados.length > 0);
+
+                    if (parsed.opciones.length === 0) {
+                        parsed.opciones = opcionesDefault;
+                    }
+                }
+
+                return parsed;
+            }
+
             /*
             |--------------------------------------------------------------------------
-            | VALIDAR ESTRUCTURA
+            | VALIDAR ESTRUCTURA DE PORTAFOLIO
             |--------------------------------------------------------------------------
             */
 
             if (
-                !parsed ||
                 !parsed.data ||
                 !Array.isArray(
                     parsed.data

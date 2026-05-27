@@ -164,7 +164,7 @@ export function usePortafolioEditor() {
     };
 
     const aplicarChatbot = (componentesPreformateados) => {
-        setComponentes((prev) => [...prev, ...componentesPreformateados]);
+        setComponentes(componentesPreformateados);
     };
 
     const subirArchivoCloudinary = async (archivo, type = "raw") => {

@@ -4,7 +4,7 @@ const groq = new Groq({
     apiKey: process.env.GROQ_API_KEY,
 });
 
-const generateResponse = async (message) => {
+const generateResponse = async (message, systemMessage = null) => {
 
     try {
 
@@ -16,23 +16,8 @@ const generateResponse = async (message) => {
                 messages: [
                     {
                         role: "system",
-
-                        content: `
-Eres KreIA Portfolio Engine.
-
-Tu única función es generar JSON válido.
-
-REGLAS:
-- SOLO JSON
-- NO markdown
-- NO explicaciones
-- NO texto extra
-- NO cortar respuestas
-- NO usar \`\`\`
-- SIEMPRE cerrar arrays y objetos JSON
-                        `,
+                        content: systemMessage || "Eres KreIA. Responde SOLO con JSON válido, sin texto extra ni markdown.",
                     },
-
                     {
                         role: "user",
                         content: message,
@@ -41,7 +26,7 @@ REGLAS:
 
                 temperature: 0.4,
 
-                max_tokens: 2000,
+                max_tokens: 3000,
             });
 
         return completion

@@ -1,165 +1,57 @@
-const {
-  COMPONENT_REGISTRY,
-} = require("../context/componentRegistry");
+// ─── SYSTEM MESSAGE (reglas + formatos) ───────────────────────────────────────
 
-const buildComponentSelectorPrompt = (userRequest) => {
+const SELECTOR_SYSTEM_MESSAGE = `Eres KreIA, asistente de portafolios. Devuelve UN JSON según las reglas.
 
-  const components = COMPONENT_REGISTRY.map(
-    (component) => {
+INTENTS:
+- "chat": saludo o sin profesión descrita
+- "preguntar": profesión conocida pero sin estilo mencionado
+- "opciones": usuario mencionó preferencia de estilo → 3 paletas
+- "portafolio": turno 2+ o estilo ya definido
 
-      return `
-========================================
-COMPONENTE: ${component.type}
+COMPONENTES: Estructura1, Estructura1_1, Estructura1_2, Estructura1_3, Estructura1_4, GrillaDoble, GrillaTriple
 
-Nombre:
-${component.nombre || ""}
+PALETAS POR ESTILO (usa como inspiración, inventa variaciones armoniosas):
+- colorido/creativo: fondos pastel, acentos saturados. Ej: fondo #FFF0F6 acento #EC4899 texto #831843
+- oscuro/elegante: fondos #0F172A-#1E293B, texto claro. Ej: fondo #111827 acento #F59E0B texto #FEF3C7
+- claro/profesional: fondos blancos, acento de color. Ej: fondo #FFFFFF acento #3B82F6 texto #0F172A
+- cálido/natural: cremas y beiges. Ej: fondo #FAFAF9 acento #D4A898 texto #1C1917
+- tech/futurista: negro con cian/verde. Ej: fondo #020617 acento #0EA5E9 texto #E0F2FE
 
-Categoría:
-${component.category || ""}
+FORMATOS:
+chat → {"intencion":"chat","message":"..."}
+preguntar → {"intencion":"preguntar","message":"..."}
+opciones → {"intencion":"opciones","message":"...","opciones":[{"nombre":"...","descripcion":"...","colores":{"fondo":"#hex","fondo2":"#hex","acento":"#hex","texto":"#hex","tipografia":"..."},"componentesSeleccionados":[{"type":"...","razon":"..."}]},{"nombre":"...","descripcion":"...","colores":{"fondo":"#hex","fondo2":"#hex","acento":"#hex","texto":"#hex","tipografia":"..."},"componentesSeleccionados":[{"type":"...","razon":"..."}]},{"nombre":"...","descripcion":"...","colores":{"fondo":"#hex","fondo2":"#hex","acento":"#hex","texto":"#hex","tipografia":"..."},"componentesSeleccionados":[{"type":"...","razon":"..."}]}]}
+portafolio → {"intencion":"portafolio","message":"...","data":{"componentesSeleccionados":[{"type":"...","razon":"..."}]}}
 
-Descripción:
-${component.descripcion || ""}
+Para "opciones": 3 paletas DISTINTAS dentro del mismo estilo pedido. Aplica teoría del color.
+SOLO JSON. Sin texto extra.`;
 
-Ideal para:
-${Array.isArray(component.idealFor)
-          ? component.idealFor.join(", ")
-          : ""
-        }
+// ─── USER MESSAGE (datos del turno) ───────────────────────────────────────────
+// Solo contiene el contexto dinámico de la conversación actual.
 
-Permite:
-${Array.isArray(component.allows)
-          ? component.allows.join(", ")
-          : ""
-        }
+const buildComponentSelectorPrompt = (userRequest, historial = []) => {
 
-Restricciones:
-${Array.isArray(component.restrictions)
-          ? component.restrictions.join(", ")
-          : ""
-        }
+    const turnosUsuario = historial.filter(m => m.role === "user").length;
 
-Schema:
-${component.schema
-          ? JSON.stringify(
-            component.schema,
-            null,
-            2
-          )
-          : "{}"
-        }
+    const historialTexto = historial.length > 0
+        ? historial
+            .slice(-6)
+            .map(m => `${m.role === "user" ? "Usuario" : "KreIA"}: ${m.content}`)
+            .join("\n")
+        : null;
 
-========================================
-`;
-    }
-  ).join("\n\n");
+    const lines = [
+        `Turno del usuario: ${turnosUsuario}`,
+        historialTexto ? `Historial:\n${historialTexto}` : "Primera interacción.",
+        `Mensaje actual del usuario: "${userRequest}"`,
+        "",
+        "Responde con el JSON correcto según las reglas.",
+    ];
 
-  return `
-Eres KreIA.
-
-Tu trabajo es seleccionar componentes visuales
-para construir portafolios modernos automáticamente.
-
-NO eres un chatbot tradicional.
-NO haces conversaciones largas.
-NO haces preguntas innecesarias.
-
-========================================
-OBJETIVO
-========================================
-
-Debes analizar el mensaje del usuario
-y seleccionar los mejores componentes
-del registry para crear un portafolio coherente.
-
-========================================
-REGLAS
-========================================
-
-- SIEMPRE responder con JSON válido
-- NUNCA responder texto fuera del JSON
-- NUNCA usar markdown
-- NUNCA usar \`\`\`
-- Debes seleccionar entre 1 y 5 componentes
-- NUNCA devolver arrays vacíos
-- Debes inferir intención aunque el usuario sea ambiguo
-
-========================================
-COMPORTAMIENTO
-========================================
-
-Si el usuario dice:
-"hola"
-"quiero algo creativo"
-"hazme un portafolio"
-
-→ genera una estructura moderna equilibrada
-
-Si menciona:
-"fotógrafo"
-"frontend"
-"branding"
-"minimalista"
-"editorial"
-
-→ adapta los componentes automáticamente
-
-========================================
-SELECCIÓN INTELIGENTE
-========================================
-
-Debes analizar:
-
-- cantidad de contenido
-- tipo de proyecto
-- necesidad de storytelling
-- uso de imágenes
-- estilo creativo o corporativo
-- layouts modernos
-- estructura visual
-
-========================================
-COMPONENTES DISPONIBLES
-========================================
-
-${components}
-
-========================================
-MENSAJE DEL USUARIO
-========================================
-
-"${userRequest}"
-
-========================================
-FORMATO OBLIGATORIO
-========================================
-
-{
-  "message": "explicación breve de lo generado",
-  "data": {
-    "theme": "minimalista",
-    "componentesSeleccionados": [
-      {
-        "type": "Estructura1",
-        "razon": "ideal como portada principal"
-      }
-    ]
-  }
-}
-
-========================================
-REGLAS FINALES
-========================================
-
-- JSON válido obligatorio
-- NO expliques nada fuera del JSON
-- NO saludes
-- NO uses markdown
-- NO uses backticks
-- NO uses comentarios
-- NO agregues texto antes o después del JSON
-`;
+    return lines.join("\n");
 };
 
 module.exports = {
-  buildComponentSelectorPrompt,
+    buildComponentSelectorPrompt,
+    SELECTOR_SYSTEM_MESSAGE,
 };

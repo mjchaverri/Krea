@@ -44,33 +44,52 @@ const extractJSON = (text) => {
             .trim();
 
         // =====================================
-        // EXTRAER JSON
+        // EXTRAER Y REPARAR JSON
         // =====================================
 
-        const match =
-            cleanText.match(
-                /(\{[\s\S]*\}|\[[\s\S]*\])/
-            );
-
-        if (!match) {
-            throw new Error("No se encontró JSON");
+        // El builder siempre devuelve un array — buscar desde el primer [
+        const arrayStart = cleanText.indexOf("[");
+        if (arrayStart === -1) {
+            throw new Error("No se encontró array JSON");
         }
 
-        let jsonString = match[0];
+        let jsonString = cleanText.slice(arrayStart);
 
-        // =====================================
-        // FIX COMAS FLOTANTES
-        // =====================================
-
+        // Fix comas flotantes
         jsonString = jsonString
             .replace(/,\s*}/g, "}")
             .replace(/,\s*]/g, "]");
 
-        // =====================================
-        // PARSE
-        // =====================================
+        // Intentar parse directo
+        try {
+            return JSON.parse(jsonString);
+        } catch {
+            // Reparar: contar aperturas vs cierres y cerrar lo que falta
+            let openBraces = 0;
+            let openBrackets = 0;
+            let inString = false;
+            let escape = false;
 
-        return JSON.parse(jsonString);
+            for (const ch of jsonString) {
+                if (escape) { escape = false; continue; }
+                if (ch === "\\") { escape = true; continue; }
+                if (ch === '"') { inString = !inString; continue; }
+                if (inString) continue;
+                if (ch === "{") openBraces++;
+                else if (ch === "}") openBraces--;
+                else if (ch === "[") openBrackets++;
+                else if (ch === "]") openBrackets--;
+            }
+
+            // Quitar coma final suelta
+            jsonString = jsonString.trimEnd().replace(/,\s*$/, "");
+
+            // Cerrar estructuras abiertas
+            for (let i = 0; i < openBraces; i++) jsonString += "}";
+            for (let i = 0; i < openBrackets; i++) jsonString += "]";
+
+            return JSON.parse(jsonString);
+        }
 
     } catch (error) {
 
@@ -103,28 +122,30 @@ const validatePortfolioStructure = (
             component => component.type
         );
 
-    return portfolio.filter(component => {
+    const validTypesLower = validTypes.map(t => t.toLowerCase());
 
-        if (!component.type) {
-            return false;
-        }
-
-        if (!validTypes.includes(component.type)) {
-            return false;
-        }
-
-        if (!component.data) {
-            return false;
-        }
-
-        return true;
-    });
+    return portfolio
+        .map(component => {
+            // normalizar type si la IA usó mayúsculas/minúsculas distintas
+            if (component.type && !validTypes.includes(component.type)) {
+                const idx = validTypesLower.indexOf(component.type.toLowerCase());
+                if (idx !== -1) component.type = validTypes[idx];
+            }
+            return component;
+        })
+        .filter(component => {
+            if (!component.type) return false;
+            if (!validTypes.includes(component.type)) return false;
+            if (!component.data) return false;
+            return true;
+        });
 };
 
 const generatePortfolio =
     async ({
         userMessage,
         selectedComponents,
+        colores,
     }) => {
 
         try {
@@ -133,6 +154,7 @@ const generatePortfolio =
                 buildPortfolioPrompt({
                     userMessage,
                     selectedComponents,
+                    colores,
                 });
 
             const rawResponse =

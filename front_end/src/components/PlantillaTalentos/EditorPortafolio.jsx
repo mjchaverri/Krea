@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import NavBarEditor from "./NavBarEditor";
 import BarraHerramientas from "./BarraHerramientas";
 import SidebarTalentos from "./SidebarTalentos";
@@ -30,6 +31,9 @@ const MAPA = {
 };
 
 function EditorPortafolio() {
+
+    const location = useLocation();
+    const portfolioId = location.state?.proyectoEditando?.id ?? null;
 
     const {
         componentes,
@@ -289,7 +293,7 @@ function EditorPortafolio() {
                 onClose={closePreview}
             />
 
-            <ChatBotBubble />
+            <ChatBotBubble portfolioId={portfolioId} />
         </>
     );
 }

@@ -3,7 +3,9 @@
     "allow": [
       "Bash(Get-ChildItem -Recurse -Directory)",
       "Bash(Select-Object -ExpandProperty FullName)",
-      "Bash(grep -E \"\\(app|server|index\\)\\\\.js$\")"
+      "Bash(grep -E \"\\(app|server|index\\)\\\\.js$\")",
+      "WebFetch(domain:localhost)",
+      "WebFetch(domain:console.groq.com)"
     ]
   }
 }

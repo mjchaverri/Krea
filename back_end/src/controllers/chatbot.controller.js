@@ -4,6 +4,12 @@ const {
     "../services/portafolioGenerator.service"
 );
 
+const {
+    generatePortfolio,
+} = require(
+    "../services/portfolioBuilder.service"
+);
+
 const sendMessage = async (
     req,
     res
@@ -13,27 +19,64 @@ const sendMessage = async (
 
         let { message } = req.body;
 
-        // 🧼 limpiar input
+        // limpiar input
         if (typeof message === "string") {
             message = message.trim();
         }
 
         if (!message) {
+
             return res.status(400).json({
                 ok: false,
+
                 message:
                     "El mensaje es requerido",
             });
         }
 
-        const response =
+        // =====================================================
+        // PASO 1
+        // SELECCIONAR COMPONENTES
+        // =====================================================
+
+        const selectedResponse =
             await selectPortfolioComponents(
                 message
             );
 
+        // =====================================================
+        // PASO 2
+        // GENERAR PORTAFOLIO COMPLETO
+        // =====================================================
+
+        const portfolio =
+            await generatePortfolio({
+
+                userMessage: message,
+
+                selectedComponents:
+                    selectedResponse
+                        .data
+                        .componentesSeleccionados,
+            });
+
+        // =====================================================
+        // RESPONSE FINAL
+        // =====================================================
+
         return res.status(200).json({
+
             ok: true,
-            response,
+
+            message:
+                selectedResponse.message,
+
+            selectedComponents:
+                selectedResponse
+                    .data
+                    .componentesSeleccionados,
+
+            portfolio,
         });
 
     } catch (error) {
@@ -44,11 +87,15 @@ const sendMessage = async (
         );
 
         return res.status(500).json({
+
             ok: false,
+
             message:
                 "Error interno del servidor",
+
             detail:
-                process.env.NODE_ENV === "development"
+                process.env.NODE_ENV ===
+                    "development"
                     ? error.message
                     : undefined,
         });

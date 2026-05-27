@@ -25,22 +25,63 @@ function ChatBotBubble() {
     const [messages, setMessages] =
         useState(() => {
 
-            const saved =
-                localStorage.getItem(
-                    "kreia-chat"
+            try {
+
+                const saved =
+                    localStorage.getItem(
+                        "kreia-chat"
+                    );
+
+                if (!saved) {
+
+                    return [
+                        {
+                            role: "assistant",
+
+                            content:
+                                "Hola :wave: Soy KreIA.\nEstoy aquí para ayudarte a construir tu portafolio ideal.",
+                        },
+                    ];
+                }
+
+                const parsed =
+                    JSON.parse(saved);
+
+                if (!Array.isArray(parsed)) {
+
+                    return [
+                        {
+                            role: "assistant",
+
+                            content:
+                                "Hola :wave: Soy KreIA.\nEstoy aquí para ayudarte a construir tu portafolio ideal.",
+                        },
+                    ];
+                }
+
+                return parsed;
+
+            } catch (error) {
+
+                console.error(
+                    "LOCAL STORAGE CHAT ERROR:",
+                    error
                 );
 
-            return saved
-                ? JSON.parse(saved)
-                : [
+                return [
                     {
                         role: "assistant",
 
                         content:
-                            "Hola 👋 Soy KreIA.\nEstoy aquí para ayudarte a construir tu portafolio ideal.",
+                            "Hola :wave: Soy KreIA.\nEstoy aquí para ayudarte a construir tu portafolio ideal.",
                     },
                 ];
+            }
         });
+
+    // =====================================
+    // PERSISTIR CHAT
+    // =====================================
 
     useEffect(() => {
 
@@ -50,6 +91,10 @@ function ChatBotBubble() {
         );
 
     }, [messages]);
+
+    // =====================================
+    // ENVIAR MENSAJE
+    // =====================================
 
     const sendMessage = async () => {
 
@@ -94,22 +139,75 @@ function ChatBotBubble() {
             const data =
                 await response.json();
 
+            console.log(
+                "CHATBOT RESPONSE:",
+                data
+            );
+
+            // =====================================
+            // VALIDACIÓN BACKEND
+            // =====================================
+
             if (!data.ok) {
 
                 throw new Error(
-                    data.message
+                    data.message ||
+                    "Error del servidor"
                 );
             }
 
-            const aiResponse =
-                data.response;
+            // =====================================
+            // NUEVA ESTRUCTURA
+            // =====================================
 
-            // GUARDAR JSON ESTRUCTURADO
+            const components =
+                data.components || {};
+
+            const portfolio =
+                data.portfolio || [];
+
+            // =====================================
+            // GUARDAR PORTFOLIO
+            // =====================================
+
             localStorage.setItem(
-                "kreia-last-response",
-                JSON.stringify(
-                    aiResponse.data
+                "kreia-portfolio",
+                JSON.stringify(portfolio)
+            );
+
+            // =====================================
+            // PREVIEW EN TIEMPO REAL
+            // =====================================
+
+            window.dispatchEvent(
+                new CustomEvent(
+                    "kreia-preview",
+                    {
+                        detail: portfolio,
+                    }
                 )
+            );
+
+            // =====================================
+            // MENSAJE IA
+            // =====================================
+
+            setMessages((prev) => [
+                ...prev,
+                {
+                    role: "assistant",
+
+                    content:
+                        components.message ||
+                        "Portafolio generado correctamente.",
+                },
+            ]);
+
+        } catch (error) {
+
+            console.error(
+                "CHATBOT FRONT ERROR:",
+                error
             );
 
             setMessages((prev) => [
@@ -118,21 +216,7 @@ function ChatBotBubble() {
                     role: "assistant",
 
                     content:
-                        aiResponse.message,
-                },
-            ]);
-
-        } catch (error) {
-
-            console.error(error);
-
-            setMessages((prev) => [
-                ...prev,
-                {
-                    role: "assistant",
-
-                    content:
-                        "Ocurrió un error al procesar la solicitud.",
+                        "Ocurrió un error al generar el portafolio.",
                 },
             ]);
 
@@ -145,10 +229,16 @@ function ChatBotBubble() {
     return (
         <>
 
+            {/* ============================== */}
+            {/* CHAT WINDOW */}
+            {/* ============================== */}
+
             <div
                 className={`chatbot-window ${open ? "open" : ""
                     }`}
             >
+
+                {/* HEADER */}
 
                 <div className="chatbot-header">
 
@@ -157,7 +247,7 @@ function ChatBotBubble() {
                         <h4>KreIA</h4>
 
                         <span>
-                            Asistente KreIA
+                            Asistente IA
                         </span>
 
                     </div>
@@ -172,6 +262,8 @@ function ChatBotBubble() {
 
                 </div>
 
+                {/* BODY */}
+
                 <div className="chatbot-body">
 
                     {messages.map(
@@ -181,9 +273,9 @@ function ChatBotBubble() {
                                 key={index}
 
                                 className={`chatbot-message ${msg.role ===
-                                    "assistant"
-                                    ? "bot"
-                                    : "user"
+                                        "assistant"
+                                        ? "bot"
+                                        : "user"
                                     }`}
                             >
                                 {msg.content}
@@ -194,18 +286,20 @@ function ChatBotBubble() {
                     {loading && (
 
                         <div className="chatbot-message bot">
-                            KreIA está pensando...
+                            KreIA está generando tu portafolio...
                         </div>
                     )}
 
                 </div>
+
+                {/* FOOTER */}
 
                 <div className="chatbot-footer">
 
                     <input
                         type="text"
 
-                        placeholder="Escribe un mensaje..."
+                        placeholder="Describe tu portafolio..."
 
                         value={input}
 
@@ -235,6 +329,10 @@ function ChatBotBubble() {
 
                 </div>
             </div>
+
+            {/* ============================== */}
+            {/* BURBUJA */}
+            {/* ============================== */}
 
             <button
                 className="chatbot-bubble"

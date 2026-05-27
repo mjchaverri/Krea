@@ -1,6 +1,14 @@
 const { BASE_FIELDS } = require("./baseFields");
 const { BLOCK_FIELDS } = require("./blockFields");
+
+const { BASE_SCHEMA } = require("./baseSchema");
+const { BLOCK_SCHEMA } = require("./blockSchema");
+
 const COMPONENT_REGISTRY = [
+
+    // =====================================================
+    // ESTRUCTURA 1
+    // =====================================================
 
     {
         type: "Estructura1",
@@ -9,41 +17,88 @@ const COMPONENT_REGISTRY = [
 
         category: "hero",
 
-        descripcion: `
-        Layout centrado con un único bloque principal.
-        Ideal para portadas y presentaciones minimalistas.
-        `,
+        descripcion:
+            "Layout minimalista centrado con un único bloque principal.",
 
         idealFor: [
-            "portadas",
-            "hero sections",
-            "presentaciones personales",
-            "proyectos únicos",
-            "diseño minimalista",
-            "imagen de fondo"
+            "landing",
+            "branding",
+            "hero",
+            "portfolio",
+            "minimalismo",
         ],
 
-        allows: [
-            "texto",
-            "imagen",
-            "color",
+        visualStyle: [
+            "minimalista",
+            "centrado",
+            "clean",
+            "elegante",
         ],
+
+        designRules: {
+            preferredColors: [
+                "#111827",
+                "#0F172A",
+                "#FFFFFF",
+            ],
+
+            preferredFonts: [
+                "serif",
+                "sans-serif",
+            ],
+
+            recommendedTextLength: {
+                title: 40,
+                description: 120,
+            },
+
+            preferredTextAlign: [
+                "center",
+            ],
+
+            vibe: [
+                "minimal",
+                "premium",
+                "clean",
+            ],
+        },
+
+        allows: {
+            text: true,
+            image: true,
+            backgroundColor: true,
+            backgroundImage: true,
+        },
+
+        limits: {
+            maxBlocks: 1,
+            maxImages: 1,
+            maxMainImages: 1,
+        },
+
+        recommendedImageSizes: {
+            width: 1920,
+            height: 1080,
+            orientation: "horizontal",
+        },
 
         restrictions: [
-            "solo un bloque principal",
-            "contenido centrado",
+            "solo un contenido principal",
+            "no recomendado para mucho texto",
         ],
 
         fields: {
             ...BASE_FIELDS,
         },
 
-        example: {
+        schema: {
+            ...BASE_SCHEMA,
+        },
 
+        example: {
             type: "Estructura1",
 
             data: {
-
                 texto: "Frontend Developer",
 
                 colorTexto: "#FFFFFF",
@@ -68,6 +123,10 @@ const COMPONENT_REGISTRY = [
         },
     },
 
+    // =====================================================
+    // ESTRUCTURA 1_1
+    // =====================================================
+
     {
         type: "Estructura1_1",
 
@@ -75,29 +134,70 @@ const COMPONENT_REGISTRY = [
 
         category: "split",
 
-        descripcion: `
-        Layout dividido verticalmente
-        con dos bloques principales.
-        `,
+        descripcion:
+            "Layout dividido verticalmente en dos bloques principales.",
 
         idealFor: [
-            "Titulo principal o frase corta y texto",
-            "Titulo principal o frase corta e imagen principal",
-            "Imagen de fondo con titulo principal o frase corta",
-            "Titulo principal o frase corta y color de fondo",
-            "Imagen principal con texto o frase corta",
-            "Imagen principal y color de fondo",
-            "Color de fondo y texto",
-            "Combinaciones de 3",
-            "landing pages",
+            "landing",
+            "split screen",
+            "branding",
             "proyectos destacados",
         ],
 
-        allows: [
-            "texto",
-            "imagen",
-            "color",
+        visualStyle: [
+            "moderno",
+            "vertical",
+            "editorial",
+            "clean",
         ],
+
+        designRules: {
+            preferredColors: [
+                "#111827",
+                "#2563EB",
+                "#FFFFFF",
+            ],
+
+            preferredFonts: [
+                "sans-serif",
+                "serif",
+            ],
+
+            recommendedTextLength: {
+                title: 60,
+                description: 180,
+            },
+
+            preferredTextAlign: [
+                "left",
+                "center",
+            ],
+
+            vibe: [
+                "modern",
+                "editorial",
+                "clean",
+            ],
+        },
+
+        allows: {
+            text: true,
+            image: true,
+            backgroundColor: true,
+            backgroundImage: true,
+        },
+
+        limits: {
+            maxBlocks: 2,
+            maxImages: 3,
+            maxMainImages: 2,
+        },
+
+        recommendedImageSizes: {
+            width: 1920,
+            height: 550,
+            orientation: "horizontal",
+        },
 
         restrictions: [
             "requiere bloqueTop",
@@ -105,7 +205,6 @@ const COMPONENT_REGISTRY = [
         ],
 
         fields: {
-
             ...BASE_FIELDS,
 
             fondo: BLOCK_FIELDS,
@@ -115,12 +214,20 @@ const COMPONENT_REGISTRY = [
             bloqueBottom: BLOCK_FIELDS,
         },
 
-        example: {
+        schema: {
+            ...BASE_SCHEMA,
 
+            fondo: BLOCK_SCHEMA,
+
+            bloqueTop: BLOCK_SCHEMA,
+
+            bloqueBottom: BLOCK_SCHEMA,
+        },
+
+        example: {
             type: "Estructura1_1",
 
             data: {
-
                 fondo: {
                     colorFondo: "#111827",
                 },
@@ -131,12 +238,16 @@ const COMPONENT_REGISTRY = [
                 },
 
                 bloqueBottom: {
-                    texto: "UI/UX Designer",
+                    texto: "UI / UX Designer",
                     colorFondo: "#2563EB",
                 },
             },
         },
     },
+
+    // =====================================================
+    // ESTRUCTURA 1_2
+    // =====================================================
 
     {
         type: "Estructura1_2",
@@ -145,22 +256,70 @@ const COMPONENT_REGISTRY = [
 
         category: "stack",
 
-        descripcion: `
-        Layout dividido en tres bloques verticales.
-        Ideal para storytelling visual y proyectos editoriales.
-        `,
+        descripcion:
+            "Layout vertical dividido en tres bloques principales.",
 
         idealFor: [
             "storytelling",
-            "portafolios editoriales",
-            "galerías visuales",
+            "editorial",
+            "galerías",
+            "landing",
         ],
 
-        allows: [
-            "texto",
-            "imagen",
-            "color",
+        visualStyle: [
+            "editorial",
+            "stacked",
+            "moderno",
+            "visual",
         ],
+
+        designRules: {
+            preferredColors: [
+                "#0F172A",
+                "#FFFFFF",
+                "#1E293B",
+            ],
+
+            preferredFonts: [
+                "serif",
+                "sans-serif",
+            ],
+
+            recommendedTextLength: {
+                title: 70,
+                description: 250,
+            },
+
+            preferredTextAlign: [
+                "left",
+                "center",
+            ],
+
+            vibe: [
+                "storytelling",
+                "modern",
+                "visual",
+            ],
+        },
+
+        allows: {
+            text: true,
+            image: true,
+            backgroundColor: true,
+            backgroundImage: true,
+        },
+
+        limits: {
+            maxBlocks: 3,
+            maxImages: 4,
+            maxMainImages: 2,
+        },
+
+        recommendedImageSizes: {
+            width: 1000,
+            height: 800,
+            orientation: "mixed",
+        },
 
         restrictions: [
             "requiere bloqueTop",
@@ -169,7 +328,6 @@ const COMPONENT_REGISTRY = [
         ],
 
         fields: {
-
             ...BASE_FIELDS,
 
             fondo: BLOCK_FIELDS,
@@ -181,24 +339,36 @@ const COMPONENT_REGISTRY = [
             bloqueBottom: BLOCK_FIELDS,
         },
 
-        example: {
+        schema: {
+            ...BASE_SCHEMA,
 
+            fondo: BLOCK_SCHEMA,
+
+            bloqueTop: BLOCK_SCHEMA,
+
+            bloqueMid: BLOCK_SCHEMA,
+
+            bloqueBottom: BLOCK_SCHEMA,
+        },
+
+        example: {
             type: "Estructura1_2",
 
             data: {
-
                 fondo: {
                     colorFondo: "#0F172A",
                 },
 
                 bloqueTop: {
                     texto: "Diseño Web",
+
                     imageUrl:
                         "https://example.com/top.jpg",
                 },
 
                 bloqueMid: {
                     texto: "UI / UX",
+
                     colorTexto: "#FFFFFF",
                 },
 
@@ -210,6 +380,10 @@ const COMPONENT_REGISTRY = [
         },
     },
 
+    // =====================================================
+    // ESTRUCTURA 1_3
+    // =====================================================
+
     {
         type: "Estructura1_3",
 
@@ -217,22 +391,69 @@ const COMPONENT_REGISTRY = [
 
         category: "editorial",
 
-        descripcion: `
-Layout editorial con bloque superior,
-bloque central destacado y dos bloques inferiores.
-`,
+        descripcion:
+            "Layout editorial con múltiples bloques jerárquicos.",
 
         idealFor: [
             "revistas digitales",
             "branding",
-            "portafolios modernos",
+            "editorial",
+            "storytelling",
         ],
 
-        allows: [
-            "texto",
-            "imagen",
-            "color",
+        visualStyle: [
+            "editorial",
+            "premium",
+            "moderno",
+            "magazine",
         ],
+
+        designRules: {
+            preferredColors: [
+                "#1E293B",
+                "#DC2626",
+                "#FFFFFF",
+            ],
+
+            preferredFonts: [
+                "serif",
+            ],
+
+            recommendedTextLength: {
+                title: 90,
+                description: 400,
+            },
+
+            preferredTextAlign: [
+                "left",
+                "center",
+            ],
+
+            vibe: [
+                "editorial",
+                "luxury",
+                "premium",
+            ],
+        },
+
+        allows: {
+            text: true,
+            image: true,
+            backgroundColor: true,
+            backgroundImage: true,
+        },
+
+        limits: {
+            maxBlocks: 4,
+            maxImages: 5,
+            maxMainImages: 3,
+        },
+
+        recommendedImageSizes: {
+            width: 700,
+            height: 700,
+            orientation: "mixed",
+        },
 
         restrictions: [
             "requiere bloqueTop",
@@ -242,7 +463,6 @@ bloque central destacado y dos bloques inferiores.
         ],
 
         fields: {
-
             ...BASE_FIELDS,
 
             fondo: BLOCK_FIELDS,
@@ -256,18 +476,31 @@ bloque central destacado y dos bloques inferiores.
             bloqueBottom2: BLOCK_FIELDS,
         },
 
-        example: {
+        schema: {
+            ...BASE_SCHEMA,
 
+            fondo: BLOCK_SCHEMA,
+
+            bloqueTop: BLOCK_SCHEMA,
+
+            bloqueMid: BLOCK_SCHEMA,
+
+            bloqueBottom1: BLOCK_SCHEMA,
+
+            bloqueBottom2: BLOCK_SCHEMA,
+        },
+
+        example: {
             type: "Estructura1_3",
 
             data: {
-
                 fondo: {
                     colorFondo: "#1E293B",
                 },
 
                 bloqueTop: {
                     texto: "Creative Studio",
+
                     colorTexto: "#FFFFFF",
                 },
 
@@ -287,6 +520,10 @@ bloque central destacado y dos bloques inferiores.
         },
     },
 
+    // =====================================================
+    // ESTRUCTURA 1_4
+    // =====================================================
+
     {
         type: "Estructura1_4",
 
@@ -294,23 +531,69 @@ bloque central destacado y dos bloques inferiores.
 
         category: "mosaic",
 
-        descripcion: `
-Layout tipo mosaico con múltiples bloques visuales.
-Ideal para galerías modernas y proyectos creativos.
-`,
+        descripcion:
+            "Layout tipo mosaico con múltiples bloques visuales.",
 
         idealFor: [
             "galerías",
             "branding",
             "showcases",
-            "portafolios visuales",
+            "creative portfolio",
         ],
 
-        allows: [
-            "texto",
-            "imagen",
-            "color",
+        visualStyle: [
+            "mosaico",
+            "creativo",
+            "visual",
+            "moderno",
         ],
+        designRules: {
+            preferredColors: [
+                "#0F172A",
+                "#7F1D1D",
+                "#FFFFFF",
+            ],
+
+            preferredFonts: [
+                "sans-serif",
+                "serif",
+            ],
+
+            recommendedTextLength: {
+                title: 70,
+                description: 180,
+            },
+
+            preferredTextAlign: [
+                "center",
+                "left",
+            ],
+
+            vibe: [
+                "creative",
+                "dynamic",
+                "visual",
+            ],
+        },
+
+        allows: {
+            text: true,
+            image: true,
+            backgroundColor: true,
+            backgroundImage: true,
+        },
+
+        limits: {
+            maxBlocks: 5,
+            maxImages: 6,
+            maxMainImages: 4,
+        },
+
+        recommendedImageSizes: {
+            width: 300,
+            height: 500,
+            orientation: "vertical",
+        },
 
         restrictions: [
             "requiere bloqueTop",
@@ -321,7 +604,6 @@ Ideal para galerías modernas y proyectos creativos.
         ],
 
         fields: {
-
             ...BASE_FIELDS,
 
             fondo: BLOCK_FIELDS,
@@ -337,12 +619,26 @@ Ideal para galerías modernas y proyectos creativos.
             bloque4: BLOCK_FIELDS,
         },
 
-        example: {
+        schema: {
+            ...BASE_SCHEMA,
 
+            fondo: BLOCK_SCHEMA,
+
+            bloqueTop: BLOCK_SCHEMA,
+
+            bloque1: BLOCK_SCHEMA,
+
+            bloque2: BLOCK_SCHEMA,
+
+            bloque3: BLOCK_SCHEMA,
+
+            bloque4: BLOCK_SCHEMA,
+        },
+
+        example: {
             type: "Estructura1_4",
 
             data: {
-
                 fondo: {
                     colorFondo: "#0F172A",
                 },
@@ -367,153 +663,14 @@ Ideal para galerías modernas y proyectos creativos.
 
                 bloque4: {
                     texto: "Creative Portfolio",
+
                     colorTexto: "#FFFFFF",
                 },
             },
         },
     },
-
-    {
-        type: "GrillaDoble",
-
-        nombre: "Grilla doble",
-
-        category: "grid",
-
-        descripcion: `
-Layout de dos columnas visuales.
-Ideal para comparación de proyectos
-o presentación dual.
-`,
-
-        idealFor: [
-            "comparativas",
-            "proyectos duales",
-            "galerías",
-        ],
-
-        allows: [
-            "texto",
-            "imagen",
-            "color",
-        ],
-
-        restrictions: [
-            "requiere bloque1",
-            "requiere bloque2",
-        ],
-
-        fields: {
-
-            ...BASE_FIELDS,
-
-            fondo: BLOCK_FIELDS,
-
-            bloque1: BLOCK_FIELDS,
-
-            bloque2: BLOCK_FIELDS,
-        },
-
-        example: {
-
-            type: "GrillaDoble",
-
-            data: {
-
-                fondo: {
-                    colorFondo: "#111827",
-                },
-
-                bloque1: {
-                    texto: "Proyecto A",
-                    imageUrl:
-                        "https://example.com/a.jpg",
-                },
-
-                bloque2: {
-                    texto: "Proyecto B",
-                    imageUrl:
-                        "https://example.com/b.jpg",
-                },
-            },
-        },
-    },
-
-    {
-        type: "GrillaTriple",
-
-        nombre: "Grilla triple",
-
-        category: "grid",
-
-        descripcion: `
-Layout de tres columnas visuales.
-Ideal para mostrar múltiples proyectos
-o galerías organizadas.
-`,
-
-        idealFor: [
-            "galerías",
-            "portafolios",
-            "cards visuales",
-            "showcases",
-        ],
-
-        allows: [
-            "texto",
-            "imagen",
-            "color",
-        ],
-
-        restrictions: [
-            "requiere bloque1",
-            "requiere bloque2",
-            "requiere bloque3",
-        ],
-
-        fields: {
-
-            ...BASE_FIELDS,
-
-            fondo: BLOCK_FIELDS,
-
-            bloque1: BLOCK_FIELDS,
-
-            bloque2: BLOCK_FIELDS,
-
-            bloque3: BLOCK_FIELDS,
-        },
-
-        example: {
-
-            type: "GrillaTriple",
-
-            data: {
-
-                fondo: {
-                    colorFondo: "#0F172A",
-                },
-
-                bloque1: {
-                    texto: "Frontend",
-                },
-
-                bloque2: {
-                    texto: "UI Design",
-                    colorFondo: "#7C3AED",
-                },
-
-                bloque3: {
-                    imageUrl:
-                        "https://example.com/project.jpg",
-                },
-            },
-        },
-    },
-
 ];
 
 module.exports = {
     COMPONENT_REGISTRY,
 };
-

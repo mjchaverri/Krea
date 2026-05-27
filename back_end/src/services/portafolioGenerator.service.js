@@ -3,72 +3,127 @@ const {
 } = require("../prompts/componentSelector.prompt");
 
 const {
+    buildPortfolioPrompt,
+} = require("../context/portafolioBuilder.prompt");
+
+const {
     generateResponse,
 } = require("./ai.service");
 
+const {
+    COMPONENT_REGISTRY,
+} = require("../context/componentRegistry");
+
+/*
+|--------------------------------------------------------------------------
+| EXTRAER JSON
+|--------------------------------------------------------------------------
+*/
+
 const extractJSON = (text) => {
+
     try {
-        if (!text || typeof text !== "string") {
-            throw new Error("Respuesta vacía o inválida");
+
+        if (!text) {
+            throw new Error("Respuesta vacía");
         }
 
-        // 🧼 1. Eliminar caracteres invisibles y de control
-        let cleanText = text
-            .replace(/^\uFEFF/, "") // BOM
-            .replace(/[\u0000-\u001F\u007F]/g, "") // control chars
+        // =====================================
+        // LIMPIEZA AGRESIVA
+        // =====================================
+
+        let cleanText = String(text)
+
+            // BOM
+            .replace(/^\uFEFF/, "")
+
+            // NBSP
+            .replace(/\u00A0/g, " ")
+
+            // Zero width chars
+            .replace(/[\u200B-\u200D\uFEFF]/g, "")
+
+            // tabs raros
+            .replace(/\t/g, " ")
+
+            // normalizar saltos
+            .replace(/\r/g, "")
+
             .trim();
 
-        // 🧠 2. Intento directo
-        try {
-            return JSON.parse(cleanText);
-        } catch (_) {
-            // seguimos
+        // =====================================
+        // EXTRAER JSON
+        // =====================================
+
+        const match =
+            cleanText.match(
+                /(\{[\s\S]*\}|\[[\s\S]*\])/
+            );
+
+        if (!match) {
+            throw new Error("No se encontró JSON");
         }
 
-        // 🔍 3. Extraer JSON real
-        const jsonMatch = cleanText.match(/\{[\s\S]*\}/);
+        let jsonString = match[0];
 
-        if (!jsonMatch) {
-            throw new Error("No JSON encontrado");
-        }
+        // =====================================
+        // FIX COMAS FLOTANTES
+        // =====================================
 
-        let jsonString = jsonMatch[0];
-
-        // 🛠 4. Arreglos comunes de IA
         jsonString = jsonString
             .replace(/,\s*}/g, "}")
-            .replace(/,\s*]/g, "]")
-            .replace(/\n/g, "")
-            .replace(/\r/g, "");
+            .replace(/,\s*]/g, "]");
 
-        // 🧠 5. Segundo intento seguro
-        const parsed = JSON.parse(jsonString);
+        // =====================================
+        // PARSE
+        // =====================================
 
-        // ✅ 6. Validación
-        if (
-            typeof parsed !== "object" ||
-            !parsed.message ||
-            !parsed.data ||
-            !Array.isArray(parsed.data.componentesSeleccionados)
-        ) {
-            throw new Error("Estructura JSON inválida");
-        }
-
-        return parsed;
+        return JSON.parse(jsonString);
 
     } catch (error) {
-        console.error("❌ JSON EXTRACT ERROR:", error.message);
 
-        console.error("🧾 RAW STRING LENGTH:", text.length);
-        console.error("🧾 RAW CHAR CODES:",
-            [...text].slice(0, 20).map(c => c.charCodeAt(0))
+        console.error(
+            "PORTFOLIO JSON ERROR:",
+            error.message
         );
 
-        console.error("🧾 RAW RESPONSE:", text);
+        console.error(
+            "RAW RESPONSE:",
+            text
+        );
 
-        throw new Error("Error procesando JSON IA");
+        throw new Error(
+            "Error procesando portfolio JSON"
+        );
     }
 };
+/*
+|--------------------------------------------------------------------------
+| VALIDAR COMPONENTES
+|--------------------------------------------------------------------------
+*/
+
+const validateComponents = (
+    componentesSeleccionados
+) => {
+
+    const validTypes =
+        COMPONENT_REGISTRY.map(
+            component => component.type
+        );
+
+    return componentesSeleccionados.filter(
+        component =>
+            validTypes.includes(component.type)
+    );
+};
+
+/*
+|--------------------------------------------------------------------------
+| PASO 1
+| SELECCIONAR COMPONENTES
+|--------------------------------------------------------------------------
+*/
 
 const selectPortfolioComponents =
     async (message) => {
@@ -93,25 +148,58 @@ const selectPortfolioComponents =
             const parsed =
                 extractJSON(rawResponse);
 
-            // 🔍 VALIDACIÓN DE COMPONENTES (extra importante)
-            if (parsed?.data?.componentesSeleccionados) {
+            /*
+            |--------------------------------------------------------------------------
+            | VALIDAR ESTRUCTURA
+            |--------------------------------------------------------------------------
+            */
 
-                const {
-                    COMPONENT_REGISTRY,
-                } = require("../context/componentRegistry");
+            if (
+                !parsed ||
+                !parsed.data ||
+                !Array.isArray(
+                    parsed.data
+                        .componentesSeleccionados
+                )
+            ) {
 
-                const validTypes =
-                    COMPONENT_REGISTRY.map(
-                        c => c.type
-                    );
+                throw new Error(
+                    "Estructura IA inválida"
+                );
+            }
 
-                parsed.data.componentesSeleccionados =
-                    parsed.data.componentesSeleccionados.filter(
-                        comp =>
-                            validTypes.includes(
-                                comp.type
-                            )
-                    );
+            /*
+            |--------------------------------------------------------------------------
+            | VALIDAR COMPONENTES
+            |--------------------------------------------------------------------------
+            */
+
+            parsed.data.componentesSeleccionados =
+                validateComponents(
+                    parsed.data
+                        .componentesSeleccionados
+                );
+
+            /*
+            |--------------------------------------------------------------------------
+            | FALLBACK
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                parsed.data
+                    .componentesSeleccionados
+                    .length === 0
+            ) {
+
+                parsed.data
+                    .componentesSeleccionados = [
+                        {
+                            type: "Estructura1",
+                            razon:
+                                "fallback automático",
+                        },
+                    ];
             }
 
             return parsed;
@@ -129,6 +217,157 @@ const selectPortfolioComponents =
         }
     };
 
+/*
+|--------------------------------------------------------------------------
+| PASO 2
+| GENERAR PORTAFOLIO
+|--------------------------------------------------------------------------
+*/
+
+const buildPortfolio =
+    async ({
+        userRequest,
+        selectedComponents,
+    }) => {
+
+        try {
+
+            const prompt =
+                buildPortfolioPrompt({
+                    userRequest,
+                    selectedComponents,
+                });
+
+            const rawResponse =
+                await generateResponse(
+                    prompt
+                );
+
+            console.log(
+                "RAW PORTFOLIO RESPONSE:",
+                rawResponse
+            );
+
+            const parsed =
+                extractJSON(rawResponse);
+
+            /*
+            |--------------------------------------------------------------------------
+            | VALIDACIÓN
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                !parsed ||
+                !Array.isArray(
+                    parsed.portfolio
+                )
+            ) {
+
+                throw new Error(
+                    "Portfolio inválido"
+                );
+            }
+
+            return parsed;
+
+        } catch (error) {
+
+            console.error(
+                "PORTFOLIO BUILDER ERROR:",
+                error.message
+            );
+
+            throw new Error(
+                "Error construyendo portafolio"
+            );
+        }
+    };
+
+/*
+|--------------------------------------------------------------------------
+| GENERADOR COMPLETO
+|--------------------------------------------------------------------------
+*/
+
+const generatePortfolio =
+    async (message) => {
+
+        try {
+
+            /*
+            |--------------------------------------------------------------------------
+            | 1. SELECCIONAR COMPONENTES
+            |--------------------------------------------------------------------------
+            */
+
+            const selection =
+                await selectPortfolioComponents(
+                    message
+                );
+
+            const selectedComponents =
+                selection.data
+                    .componentesSeleccionados
+                    .map(
+                        component =>
+                            component.type
+                    );
+
+            /*
+            |--------------------------------------------------------------------------
+            | 2. GENERAR PORTAFOLIO
+            |--------------------------------------------------------------------------
+            */
+
+            const portfolio =
+                await buildPortfolio({
+                    userRequest: message,
+                    selectedComponents,
+                });
+
+            /*
+            |--------------------------------------------------------------------------
+            | RESPUESTA FINAL
+            |--------------------------------------------------------------------------
+            */
+
+            return {
+
+                ok: true,
+
+                message:
+                    selection.message,
+
+                theme:
+                    portfolio.theme,
+
+                selectedComponents,
+
+                portfolio:
+                    portfolio.portfolio,
+            };
+
+        } catch (error) {
+
+            console.error(
+                "PORTFOLIO GENERATOR ERROR:",
+                error.message
+            );
+
+            throw new Error(
+                "Error generando portafolio"
+            );
+        }
+    };
+
 module.exports = {
+
+    extractJSON,
+
     selectPortfolioComponents,
+
+    buildPortfolio,
+
+    generatePortfolio,
 };

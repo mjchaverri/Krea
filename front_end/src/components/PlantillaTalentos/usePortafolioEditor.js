@@ -163,6 +163,10 @@ export function usePortafolioEditor() {
         ));
     };
 
+    const aplicarChatbot = (componentesPreformateados) => {
+        setComponentes((prev) => [...prev, ...componentesPreformateados]);
+    };
+
     const subirArchivoCloudinary = async (archivo, type = "raw") => {
         const formData = new FormData();
         formData.append("file", archivo);
@@ -322,6 +326,7 @@ export function usePortafolioEditor() {
         eliminarComponente,
         moverComponente,
         updateComponentData,
+        aplicarChatbot,
         handlePreview,
         closePreview,
         guardarPortafolio,

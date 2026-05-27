@@ -5,6 +5,7 @@ const groq = new Groq({
 });
 
 const generateResponse = async (message) => {
+
     try {
 
         const completion =
@@ -15,16 +16,21 @@ const generateResponse = async (message) => {
                 messages: [
                     {
                         role: "system",
-                        content: `
-                            Eres un asistente experto en:
-                            - diseño UX/UI
-                            - frontend moderno
-                            - creatividad visual
-                            - portafolios digitales
 
-                            Ayudas a usuarios a mejorar
-                            sus proyectos visuales.
-                        `,
+                        content: `
+Eres KreIA Portfolio Engine.
+
+Tu única función es generar JSON válido.
+
+REGLAS:
+- SOLO JSON
+- NO markdown
+- NO explicaciones
+- NO texto extra
+- NO cortar respuestas
+- NO usar \`\`\`
+- SIEMPRE cerrar arrays y objetos JSON
+                        `,
                     },
 
                     {
@@ -33,18 +39,26 @@ const generateResponse = async (message) => {
                     },
                 ],
 
-                temperature: 0.7,
-                max_tokens: 500,
+                temperature: 0.4,
+
+                max_tokens: 2000,
             });
 
-        return completion.choices[0].message.content;
+        return completion
+            .choices[0]
+            .message
+            .content;
 
     } catch (error) {
 
-        console.error("GROQ ERROR:", error);
+        console.error(
+            "GROQ ERROR:",
+            error
+        );
 
         throw new Error(
-            error.message || "Error generando respuesta"
+            error.message ||
+            "Error generando respuesta"
         );
     }
 };

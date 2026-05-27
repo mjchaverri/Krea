@@ -1,3 +1,20 @@
+/* ── BOTÓN ELIMINAR RESEÑA PROPIA ── */
+.rp-btn-eliminar {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: #cbd5e1;
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 4px 6px;
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+}
+.rp-btn-eliminar:hover {
+    color: #ef4444;
+    background: #fee2e2;
+}
+
 /* ── ESTRELLAS SCORE ── */
 .rp-estrellas-score {
     display: flex;

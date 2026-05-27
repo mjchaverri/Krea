@@ -12,7 +12,7 @@ export function normalizarPortafolio(p) {
         imgPortada:  p.img_portada,
         usuarioId:   p.id_usuario,
         componentes,
-        categorias:  p.categorias || [],
+        categorias:  Array.isArray(p.Categorias) ? p.Categorias.map(c => c.nombre) : (p.categorias || []),
         usuario: u ? {
             id:         u.id_usuario,
             Nombre:     u.nombre_completo,

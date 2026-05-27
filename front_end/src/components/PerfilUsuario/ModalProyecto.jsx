@@ -105,6 +105,24 @@ function ModalProyecto({ proyecto, resenas = [], onClose, onReviewAdded }) {
         ? resenasFiltradas.some(r => String(r.usuarioId) === String(usuarioActivo.id))
         : false;
 
+    const handleEliminarResena = async (id) => {
+        const { isConfirmed } = await Swal.fire({
+            title: "¿Eliminar reseña?",
+            text: "Esta acción no se puede deshacer.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#ef4444",
+            cancelButtonColor: "#6b7280",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar",
+        });
+        if (!isConfirmed) return;
+        try {
+            await Fetch.deleteData(`resenas/${id}`);
+            if (onReviewAdded) await onReviewAdded();
+        } catch (e) { console.error(e); }
+    };
+
     const handleEnviarResena = async () => {
         if (!nuevaResena.comentario.trim()) return;
         if (yaReseno) {
@@ -179,6 +197,20 @@ function ModalProyecto({ proyecto, resenas = [], onClose, onReviewAdded }) {
                     {/* ── Derecha: reseñas ── */}
                     <div className="modal-right">
 
+                        {proyecto.categorias?.length > 0 && (
+                            <div className="modal-cats-section">
+                                <p className="modal-cats-label">Categorías</p>
+                                <div className="modal-cats">
+                                    {proyecto.categorias.slice(0, 3).map(cat => (
+                                        <span key={cat} className="modal-cat-tag">{cat}</span>
+                                    ))}
+                                    {proyecto.categorias.length > 3 && (
+                                        <span className="modal-cat-tag modal-cat-tag--extra">+{proyecto.categorias.length - 3}</span>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
                         <div className="modal-right-header">
                             <h3 className="modal-right-title">Reseñas</h3>
                             <div className="modal-right-rating">
@@ -196,6 +228,7 @@ function ModalProyecto({ proyecto, resenas = [], onClose, onReviewAdded }) {
                             ) : (
                                 resenasFiltradas.map((r, i) => {
                                     const { nombre, img } = getUserInfo(r.usuarioId);
+                                    const esMia = usuarioActivo?.id && String(usuarioActivo.id) === String(r.usuarioId);
                                     return (
                                         <div key={i} className="resena-item">
                                             <div className="resena-autor">
@@ -209,6 +242,15 @@ function ModalProyecto({ proyecto, resenas = [], onClose, onReviewAdded }) {
                                                     <span className="resena-nombre">{nombre}</span>
                                                     <span className="resena-fecha">{new Date(r.fecha).toLocaleDateString()}</span>
                                                 </div>
+                                                {esMia && (
+                                                    <button
+                                                        className="resena-btn-eliminar"
+                                                        onClick={() => handleEliminarResena(r.id)}
+                                                        title="Eliminar mi reseña"
+                                                    >
+                                                        <i className="fa-solid fa-trash" />
+                                                    </button>
+                                                )}
                                             </div>
                                             <div className="resena-stars">
                                                 {[1,2,3,4,5].map(n => (

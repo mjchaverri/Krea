@@ -280,6 +280,7 @@ export function usePortafolioEditor() {
                 pdf:              pdfUrl,
                 img_portada:      imgPortadaUrl,
                 componentes_json: JSON.stringify(componentes),
+                categorias,
             };
             
             if (isEditMode) {

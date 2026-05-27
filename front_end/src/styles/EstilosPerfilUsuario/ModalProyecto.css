@@ -2,6 +2,66 @@
    MODAL PROYECTO — Estilo Krea
 ══════════════════════════════════════ */
 
+/* ── CATEGORÍAS EN EL MODAL ── */
+.modal-cats-section {
+    padding: 20px 0 16px;
+    border-bottom: 1px solid #f1f5f9;
+    margin-bottom: 20px;
+}
+
+.modal-cats-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0 0 8px;
+    font-family: 'Inter', sans-serif;
+}
+
+.modal-cats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.modal-cat-tag {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    color: #0284c7;
+    padding: 3px 10px;
+    border-radius: 50px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.modal-cat-tag--extra {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #64748b;
+}
+
+/* ── BOTÓN ELIMINAR RESEÑA PROPIA ── */
+.resena-btn-eliminar {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: #cbd5e1;
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 4px 6px;
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+}
+.resena-btn-eliminar:hover {
+    color: #ef4444;
+    background: #fee2e2;
+}
+
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -9,7 +69,9 @@
     backdrop-filter: blur(6px);
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    overflow-y: auto;
+    padding: 24px 0;
     z-index: 9999;
     animation: mp-fade-in 0.2s ease;
 }
@@ -23,7 +85,7 @@
     background: #ffffff;
     width: 92vw;
     max-width: 1200px;
-    height: 88vh;
+    min-height: 760px;
     border-radius: 20px;
     position: relative;
     display: flex;
@@ -70,7 +132,9 @@
 .modal-split {
     display: flex;
     width: 100%;
-    height: 100%;
+    flex: 1;
+    min-height: 0;
+    align-items: stretch;
 }
 
 /* ── Panel izquierdo: portafolio ── */
@@ -78,12 +142,9 @@
     flex: 1.5;
     background: #ffffff;
     border-right: 1px solid #e2e8f0;
-    overflow-y: auto;
     overflow-x: hidden;
     padding: 0;
     position: relative;
-    scrollbar-width: thin;
-    scrollbar-color: #e2e8f0 transparent;
 }
 
 
@@ -159,7 +220,6 @@
     padding: 28px 24px;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
     background: #ffffff;
     scrollbar-width: thin;
     scrollbar-color: #e2e8f0 transparent;

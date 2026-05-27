@@ -59,6 +59,11 @@ const eliminarResena = async (req, res) => {
         if (!resenaEncontrada) {
             return res.status(404).json({ status: 404, message: "Reseña no encontrada" })
         }
+        const esAutor = String(resenaEncontrada.id_usuario) === String(req.usuario.id)
+        const esAdmin = req.usuario.id_rol === 1
+        if (!esAdmin && !esAutor) {
+            return res.status(403).json({ status: 403, message: "No tienes permiso para eliminar esta reseña" })
+        }
         await resenaEncontrada.destroy()
         res.status(200).json({ status: 200, message: "Reseña eliminada correctamente" })
     } catch (error) {

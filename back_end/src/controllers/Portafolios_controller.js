@@ -1,4 +1,4 @@
-const { Portafolios, Usuario } = require("../index")
+const { Portafolios, Usuario, Categorias } = require("../index")
 const { validationResult } = require("express-validator")
 const { Op } = require("sequelize")
 
@@ -8,8 +8,12 @@ const crearPortafolio = async (req, res) => {
         return res.status(400).json({ status: 400, message: "Datos inválidos", data: errors.array() })
     }
     try {
-        const { titulo, descripcion, pdf, img_portada, id_usuario, componentes_json } = req.body
+        const { titulo, descripcion, pdf, img_portada, id_usuario, componentes_json, categorias } = req.body
         const nuevoPortafolio = await Portafolios.create({ titulo, descripcion, pdf, img_portada, id_usuario, componentes_json: componentes_json || null })
+        if (Array.isArray(categorias) && categorias.length > 0) {
+            const cats = await Categorias.findAll({ where: { nombre: categorias } })
+            await nuevoPortafolio.setCategorias(cats)
+        }
         res.status(201).json({ status: 201, message: "Portafolio creado correctamente", data: nuevoPortafolio })
     } catch (error) {
         res.status(500).json({ status: 500, message: error.message })
@@ -32,10 +36,10 @@ const obtenerPortafolios = async (req, res) => {
             limit,
             offset,
             order: [["createdAt", "DESC"]],
-            include: [{
-                model: Usuario,
-                attributes: ['id_usuario', 'nombre_completo', 'img_perfil', 'provincia', 'canton', 'distrito'],
-            }],
+            include: [
+                { model: Usuario, attributes: ['id_usuario', 'nombre_completo', 'img_perfil', 'provincia', 'canton', 'distrito'] },
+                { model: Categorias, attributes: ['id_categoria', 'nombre'], through: { attributes: [] } },
+            ],
         })
         res.status(200).json({
             status: 200,
@@ -59,10 +63,10 @@ const obtenerPortafoliosPorUsuario = async (req, res) => {
             where: { id_usuario },
             limit,
             offset,
-            include: [{
-                model: Usuario,
-                attributes: ['id_usuario', 'nombre_completo', 'img_perfil', 'provincia', 'canton', 'distrito'],
-            }],
+            include: [
+                { model: Usuario, attributes: ['id_usuario', 'nombre_completo', 'img_perfil', 'provincia', 'canton', 'distrito'] },
+                { model: Categorias, attributes: ['id_categoria', 'nombre'], through: { attributes: [] } },
+            ],
         })
         res.status(200).json({
             status: 200,
@@ -101,7 +105,7 @@ const editarPortafolio = async (req, res) => {
     }
     try {
         const { id_portafolio } = req.params
-        const { titulo, descripcion, pdf, img_portada, componentes_json } = req.body
+        const { titulo, descripcion, pdf, img_portada, componentes_json, categorias } = req.body
         const portafolioEncontrado = await Portafolios.findByPk(id_portafolio)
         if (!portafolioEncontrado) {
             return res.status(404).json({ status: 404, message: "Portafolio no encontrado" })
@@ -109,6 +113,12 @@ const editarPortafolio = async (req, res) => {
         const updates = { titulo, descripcion, pdf, img_portada }
         if (componentes_json !== undefined) updates.componentes_json = componentes_json || null
         await portafolioEncontrado.update(updates)
+        if (Array.isArray(categorias)) {
+            const cats = categorias.length > 0
+                ? await Categorias.findAll({ where: { nombre: categorias } })
+                : []
+            await portafolioEncontrado.setCategorias(cats)
+        }
         res.status(200).json({ status: 200, message: "Portafolio actualizado correctamente", data: portafolioEncontrado })
     } catch (error) {
         res.status(500).json({ status: 500, message: error.message })

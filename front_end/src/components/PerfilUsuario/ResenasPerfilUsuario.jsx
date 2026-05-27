@@ -54,6 +54,26 @@ function ResenasPerfilUsuario({ usuarioId, isOwner, onCountChange }) {
     const usuarioActivo = JSON.parse(localStorage.getItem("UsuarioActivo") || "null");
     const puedeEscribir = !isOwner && !!usuarioActivo;
 
+    const eliminarResena = async (r) => {
+        const { isConfirmed } = await import("sweetalert2").then(m => m.default.fire({
+            title: "¿Eliminar reseña?",
+            text: "Esta acción no se puede deshacer.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#ef4444",
+            cancelButtonColor: "#6b7280",
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar",
+        }));
+        if (!isConfirmed) return;
+        try {
+            await Fetch.deleteData(`resenas-perfil/${r.id}`);
+            cargar(pagina);
+        } catch (e) {
+            console.error("Error eliminando reseña:", e);
+        }
+    };
+
     const cargar = useCallback(async (pag = 1) => {
         setCargando(true);
         try {
@@ -187,6 +207,15 @@ function ResenasPerfilUsuario({ usuarioId, isOwner, onCountChange }) {
                                         <span key={s} style={{ color: s <= r.rating ? "#0db9f2" : "#e2e8f0" }}>★</span>
                                     ))}
                                 </div>
+                                {usuarioActivo && String(usuarioActivo.id) === String(r.autorId) && (
+                                    <button
+                                        className="rp-btn-eliminar"
+                                        onClick={() => eliminarResena(r)}
+                                        title="Eliminar mi reseña"
+                                    >
+                                        <i className="fa-solid fa-trash" />
+                                    </button>
+                                )}
                             </div>
                             <p className="resena-text">"{r.comentario}"</p>
                         </div>

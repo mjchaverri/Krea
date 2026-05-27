@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/navbar/Navbar';
 import Footer from '../components/ApartadoPaginaPrincipal/Footer';
@@ -28,6 +28,31 @@ function TodosProyectos() {
     const [filtroDistrito, setFiltroDistrito] = useState("");
     const [filtroRating, setFiltroRating] = useState(0);
     const [ordenarPor, setOrdenarPor] = useState("recientes");
+    const [filtroCategoria, setFiltroCategoria] = useState("");
+    const [dropdownAbierto, setDropdownAbierto] = useState(null);
+    const dropdownsRef = useRef(null);
+
+    useEffect(() => {
+        const handler = (e) => {
+            if (dropdownsRef.current && !dropdownsRef.current.contains(e.target))
+                setDropdownAbierto(null);
+        };
+        document.addEventListener('mousedown', handler);
+        return () => document.removeEventListener('mousedown', handler);
+    }, []);
+
+    const toggleDropdown = (key) => setDropdownAbierto(prev => prev === key ? null : key);
+
+    const ORDENAR_LABELS = { recientes: 'Más recientes', valorados: 'Mejor valorados', populares: 'Más reseñas' };
+    const RATING_LABELS  = { 0: 'Todas', 3: '3★+', 4: '4★+', 5: '5★' };
+
+    const CATEGORIAS = [
+        "Diseño y creatividad visual", "UX/UI", "Desarrollo y tecnología creativa",
+        "Multimedia y animación", "Fotografía y arte visual", "Publicidad y marketing",
+        "Arquitectura", "Diseño de interiores", "Diseño industrial", "Educación",
+        "Escritura y contenido", "Manualidades y arte hecho a mano", "Moda y costura",
+        "Música y producción sonora", "Ilustración", "Modelado 3D",
+    ];
 
     const usuarioActivo = useMemo(() => {
         try { return JSON.parse(localStorage.getItem("UsuarioActivo")) || null } catch { return null }
@@ -67,7 +92,7 @@ function TodosProyectos() {
 
     // Reset página cuando cambian filtros
     useEffect(() => { setPaginaActual(1); }, [
-        filtroProvincia, filtroCanton, filtroDistrito, filtroRating, ordenarPor, busqueda
+        filtroProvincia, filtroCanton, filtroDistrito, filtroRating, ordenarPor, busqueda, filtroCategoria
     ]);
 
     const provinciasUnicas = useMemo(() =>
@@ -93,6 +118,7 @@ function TodosProyectos() {
             if (filtroProvincia && u.Provincias !== filtroProvincia) return acc;
             if (filtroCanton && u.Canton !== filtroCanton) return acc;
             if (filtroDistrito && u.Distrito !== filtroDistrito) return acc;
+            if (filtroCategoria && !(proyecto.categorias || []).includes(filtroCategoria)) return acc;
 
             if (busqueda) {
                 const q = busqueda.toLowerCase();
@@ -112,7 +138,7 @@ function TodosProyectos() {
         if (ordenarPor === "populares") resultado.sort((a, b) => b.cantidadResenas - a.cantidadResenas);
 
         return resultado;
-    }, [portafolios, todasResenas, filtroProvincia, filtroCanton, filtroDistrito, filtroRating, ordenarPor, busqueda]);
+    }, [portafolios, todasResenas, filtroProvincia, filtroCanton, filtroDistrito, filtroRating, ordenarPor, busqueda, filtroCategoria]);
 
     const totalPaginas = Math.max(1, Math.ceil(proyectosFiltrados.length / ITEMS_POR_PAGINA));
     const proyectosPagina = proyectosFiltrados.slice(
@@ -122,10 +148,10 @@ function TodosProyectos() {
 
     const limpiarFiltros = () => {
         setFiltroProvincia(""); setFiltroCanton(""); setFiltroDistrito("");
-        setFiltroRating(0); setOrdenarPor("recientes"); setBusqueda("");
+        setFiltroRating(0); setOrdenarPor("recientes"); setBusqueda(""); setFiltroCategoria("");
     };
 
-    const hayFiltros = filtroProvincia || filtroCanton || filtroDistrito || filtroRating > 0 || busqueda || ordenarPor !== "recientes";
+    const hayFiltros = filtroProvincia || filtroCanton || filtroDistrito || filtroRating > 0 || busqueda || ordenarPor !== "recientes" || filtroCategoria;
 
     // Genera los botones de paginación con ellipsis
     const generarPaginas = () => {
@@ -191,83 +217,131 @@ function TodosProyectos() {
             {tabActiva === 'todos' ? (
                 <div className="tp-layout">
 
-                    {/* Sidebar filtros */}
-                    <aside className="tp-filtros">
-                        <div className="tp-filtros__header">
-                            <h4 className="tp-filtros__titulo">
-                                <i className="fa-solid fa-sliders" /> Filtros
-                            </h4>
+                    {/* Barra de filtros con dropdowns */}
+                    <div className="tp-filtros" ref={dropdownsRef}>
+                        <span className="tp-filtros__titulo">
+                            <i className="fa-solid fa-sliders" /> Filtros
+                            {hayFiltros && <span className="tp-filtros__badge">{[filtroProvincia, filtroCanton, filtroDistrito, filtroRating > 0, filtroCategoria, ordenarPor !== 'recientes'].filter(Boolean).length}</span>}
+                        </span>
+
+                        <div className="tp-filtros__dropdowns">
+
+                            {/* Ordenar */}
+                            <div className="tp-dd">
+                                <button
+                                    className={`tp-dd__btn ${ordenarPor !== 'recientes' ? 'tp-dd__btn--activo' : ''}`}
+                                    onClick={() => toggleDropdown('ordenar')}
+                                >
+                                    {ORDENAR_LABELS[ordenarPor]}
+                                    <i className={`fa-solid fa-chevron-down tp-dd__arrow ${dropdownAbierto === 'ordenar' ? 'open' : ''}`} />
+                                </button>
+                                {dropdownAbierto === 'ordenar' && (
+                                    <div className="tp-dd__panel">
+                                        {Object.entries(ORDENAR_LABELS).map(([val, label]) => (
+                                            <button
+                                                key={val}
+                                                className={`tp-dd__opcion ${ordenarPor === val ? 'activa' : ''}`}
+                                                onClick={() => { setOrdenarPor(val); setDropdownAbierto(null); }}
+                                            >{label}</button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Calificación */}
+                            <div className="tp-dd">
+                                <button
+                                    className={`tp-dd__btn ${filtroRating > 0 ? 'tp-dd__btn--activo' : ''}`}
+                                    onClick={() => toggleDropdown('rating')}
+                                >
+                                    {filtroRating > 0 ? RATING_LABELS[filtroRating] : 'Calificación'}
+                                    <i className={`fa-solid fa-chevron-down tp-dd__arrow ${dropdownAbierto === 'rating' ? 'open' : ''}`} />
+                                </button>
+                                {dropdownAbierto === 'rating' && (
+                                    <div className="tp-dd__panel">
+                                        {[0, 5, 4, 3].map(n => (
+                                            <button
+                                                key={n}
+                                                className={`tp-dd__opcion ${filtroRating === n ? 'activa' : ''}`}
+                                                onClick={() => { setFiltroRating(n); setDropdownAbierto(null); }}
+                                            >
+                                                {n === 0
+                                                    ? <><i className="fa-solid fa-list" /> Todas</>
+                                                    : <><i className="fa-solid fa-star" style={{ color: '#f59e0b' }} /> {RATING_LABELS[n]}</>
+                                                }
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Categoría */}
+                            <div className="tp-dd">
+                                <button
+                                    className={`tp-dd__btn ${filtroCategoria ? 'tp-dd__btn--activo' : ''}`}
+                                    onClick={() => toggleDropdown('categoria')}
+                                >
+                                    <span className="tp-dd__label-truncate">
+                                        {filtroCategoria || 'Categoría'}
+                                    </span>
+                                    <i className={`fa-solid fa-chevron-down tp-dd__arrow ${dropdownAbierto === 'categoria' ? 'open' : ''}`} />
+                                </button>
+                                {dropdownAbierto === 'categoria' && (
+                                    <div className="tp-dd__panel tp-dd__panel--cats">
+                                        {CATEGORIAS.map(cat => (
+                                            <button
+                                                key={cat}
+                                                className={`tp-dd__opcion ${filtroCategoria === cat ? 'activa' : ''}`}
+                                                onClick={() => { setFiltroCategoria(filtroCategoria === cat ? "" : cat); setDropdownAbierto(null); }}
+                                            >{cat}</button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Ubicación */}
+                            <div className="tp-dd">
+                                <button
+                                    className={`tp-dd__btn ${(filtroProvincia || filtroCanton || filtroDistrito) ? 'tp-dd__btn--activo' : ''}`}
+                                    onClick={() => toggleDropdown('ubicacion')}
+                                >
+                                    {filtroProvincia || 'Ubicación'}
+                                    <i className={`fa-solid fa-chevron-down tp-dd__arrow ${dropdownAbierto === 'ubicacion' ? 'open' : ''}`} />
+                                </button>
+                                {dropdownAbierto === 'ubicacion' && (
+                                    <div className="tp-dd__panel tp-dd__panel--ubicacion">
+                                        <div className="tp-dd__filtro-grupo">
+                                            <label>Provincia</label>
+                                            <select value={filtroProvincia} onChange={e => { setFiltroProvincia(e.target.value); setFiltroCanton(""); setFiltroDistrito(""); }}>
+                                                <option value="">Todas</option>
+                                                {provinciasUnicas.map(p => <option key={p} value={p}>{p}</option>)}
+                                            </select>
+                                        </div>
+                                        <div className="tp-dd__filtro-grupo">
+                                            <label>Cantón</label>
+                                            <select value={filtroCanton} disabled={!filtroProvincia} onChange={e => { setFiltroCanton(e.target.value); setFiltroDistrito(""); }}>
+                                                <option value="">Todos</option>
+                                                {cantonesUnicos.map(c => <option key={c} value={c}>{c}</option>)}
+                                            </select>
+                                        </div>
+                                        <div className="tp-dd__filtro-grupo">
+                                            <label>Distrito</label>
+                                            <select value={filtroDistrito} disabled={!filtroCanton} onChange={e => setFiltroDistrito(e.target.value)}>
+                                                <option value="">Todos</option>
+                                                {distritosUnicos.map(d => <option key={d} value={d}>{d}</option>)}
+                                            </select>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
                             {hayFiltros && (
                                 <button className="tp-filtros__limpiar" onClick={limpiarFiltros}>
-                                    Limpiar todo
+                                    <i className="fa-solid fa-xmark" /> Limpiar
                                 </button>
                             )}
                         </div>
-
-                        {/* Ordenar */}
-                        <span className="tp-filtro-seccion-label">Ordenar por</span>
-                        <div className="tp-ordenar-grupo">
-                            <select value={ordenarPor} onChange={e => setOrdenarPor(e.target.value)}>
-                                <option value="recientes">Más recientes</option>
-                                <option value="valorados">Mejor valorados</option>
-                                <option value="populares">Más reseñas</option>
-                            </select>
-                        </div>
-
-                        <div className="tp-filtro-separator" />
-
-                        {/* Rating */}
-                        <span className="tp-filtro-seccion-label">Calificación</span>
-                        <div className="tp-rating-btns">
-                            {[0, 5, 4, 3].map(n => (
-                                <button
-                                    key={n}
-                                    className={`tp-rating-btn ${filtroRating === n ? 'active' : ''}`}
-                                    onClick={() => setFiltroRating(n)}
-                                >
-                                    {n === 0 ? (
-                                        <><i className="fa-solid fa-list" /> Todas</>
-                                    ) : (
-                                        <><i className="fa-solid fa-star" /> {n} estrella{n !== 1 ? 's' : ''}+</>
-                                    )}
-                                </button>
-                            ))}
-                        </div>
-
-                        <div className="tp-filtro-separator" />
-
-                        {/* Ubicación */}
-                        <span className="tp-filtro-seccion-label">Ubicación</span>
-                        <div className="tp-filtro-grupo">
-                            <select
-                                value={filtroProvincia}
-                                onChange={e => { setFiltroProvincia(e.target.value); setFiltroCanton(""); setFiltroDistrito(""); }}
-                            >
-                                <option value="">Provincia</option>
-                                {provinciasUnicas.map(p => <option key={p} value={p}>{p}</option>)}
-                            </select>
-                        </div>
-                        <div className="tp-filtro-grupo">
-                            <select
-                                value={filtroCanton}
-                                disabled={!filtroProvincia}
-                                onChange={e => { setFiltroCanton(e.target.value); setFiltroDistrito(""); }}
-                            >
-                                <option value="">Cantón</option>
-                                {cantonesUnicos.map(c => <option key={c} value={c}>{c}</option>)}
-                            </select>
-                        </div>
-                        <div className="tp-filtro-grupo">
-                            <select
-                                value={filtroDistrito}
-                                disabled={!filtroCanton}
-                                onChange={e => setFiltroDistrito(e.target.value)}
-                            >
-                                <option value="">Distrito</option>
-                                {distritosUnicos.map(d => <option key={d} value={d}>{d}</option>)}
-                            </select>
-                        </div>
-                    </aside>
+                    </div>
 
                     {/* Grid principal */}
                     <main className="tp-main">
@@ -275,14 +349,6 @@ function TodosProyectos() {
                             <p className="tp-main__count">
                                 {cargando ? 'Cargando...' : `${proyectosFiltrados.length} resultado${proyectosFiltrados.length !== 1 ? 's' : ''}`}
                             </p>
-                            <div className="tp-main__sort">
-                                <span>Ordenar:</span>
-                                <select value={ordenarPor} onChange={e => setOrdenarPor(e.target.value)}>
-                                    <option value="recientes">Más recientes</option>
-                                    <option value="valorados">Mejor valorados</option>
-                                    <option value="populares">Más reseñas</option>
-                                </select>
-                            </div>
                         </div>
 
                         {cargando ? (

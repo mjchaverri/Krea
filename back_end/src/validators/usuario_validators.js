@@ -22,10 +22,10 @@ const validarLogin = [
 ]
 
 const validarEditarUsuario = [
-    body("nombre_usuario").optional().trim().isLength({ max: 30 }).withMessage("Máximo 30 caracteres"),
-    body("nombre_completo").optional().trim().isLength({ max: 100 }).withMessage("Máximo 100 caracteres"),
-    body("correo").optional().trim().isEmail().withMessage("Debe ser un correo válido"),
-    body("telefono").optional().isMobilePhone().withMessage("Teléfono inválido"),
+    body("nombre_usuario").optional({ checkFalsy: true }).trim().isLength({ max: 30 }).withMessage("Máximo 30 caracteres"),
+    body("nombre_completo").optional({ checkFalsy: true }).trim().isLength({ max: 100 }).withMessage("Máximo 100 caracteres"),
+    body("correo").optional({ checkFalsy: true }).trim().isEmail().withMessage("Debe ser un correo válido"),
+    body("telefono").optional({ checkFalsy: true }).isMobilePhone('any').withMessage("Teléfono inválido"),
 ]
 
 module.exports = { validarCrearUsuario, validarLogin, validarEditarUsuario }

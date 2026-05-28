@@ -191,7 +191,7 @@ function Estructura1({ onActivate, activeElement, initialData, onUpdate }) {
                     style={{
                         color: fondo.state.colorTexto,
                         fontSize: fondo.state.fontSize || "16px",
-                        fontFamily: fondo.state.fontFamily === "serif" ? "Georgia, serif" : "inherit",
+                        fontFamily: fondo.state.fontFamily || "inherit",
                         fontWeight: fondo.state.bold ? "bold" : "normal",
                         fontStyle: fondo.state.italic ? "italic" : "normal",
                         textAlign: fondo.state.align || "center",

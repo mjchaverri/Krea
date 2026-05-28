@@ -132,7 +132,7 @@ function EditableBlock({ data, update, onActivate, activeElement, className = ""
                 style={{
                     color: data.colorTexto,
                     fontSize: data.fontSize,
-                    fontFamily: data.fontFamily === "serif" ? "Georgia, serif" : "inherit",
+                    fontFamily: data.fontFamily || "inherit",
                     fontWeight: data.bold ? "bold" : "normal",
                     fontStyle: data.italic ? "italic" : "normal",
                     textAlign: data.align,

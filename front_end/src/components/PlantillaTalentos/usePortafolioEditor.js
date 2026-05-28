@@ -148,6 +148,7 @@ export function usePortafolioEditor() {
     const moverComponente = (id, direction) => {
         setComponentes(prev => {
             const idx = prev.findIndex(c => c.id === id);
+            if (idx === -1) return prev;
             if (direction === 'up' && idx === 0) return prev;
             if (direction === 'down' && idx === prev.length - 1) return prev;
             const next = [...prev];

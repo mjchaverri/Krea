@@ -26,7 +26,8 @@
     flex-shrink: 0;
 }
 
-.est1_2__description {
+.est1_2__description,
+.est1_2__bottom {
     width: 100%;
     height: 100%;
 }

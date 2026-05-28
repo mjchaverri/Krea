@@ -5,14 +5,15 @@
     padding: 20px;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: stretch;
     position: relative;
     cursor: pointer;
 }
 
-/* El bloque interior: centrado, altura libre según contenido */
+/* El bloque interior: ocupa toda la altura del contenedor */
 .est1__child {
     width: 100%;
     min-height: 200px;
+    flex: 1;
     /* editable-block aporta: border-radius, box-shadow, cursor, flex column */
 }

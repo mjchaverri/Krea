@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --primary-blue: #0ea5e9;
   --secondary-blue: #4ec0fd;
   --bg-light: #fdfdfb;
@@ -8,6 +8,7 @@
   --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.05);
   --shadow-blue: 0 10px 25px rgba(0, 136, 204, 0.2);
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --gutter: clamp(20px, 5vw, 80px);
 }
 
 .DivNavbar {
@@ -23,9 +24,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 40px;
+  width: 100%;
+  padding: 0 var(--gutter);
   height: 60px;
 }
 
@@ -111,9 +111,11 @@
 }
 
 .HeroWrapper {
-  padding: 4rem 20px;
+  padding: 4rem 0;
   background-color: var(--white);
   text-align: left;
+  position: relative;
+  overflow: hidden;
 }
 
 .BotonPerfil {
@@ -135,15 +137,21 @@
 }
 
 .DivPresentacion {
-  padding: 4rem 20px;
+  padding: 4rem var(--gutter);
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  max-width: 1400px;
+  max-width: 1680px;
   margin: 0 auto;
   gap: 60px;
   background-color: transparent;
+}
+
+.Descripcion {
+  max-width: 560px;
+  position: relative;
+  z-index: 1;
 }
 
 .EliteBadge {
@@ -221,31 +229,44 @@
 }
 
 .DivImagen {
-  flex: 1;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: min(52%, 900px);
+  min-width: 320px;
   display: flex;
   justify-content: flex-end;
 }
 
 .ImageContainer {
   position: relative;
-  border-radius: 20px;
-  padding: 10px;
+  height: 100%;
+  width: 100%;
+  padding: 0;
   background: transparent;
-  box-shadow: 0 0 50px rgba(14, 165, 233, 0.2);
+  box-shadow: none;
 }
 
 .ImagenPrincipal {
   width: 100%;
-  max-width: 600px;
-  height: auto;
-  border-radius: 15px;
+  height: 100%;
+  max-width: none;
+  border-radius: 0;
   display: block;
   object-fit: cover;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.6) 10%, #000 22%);
+  mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.6) 10%, #000 22%);
 }
 
+@media (max-width: 900px) {
+  .DivImagen {
+    display: none;
+  }
 
-.ImagenPrincipal:hover {
-  transform: scale(1.02);
+  .Descripcion {
+    max-width: 100%;
+  }
 }
 
 /* Sección Comunidad */
@@ -255,8 +276,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 60px;
-  padding: 5rem 8%;
-  max-width: 1400px;
+  padding: 5rem var(--gutter);
+  max-width: 1680px;
   margin: 0 auto;
 }
 
@@ -358,7 +379,7 @@
 @media (max-width: 900px) {
   .ComunidadSection {
     flex-direction: column;
-    padding: 4rem 6%;
+    padding: 4rem var(--gutter);
     gap: 40px;
   }
   .ComunidadContent {
@@ -371,7 +392,7 @@
 
 .DivDescrip {
   text-align: center;
-  padding: 5rem 10%;
+  padding: 5rem var(--gutter);
   background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
   position: relative;
   overflow: hidden;
@@ -424,7 +445,7 @@
   color: #475569;
   font-size: 1rem;
   line-height: 1.8;
-  max-width: 700px;
+  max-width: 760px;
   margin: 0 auto;
 }
 
@@ -433,7 +454,7 @@
   justify-content: center;
   gap: 1.5rem;
   padding: 0;
-  max-width: 1100px;
+  max-width: 1300px;
   margin: 3rem auto 0;
 }
 
@@ -484,7 +505,7 @@
 
 /* Project Showcase Section */
 .ShowcaseSection {
-  padding: 3rem 40px 5rem;
+  padding: 3rem var(--gutter) 5rem;
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
@@ -529,7 +550,7 @@
   align-items: center;
   gap: 4px;
   width: 100%;
-  max-width: 1280px;
+  max-width: 1500px;
   margin-bottom: 3rem;
 }
 
@@ -586,7 +607,7 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
   width: 100%;
-  max-width: 1280px;
+  max-width: 1500px;
 }
 
 .no-projects {

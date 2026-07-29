@@ -13,9 +13,9 @@
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
   gap: 48px;
-  max-width: 1280px;
+  max-width: 1680px;
   margin: 0 auto;
-  padding: 56px 40px 40px;
+  padding: 56px var(--gutter) 40px;
 }
 
 /* ── Columna marca ── */
@@ -112,8 +112,8 @@
 /* ── Barra inferior ── */
 .footer-bottom {
   border-top: 1px solid #e2e8f0;
-  padding: 18px 40px;
-  max-width: 1280px;
+  padding: 18px var(--gutter);
+  max-width: 1680px;
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -130,7 +130,7 @@
   .footer-main {
     grid-template-columns: 1fr 1fr;
     gap: 36px;
-    padding: 40px 24px 32px;
+    padding: 40px var(--gutter) 32px;
   }
   .footer-col--brand {
     grid-column: 1 / -1;
@@ -143,9 +143,9 @@
 @media (max-width: 560px) {
   .footer-main {
     grid-template-columns: 1fr;
-    padding: 32px 20px 24px;
+    padding: 32px var(--gutter) 24px;
   }
   .footer-bottom {
-    padding: 16px 20px;
+    padding: 16px var(--gutter);
   }
 }

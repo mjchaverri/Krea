@@ -11,6 +11,7 @@ import {
 } from "react";
 
 import "../../styles/PlantillaTalentos/ChatBotBubble.css";
+import { isDemoMode } from "../../mock/mockEngine";
 
 const WELCOME_MESSAGE = {
     role: "assistant",
@@ -164,6 +165,16 @@ function ChatBotBubble({ portfolioId }) {
     const callBackend = async ({ message, historial, opcionSeleccionada }) => {
         try {
             setLoading(true);
+
+            if (isDemoMode()) {
+                await new Promise(r => setTimeout(r, 400));
+                setMessages(prev => [...prev, {
+                    role: "assistant",
+                    content: "KreIA (generación con IA) no está disponible en el modo de sesión de prueba, ya que depende del backend real. Podés explorar el resto de la plataforma con normalidad.",
+                }]);
+                return;
+            }
+
             const body = { message, historial };
             if (opcionSeleccionada) body.opcionSeleccionada = opcionSeleccionada;
 

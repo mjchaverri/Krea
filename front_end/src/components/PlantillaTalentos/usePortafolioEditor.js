@@ -4,6 +4,7 @@ import { generarPDFBlob } from "../../extras/pdfPortafolio";
 import Fetch from "../../services/Fetch";
 import Swal from "sweetalert2";
 import html2canvas from "html2canvas";
+import { isDemoMode, archivoABase64 } from "../../mock/mockEngine";
 
 export function usePortafolioEditor() {
     const location = useLocation();
@@ -169,6 +170,13 @@ export function usePortafolioEditor() {
     };
 
     const subirArchivoCloudinary = async (archivo, type = "raw") => {
+        if (isDemoMode()) {
+            try {
+                return await archivoABase64(archivo);
+            } catch {
+                return null;
+            }
+        }
         const formData = new FormData();
         formData.append("file", archivo);
         formData.append("upload_preset", "portfolios");

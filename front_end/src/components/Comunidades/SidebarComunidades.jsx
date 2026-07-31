@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import '../../styles/EstilosSidebar/SidebarComunidades.css'
 import Fetch from '../../services/Fetch'
 import Swal from 'sweetalert2'
+import { isDemoMode, archivoABase64 } from '../../mock/mockEngine'
 
 const ICONOS = ['🎨', '🎵', '💻', '📸', '✍️', '🎭', '🎬', '🏛️', '🌿', '🎧', '🖌️', '📐', '🧵', '🎙️', '🖼️', '🎮']
 const COLORES = ['#0ea5e9', '#8b5cf6', '#f43f5e', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#6366f1', '#14b8a6', '#f97316']
@@ -172,6 +173,10 @@ function SidebarComunidades({
         setBannerPreview(URL.createObjectURL(file))
         setSubiendoBanner(true)
         try {
+            if (isDemoMode()) {
+                handleChange('banner', await archivoABase64(file))
+                return
+            }
             const data = new FormData()
             data.append('file', file)
             data.append('upload_preset', 'imagenes')

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
 import PantallaBaneado from '../components/PantallaBaneado'
+import { isDemoMode } from '../mock/mockEngine'
 
 const RutaPrivada = ({ children }) => {
     const token = localStorage.getItem('token')
@@ -9,6 +10,7 @@ const RutaPrivada = ({ children }) => {
 
     useEffect(() => {
         if (!token) { setVerificado(true); return }
+        if (isDemoMode()) { setBanInfo(false); setVerificado(true); return }
 
         // Verificar estado del ban via API en cada visita a ruta privada
         fetch('http://localhost:3000/usuarios/me', {

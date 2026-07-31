@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { isDemoMode, archivoABase64 } from "../../mock/mockEngine";
 
 function UploadImage({ setImageUrl, id = "upload-input" }) {
   const inputRef = useRef();
@@ -7,6 +8,15 @@ function UploadImage({ setImageUrl, id = "upload-input" }) {
     const file = e.target.files[0];
 
     if (!file) return;
+
+    if (isDemoMode()) {
+      try {
+        setImageUrl(await archivoABase64(file));
+      } catch (error) {
+        console.error("Error leyendo imagen en modo demo:", error);
+      }
+      return;
+    }
 
     const data = new FormData();
     data.append("file", file);

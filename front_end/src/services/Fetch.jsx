@@ -1,3 +1,5 @@
+import { isDemoMode, mockRequest, desactivarModoDemo } from '../mock/mockEngine'
+
 const BASE_URL = 'http://localhost:3000'
 
 function getToken() {
@@ -23,11 +25,13 @@ async function handleResponse(res) {
 }
 
 async function getData(endpoint) {
+    if (isDemoMode()) return mockRequest('GET', endpoint)
     const res = await fetch(`${BASE_URL}/${endpoint}`, { headers: buildHeaders() })
     return handleResponse(res)
 }
 
 async function postData(endpoint, obj) {
+    if (isDemoMode()) return mockRequest('POST', endpoint, obj)
     const res = await fetch(`${BASE_URL}/${endpoint}`, {
         method: 'POST',
         headers: buildHeaders(),
@@ -37,6 +41,7 @@ async function postData(endpoint, obj) {
 }
 
 async function putData(endpoint, obj) {
+    if (isDemoMode()) return mockRequest('PUT', endpoint, obj)
     const res = await fetch(`${BASE_URL}/${endpoint}`, {
         method: 'PUT',
         headers: buildHeaders(),
@@ -46,6 +51,7 @@ async function putData(endpoint, obj) {
 }
 
 async function patchData(endpoint, obj) {
+    if (isDemoMode()) return mockRequest('PATCH', endpoint, obj)
     const res = await fetch(`${BASE_URL}/${endpoint}`, {
         method: 'PATCH',
         headers: buildHeaders(),
@@ -55,6 +61,7 @@ async function patchData(endpoint, obj) {
 }
 
 async function deleteData(endpoint) {
+    if (isDemoMode()) return mockRequest('DELETE', endpoint)
     const res = await fetch(`${BASE_URL}/${endpoint}`, {
         method: 'DELETE',
         headers: buildHeaders(),
@@ -63,6 +70,15 @@ async function deleteData(endpoint) {
 }
 
 async function logoutClient() {
+    if (isDemoMode()) {
+        desactivarModoDemo()
+        localStorage.removeItem('token')
+        localStorage.removeItem('rol')
+        localStorage.removeItem('idUsuario')
+        localStorage.removeItem('UsuarioActivo')
+        window.location.href = "/"
+        return
+    }
     try {
         const token = getToken()
         if (token) {

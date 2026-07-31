@@ -9,7 +9,6 @@ import PaguinaIniciar from "../pages/PaguinaIniciar"
 import PaginaRegistro from "../pages/PaginaRegistro"
 import Portafolio from "../pages/Portafolio"
 import Admin from "../pages/Admin"
-import Funcionalidad from "../pages/Funcionalidad"
 import RutaPrivada from "./RutaPrivada"
 import PaginaConsejos from "../pages/PaginaConsejos"
 import RutaPrivadaAdmin from "./RutaPrivadaAdmin"
@@ -27,7 +26,6 @@ const router = createBrowserRouter([
     { path: "/sobre-nosotros", element: <SobreNosotros /> },
     { path: "/portafolio",     element: <RutaPrivada><Portafolio /></RutaPrivada> },
     { path: "/Admin",          element: <RutaPrivadaAdmin><Admin /></RutaPrivadaAdmin> },
-    { path: "/Funcionalidad",  element: <RutaPrivada><Funcionalidad /></RutaPrivada> },
     { path: "/Consejos",       element: <RutaPrivada><PaginaConsejos /></RutaPrivada> },
     { path: "/todos-proyectos",element: <TodosProyectos /> },
     { path: "/perfil/:usuarioId", element: <PerfilVisitante /> },

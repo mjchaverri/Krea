@@ -188,16 +188,66 @@ export function usePortafolioEditor() {
         return (await res.json()).secure_url;
     };
 
-    // Captura el div de PDF (off-screen, sin overflow) y devuelve un canvas
+    // Recorre recursivamente el "data" de cada componente y junta todas las
+    // URLs de imagen (imageUrl/childImageUrl), sin importar si el shape es
+    // plano (Estructura1) o anidado (fondo/bloque1/bloque2/content, etc.).
+    const extraerImagenes = (comps) => {
+        const urls = new Set();
+        const visitar = (obj) => {
+            if (!obj || typeof obj !== "object") return;
+            for (const [key, val] of Object.entries(obj)) {
+                if ((key === "imageUrl" || key === "childImageUrl") && typeof val === "string" && val) {
+                    urls.add(val);
+                } else if (val && typeof val === "object") {
+                    visitar(val);
+                }
+            }
+        };
+        comps.forEach((c) => visitar(c.data));
+        return Array.from(urls);
+    };
+
+    // Precarga cada URL en el caché del navegador esperando a que termine
+    // de descargar (o falle) antes de continuar.
+    const precargarImagenes = (urls) => Promise.all(
+        urls.map((url) => new Promise((resolve) => {
+            const img = new Image();
+            img.onload = resolve;
+            img.onerror = resolve;
+            img.src = url;
+        }))
+    );
+
+    // Captura el div de PDF (off-screen, sin overflow) y devuelve el canvas
+    // junto con los puntos de corte seguros (borde inferior de cada
+    // componente, en px del canvas) para que generarPDFBlob pueda repartir
+    // el contenido en varias páginas sin partir un componente a la mitad.
     const capturarPdfCanvas = () => new Promise((resolve, reject) => {
         setShowPdfCapture(true);
-        // Esperar a que React renderice el div y las imágenes carguen
+        const precarga = precargarImagenes(extraerImagenes(componentes));
+        // Esperar a que React monte el div fuera de pantalla
         setTimeout(async () => {
             try {
+                // Garantiza que ninguna imagen quede a medio cargar en la captura,
+                // sin importar su tamaño o la velocidad de conexión.
+                await precarga;
+                // Pequeño margen para que React repinte ya con las imágenes en caché
+                await new Promise((r) => setTimeout(r, 150));
+
                 const el = pdfCaptureRef.current;
                 if (!el) throw new Error("pdfCaptureRef no disponible");
                 const canvas = await html2canvas(el, { useCORS: true, allowTaint: true });
-                resolve(canvas);
+
+                const rootRect = el.getBoundingClientRect();
+                const escala = canvas.width / rootRect.width;
+                const lienzoCanvas = el.querySelector(".lienzo__canvas");
+                const hijos = lienzoCanvas ? Array.from(lienzoCanvas.children) : [];
+                const boundaries = hijos.map((hijo) => {
+                    const r = hijo.getBoundingClientRect();
+                    return Math.round((r.bottom - rootRect.top) * escala);
+                });
+
+                resolve({ canvas, boundaries });
             } catch (e) {
                 reject(e);
             } finally {
@@ -223,8 +273,8 @@ export function usePortafolioEditor() {
                 allowOutsideClick: false,
                 didOpen: () => Swal.showLoading(),
             });
-            const canvas = await capturarPdfCanvas();
-            const pdfBlob = await generarPDFBlob(canvas);
+            const { canvas, boundaries } = await capturarPdfCanvas();
+            const pdfBlob = await generarPDFBlob(canvas, boundaries);
             const url = URL.createObjectURL(pdfBlob);
             const a = document.createElement("a");
             a.href = url;
@@ -277,10 +327,10 @@ export function usePortafolioEditor() {
             });
 
             setActiveElement(null);
-            const canvas = await capturarPdfCanvas();
+            const { canvas, boundaries } = await capturarPdfCanvas();
             const imagenBlob = await new Promise(r => canvas.toBlob(r, "image/jpeg", 0.8));
             const imgPortadaUrl = await subirArchivoCloudinary(imagenBlob, "image");
-            const pdfBlob = await generarPDFBlob(canvas);
+            const pdfBlob = await generarPDFBlob(canvas, boundaries);
             const pdfUrl = await subirArchivoCloudinary(pdfBlob, "raw");
 
             if (!pdfUrl) throw new Error("No se pudo subir el PDF");

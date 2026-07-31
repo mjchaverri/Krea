@@ -127,9 +127,8 @@ function Navbar() {
         { to: '/principal',       label: 'Inicio' },
         { to: '/todos-proyectos', label: 'Proyectos' },
         { to: '/comunidades',     label: 'Comunidades' },
-        { to: '/pagina-contacto', label: 'Contactos' },
+        { to: '/pagina-contacto', label: 'Contacto' },
         { to: '/sobre-nosotros',  label: 'Sobre Nosotros' },
-        { to: '/Funcionalidad',   label: 'Cómo Funciona' },
     ];
 
     return (

@@ -26,6 +26,8 @@
     padding: 10px 0 4px 0;
     display: block;
     overflow: visible;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .lienzo__titulo::placeholder { color: #d1d5db; }
@@ -40,6 +42,8 @@
     outline: none;
     padding: 0;
     line-height: 1.6;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .lienzo__descripcion::placeholder { color: #d1d5db; }

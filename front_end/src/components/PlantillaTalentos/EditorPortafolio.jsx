@@ -240,6 +240,7 @@ function EditorPortafolio() {
                 <div
                     ref={pdfCaptureRef}
                     aria-hidden="true"
+                    className="pvw-preview-mode"
                     style={{
                         position: "fixed",
                         top: 0,

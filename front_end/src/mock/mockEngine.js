@@ -147,7 +147,17 @@ function despachar(method, recurso, a, b, c, params, body, db) {
         }
         if (method === 'PATCH' && a && b === 'bloquear') {
             const u = db.usuarios.find(x => x.id_usuario === Number(a))
-            if (u) Object.assign(u, body)
+            if (!u) return null
+            if (body.desbanear) {
+                u.bloqueado = false
+                u.fecha_ban_expira = null
+                u.razon_ban = null
+            } else {
+                u.bloqueado = true
+                u.razon_ban = body.razon || null
+                const dias = Number(body.duracion) || 0
+                u.fecha_ban_expira = dias > 0 ? new Date(Date.now() + dias * 24 * 60 * 60 * 1000).toISOString() : null
+            }
             return u
         }
         if (method === 'DELETE' && a) {
@@ -385,14 +395,10 @@ function despachar(method, recurso, a, b, c, params, body, db) {
 
     // ── configuracion ─────────────────────────────────────────
     if (recurso === 'configuracion' && a === 'talento_destacado') {
-        if (method === 'GET') {
-            if (!db.configuracion.talento_destacado) return null
-            const u = db.usuarios.find(x => x.id_usuario === db.configuracion.talento_destacado)
-            return u || null
-        }
+        if (method === 'GET') return db.configuracion.talento_destacado || null
         if (method === 'PUT') {
-            db.configuracion.talento_destacado = body.id_usuario ?? body.id ?? null
-            return db.configuracion
+            db.configuracion.talento_destacado = body.valor ?? null
+            return db.configuracion.talento_destacado
         }
     }
 

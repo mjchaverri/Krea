@@ -65,6 +65,8 @@ export const CATEGORIAS_BASE = [
 
 // id_usuario del usuario con el que arranca la sesión de prueba
 export const DEMO_USUARIO_ID = 1
+// id_usuario de la cuenta admin de la sesión de prueba
+export const DEMO_ADMIN_ID = 8
 
 // ─────────────────────────────────────────────────────────────
 // Helpers para construir bloques del editor de portafolios con
@@ -455,7 +457,7 @@ export function crearSeedInicial() {
                 img_perfil: 'https://i.pravatar.cc/300?img=47',
                 descripcion: 'Pintora freelance. Trabajo principalmente con acrílico y óleo, retratos y paisajes por encargo.',
                 id_rol: 2,
-                createdAt: new Date().toISOString(),
+                createdAt: new Date('2026-02-10').toISOString(),
                 bloqueado: false,
                 fecha_ban_expira: null,
                 razon_ban: null,
@@ -472,7 +474,7 @@ export function crearSeedInicial() {
                 img_perfil: 'https://images.unsplash.com/photo-1481253127861-534498168948?w=300&h=300&fit=crop',
                 descripcion: 'Estudio de arquitectura enfocado en diseño residencial contemporáneo: espacios honestos, luz natural y materiales nobles. Más de 8 años creando proyectos a medida en Costa Rica.',
                 id_rol: 3,
-                createdAt: new Date().toISOString(),
+                createdAt: new Date('2026-03-05').toISOString(),
                 bloqueado: false,
                 fecha_ban_expira: null,
                 razon_ban: null,
@@ -489,7 +491,7 @@ export function crearSeedInicial() {
                 img_perfil: 'https://i.pravatar.cc/300?img=13',
                 descripcion: 'Especialista en tatuaje japonés (irezumi) con enfoque en piezas a gran escala que fluyen con la anatomía del cuerpo.',
                 id_rol: 2,
-                createdAt: new Date().toISOString(),
+                createdAt: new Date('2026-04-12').toISOString(),
                 bloqueado: false,
                 fecha_ban_expira: null,
                 razon_ban: null,
@@ -506,7 +508,7 @@ export function crearSeedInicial() {
                 img_perfil: 'https://i.pravatar.cc/300?img=52',
                 descripcion: 'Fotógrafo freelance. Retratos, paisajes y sesiones al aire libre con luz natural.',
                 id_rol: 2,
-                createdAt: new Date().toISOString(),
+                createdAt: new Date('2026-05-20').toISOString(),
                 bloqueado: false,
                 fecha_ban_expira: null,
                 razon_ban: null,
@@ -523,7 +525,7 @@ export function crearSeedInicial() {
                 img_perfil: 'https://i.pravatar.cc/300?img=32',
                 descripcion: 'Costurera y modista freelance. Confección y arreglos a la medida, vestidos y piezas únicas hechas a mano.',
                 id_rol: 2,
-                createdAt: new Date().toISOString(),
+                createdAt: new Date('2026-06-08').toISOString(),
                 bloqueado: false,
                 fecha_ban_expira: null,
                 razon_ban: null,
@@ -540,7 +542,7 @@ export function crearSeedInicial() {
                 img_perfil: 'https://i.pravatar.cc/300?img=68',
                 descripcion: 'Ilustrador digital freelance. Diseño de personajes e ilustración editorial, cien por ciento en tableta gráfica.',
                 id_rol: 2,
-                createdAt: new Date().toISOString(),
+                createdAt: new Date('2026-07-02').toISOString(),
                 bloqueado: false,
                 fecha_ban_expira: null,
                 razon_ban: null,
@@ -557,7 +559,24 @@ export function crearSeedInicial() {
                 img_perfil: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300&h=300&fit=crop',
                 descripcion: 'Estudio de branding y diseño digital. Construimos identidades de marca coherentes: estrategia, diseño y ejecución en un mismo equipo.',
                 id_rol: 3,
-                createdAt: new Date().toISOString(),
+                createdAt: new Date('2026-07-25').toISOString(),
+                bloqueado: false,
+                fecha_ban_expira: null,
+                razon_ban: null,
+            },
+            {
+                id_usuario: DEMO_ADMIN_ID,
+                nombre_usuario: 'admin_krea',
+                nombre_completo: 'Admin Krea',
+                correo: 'admin@krea.com',
+                telefono: '20001111',
+                provincia: 'San José',
+                canton: 'San José',
+                distrito: 'Carmen',
+                img_perfil: 'https://i.pravatar.cc/300?img=8',
+                descripcion: 'Cuenta de administración de la plataforma Krea.',
+                id_rol: 1,
+                createdAt: new Date('2026-01-15').toISOString(),
                 bloqueado: false,
                 fecha_ban_expira: null,
                 razon_ban: null,

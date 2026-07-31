@@ -4,11 +4,12 @@ import Fetch from '../../services/Fetch'
 import Swal from 'sweetalert2'
 import '../../styles/Principales/InicioSesion.css'
 import { activarModoDemo } from '../../mock/mockEngine'
-import { DEMO_USUARIO_ID, crearSeedInicial } from '../../mock/mockSeed'
+import { DEMO_USUARIO_ID, DEMO_ADMIN_ID, crearSeedInicial } from '../../mock/mockSeed'
 
 function IniciarSesion() {
     const [correo, setCorreo] = useState("")
     const [contrasena, setContrasena] = useState("")
+    const [mostrarOpcionesDemo, setMostrarOpcionesDemo] = useState(false)
     const navigate = useNavigate()
 
     async function validarInicio() {
@@ -45,9 +46,9 @@ function IniciarSesion() {
         }
     }
 
-    function iniciarSesionPrueba() {
+    function iniciarSesionPrueba(idUsuarioDemo) {
         activarModoDemo()
-        const demoUsuario = crearSeedInicial().usuarios.find(u => u.id_usuario === DEMO_USUARIO_ID)
+        const demoUsuario = crearSeedInicial().usuarios.find(u => u.id_usuario === idUsuarioDemo)
 
         localStorage.setItem('token', 'demo-token')
         localStorage.setItem('idUsuario', demoUsuario.id_usuario)
@@ -60,9 +61,13 @@ function IniciarSesion() {
             id_rol: demoUsuario.id_rol,
             Roles: demoUsuario.id_rol === 1 ? 'Admin' : 'Usuario'
         }))
-        if (demoUsuario.id_rol === 1) localStorage.setItem('rol', 'Admin')
 
-        navigate('/principal')
+        if (demoUsuario.id_rol === 1) {
+            localStorage.setItem('rol', 'Admin')
+            navigate('/Admin')
+        } else {
+            navigate('/principal')
+        }
     }
 
     return (
@@ -109,14 +114,35 @@ function IniciarSesion() {
                         </button>
                         </form>
 
-                        <button
-                            type="button"
-                            className='BotonEntrar'
-                            style={{ background: 'transparent', border: '1px solid #0ea5e9', color: '#0ea5e9', marginTop: '10px' }}
-                            onClick={iniciarSesionPrueba}
-                        >
-                            Iniciar sesión de prueba
-                        </button>
+                        {!mostrarOpcionesDemo ? (
+                            <button
+                                type="button"
+                                className='BotonEntrar'
+                                style={{ background: 'transparent', border: '1px solid #0ea5e9', color: '#0ea5e9', marginTop: '10px' }}
+                                onClick={() => setMostrarOpcionesDemo(true)}
+                            >
+                                Iniciar sesión de prueba
+                            </button>
+                        ) : (
+                            <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                                <button
+                                    type="button"
+                                    className='BotonEntrar'
+                                    style={{ background: 'transparent', border: '1px solid #0ea5e9', color: '#0ea5e9', flex: 1 }}
+                                    onClick={() => iniciarSesionPrueba(DEMO_USUARIO_ID)}
+                                >
+                                    Usuario
+                                </button>
+                                <button
+                                    type="button"
+                                    className='BotonEntrar'
+                                    style={{ background: 'transparent', border: '1px solid #0ea5e9', color: '#0ea5e9', flex: 1 }}
+                                    onClick={() => iniciarSesionPrueba(DEMO_ADMIN_ID)}
+                                >
+                                    Admin
+                                </button>
+                            </div>
+                        )}
 
                         <div className='RegistroPrompt'>
                             <h6>¿No tienes cuenta?

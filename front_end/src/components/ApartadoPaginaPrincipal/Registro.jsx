@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import Fetch from '../../services/Fetch'
 import Swal from 'sweetalert2'
 import UploadImage from '../PlantillaTalentos/SubirImagen'
-import '../../Styles/EstilosRegistros/Registro.css'
+import '../../styles/EstilosRegistros/Registro.css'
 
 const API_UBICACIONES = 'https://ubicaciones.paginasweb.cr'
 

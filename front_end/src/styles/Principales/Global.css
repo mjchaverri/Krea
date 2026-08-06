@@ -8,3 +8,10 @@ body {
 *, *::before, *::after {
     box-sizing: inherit;
 }
+
+/* Los elementos de formulario no heredan font-family del body por
+   defecto en los navegadores (usan la fuente del sistema) — Bootstrap
+   traía esta misma regla en su Reboot; al quitarlo hacía falta acá. */
+button, input, optgroup, select, textarea {
+    font-family: inherit;
+}

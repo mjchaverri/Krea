@@ -106,9 +106,12 @@
   font-weight: 500;
 }
 
-/* PREVIEW BOX */
+/* PREVIEW BOX — aspect-ratio en vez de height fijo, para que la
+   proporción se mantenga igual sin importar cuántas columnas tenga
+   la grilla (2/3/4 según el ancho de pantalla). */
 .sidebartalentos__layout-preview {
-  height: 64px;
+  width: 100%;
+  aspect-ratio: 4 / 3;
   background: #f1f5f9;
   border-radius: 8px;
   border: 1.5px solid #e2e8f0;
@@ -116,6 +119,7 @@
   display: grid;
   gap: 4px;
   transition: border-color 0.15s;
+  box-sizing: border-box;
 }
 
 /* ── LAYOUT CENTRADO ── */
@@ -258,4 +262,40 @@
 
 .sidebartalentos__empty strong {
   color: #6b7280;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .sidebartalentos {
+    width: 100%;
+    height: 100%;
+    border-right: none;
+    border-radius: 20px 20px 0 0;
+    padding: 12px;
+  }
+
+  /* El ícono "Plantillas" de la barra inferior ya identifica este panel */
+  .sidebartalentos__header {
+    display: none;
+  }
+
+  .sidebartalentos__grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+
+  .sidebartalentos__layout {
+    gap: 4px;
+    padding: 4px;
+  }
+
+  .sidebartalentos__layout span {
+    font-size: 9.5px;
+  }
+}
+
+@media (max-width: 560px) {
+  .sidebartalentos__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }

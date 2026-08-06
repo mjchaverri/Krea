@@ -80,6 +80,15 @@
 }
 
 @media (max-width: 768px) {
-  .perfil-content { padding: 24px 16px 0; }
-  .perfil-banner  { height: 120px; }
+  .perfil-content    { padding: 24px 16px 0; }
+  .perfil-banner     { height: 120px; }
+  .perfil-volver-bar { padding: 16px 16px 0; }
+
+  /* En mobile la barra de tabs (Proyectos/Reseñas) no debe quedar fija
+     tapando espacio de pantalla — que se desplace con el resto del
+     contenido, como cualquier otro elemento de la página. */
+  .secciones-perfil {
+    position: static;
+    box-shadow: none;
+  }
 }

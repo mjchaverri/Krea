@@ -33,6 +33,53 @@
   opacity: 0.8;
 }
 
+.proyectos-header-acciones {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Toggle de vista cuadrícula / lista */
+/* El toggle cuadrícula/lista es solo para celular — en el resto de
+   tamaños la cuadrícula ya se ve bien y el botón sobra. */
+.proyectos-vista-toggle {
+  display: none;
+  align-items: center;
+  background: #f1f5f9;
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+
+@media (max-width: 640px) {
+  .proyectos-vista-toggle {
+    display: flex;
+  }
+}
+
+.proyectos-vista-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  color: #64748b;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.proyectos-vista-btn:hover { color: #0f172a; }
+
+.proyectos-vista-btn--activo {
+  background: #ffffff;
+  color: #0db9f2;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
 /* 🔥 GRID RESPONSIVE — auto-fill para aprovechar el ancho disponible */
 .proyectos-grid {
   display: grid;
@@ -40,9 +87,47 @@
   gap: 32px;
 }
 
+/* Vista de lista: una columna, tarjetas horizontales y compactas */
+.proyectos-grid--lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 @media (max-width: 640px) {
+  .proyectos-container {
+    padding: 0 16px;
+    margin: 28px 0;
+  }
+
+  .proyectos-header {
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .proyectos-header h4 {
+    font-size: 18px;
+  }
+
+  .proyectos-header-acciones {
+    gap: 8px;
+  }
+
+  .btn-create-empty {
+    padding: 7px 14px;
+    font-size: 12px;
+  }
+
+  .proyectos-vista-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 11px;
+  }
+
   .proyectos-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
 }
 

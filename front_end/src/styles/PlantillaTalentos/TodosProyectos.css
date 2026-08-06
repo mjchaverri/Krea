@@ -401,9 +401,16 @@
     gap: 24px;
 }
 
+.tp-main .proyectos-grid--lista {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
 .tp-main__header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     margin-bottom: 16px;
 }
 
@@ -524,41 +531,6 @@
     user-select: none;
 }
 
-/* ── Vista Siguiendo ── */
-.tp-siguiendo-view {
-    max-width: 1300px;
-    margin: 40px auto;
-    padding: 0 24px;
-    flex: 1;
-}
-
-/* ── Botón flotante ver perfil ── */
-.tp-btn-perfil-flotante {
-    position: fixed;
-    bottom: 28px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10001;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #00AEEF;
-    color: white;
-    border: none;
-    border-radius: 999px;
-    padding: 12px 24px;
-    font-weight: 700;
-    font-size: 14px;
-    cursor: pointer;
-    box-shadow: 0 8px 24px rgba(0, 174, 239, 0.35);
-    transition: all 0.2s;
-    white-space: nowrap;
-}
-.tp-btn-perfil-flotante:hover {
-    background: #0099d6;
-    transform: translateX(-50%) translateY(-2px);
-    box-shadow: 0 12px 28px rgba(0, 174, 239, 0.45);
-}
 
 /* ── Responsive ── */
 @media (max-width: 960px) {

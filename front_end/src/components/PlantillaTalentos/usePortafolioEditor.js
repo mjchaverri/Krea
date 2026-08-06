@@ -17,6 +17,15 @@ export function usePortafolioEditor() {
     const [activeElement, setActiveElement] = useState(null);
     const [showPreviewModal, setShowPreviewModal] = useState(false);
     const [showPdfCapture, setShowPdfCapture] = useState(false);
+    // Paneles como hoja inferior en mobile (ver Portafolio.css / BarraHerramientas)
+    const [mostrarPlantillasMobile, setMostrarPlantillasMobile] = useState(false);
+    const [mostrarOpcionesMobile, setMostrarOpcionesMobile] = useState(false);
+
+    // Cierra cualquier hoja móvil abierta (plantillas / opciones)
+    const cerrarHojasMobile = () => {
+        setMostrarPlantillasMobile(false);
+        setMostrarOpcionesMobile(false);
+    };
     const pdfCaptureRef = useRef(null);
     const isEditMode = !!proyectoEditando?.id;
 
@@ -31,6 +40,7 @@ export function usePortafolioEditor() {
     const activarEditor = (e, data) => {
         e.stopPropagation();
         setActiveElement({ ...data });
+        cerrarHojasMobile();
     };
 
     // Historial undo/redo
@@ -140,6 +150,7 @@ export function usePortafolioEditor() {
             }
         };
         setComponentes((prev) => [...prev, nuevoComp]);
+        cerrarHojasMobile();
     };
 
     const eliminarComponente = (id) => {
@@ -374,6 +385,11 @@ export function usePortafolioEditor() {
         setActiveElement,
         showPreviewModal,
         showPdfCapture,
+        mostrarPlantillasMobile,
+        setMostrarPlantillasMobile,
+        mostrarOpcionesMobile,
+        setMostrarOpcionesMobile,
+        cerrarHojasMobile,
         pdfCaptureRef,
         lienzoRef,
         indiceRef,

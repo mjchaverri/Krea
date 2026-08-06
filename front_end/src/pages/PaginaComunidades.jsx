@@ -4,6 +4,7 @@ import Navbar from '../components/navbar/Navbar'
 import Footer from '../components/ApartadoPaginaPrincipal/Footer'
 import SidebarComunidades from '../components/Comunidades/SidebarComunidades'
 import CompComunidades from '../components/Comunidades/CompComunidades'
+import '../styles/EstilosSidebar/SidebarComunidades.css'
 
 function PaginaComunidades() {
     const location = useLocation()
@@ -23,7 +24,7 @@ function PaginaComunidades() {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
             <Navbar />
-            <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+            <div className="pc-layout">
                 <SidebarComunidades
                     misComunidades={misComunidades}
                     comunidadesAdmin={comunidadesAdmin}
@@ -34,7 +35,7 @@ function PaginaComunidades() {
                     onComunidadCreada={() => {}}
                     onEditarComunidad={setPedidoEdicion}
                 />
-                <div style={{ flex: 1, minWidth: 0 }}>
+                <div className="pc-content">
                     <CompComunidades
                         comunidadActivaExterna={comunidadActiva}
                         onComunidadActivaChange={setComunidadActiva}

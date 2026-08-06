@@ -11,12 +11,13 @@ const CardProyecto = ({
     onEditar,
     usuario,
     categorias = [],
+    vista = 'cuadricula',
 }) => {
     const comps = componentes || [];
     const cats  = categorias  || [];
 
     return (
-        <div className="pf-card" onClick={onVerProyecto}>
+        <div className={`pf-card ${vista === 'lista' ? 'pf-card--lista' : ''}`} onClick={onVerProyecto}>
             <div className="pf-card-media">
                 <PreviewComponentes componentes={comps} />
 
@@ -55,19 +56,24 @@ const CardProyecto = ({
             </div>
 
             <div className="pf-card-author">
-                <div className="pf-author-avatar">
-                    {usuario?.img
-                        ? <img src={usuario.img} alt={usuario.Nombre} />
-                        : <i className="fa-solid fa-user" />
-                    }
-                </div>
-                <span className="pf-author-name">{usuario?.Nombre || nombreProyecto}</span>
-                {promedio > 0 && (
-                    <span className="pf-author-rating">
-                        <i className="fa-solid fa-star" />
-                        {Number(promedio).toFixed(1)}
-                    </span>
+                {vista === 'lista' && (
+                    <h3 className="pf-card-title-lista">{nombreProyecto}</h3>
                 )}
+                <div className="pf-author-row">
+                    <div className="pf-author-avatar">
+                        {usuario?.img
+                            ? <img src={usuario.img} alt={usuario.Nombre} />
+                            : <i className="fa-solid fa-user" />
+                        }
+                    </div>
+                    <span className="pf-author-name">{usuario?.Nombre || nombreProyecto}</span>
+                    {promedio > 0 && (
+                        <span className="pf-author-rating">
+                            <i className="fa-solid fa-star" />
+                            {Number(promedio).toFixed(1)}
+                        </span>
+                    )}
+                </div>
             </div>
         </div>
     );

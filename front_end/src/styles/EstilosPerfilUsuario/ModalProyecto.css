@@ -2,6 +2,35 @@
    MODAL PROYECTO — Estilo Krea
 ══════════════════════════════════════ */
 
+/* ── Ver perfil del creador — elemento normal en el flujo, arriba de
+   categorías (antes era un botón flotante fijo a la pantalla que tapaba
+   contenido al hacer scroll dentro del modal) ── */
+.modal-btn-ver-perfil {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    background: #00AEEF;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 11px 20px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 174, 239, 0.25);
+    transition: all 0.2s;
+    margin-bottom: 20px;
+    font-family: 'Inter', sans-serif;
+}
+
+.modal-btn-ver-perfil:hover {
+    background: #0099d6;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(0, 174, 239, 0.35);
+}
+
 /* ── CATEGORÍAS EN EL MODAL ── */
 .modal-cats-section {
     padding: 20px 0 16px;
@@ -480,10 +509,47 @@
     cursor: default !important;
 }
 
-/* ── Responsive ── */
+/* ── Responsive ──
+   En mobile el modal es UNA sola columna scrolleable: el portafolio ocupa
+   el alto que necesite (ya no un 50% forzado) y las reseñas —incluido el
+   formulario de "dejar reseña"— fluyen debajo, todas alcanzables con el
+   mismo scroll. Antes la lista de reseñas tenía su propio scroll interno
+   dentro de una mitad fija de pantalla y el formulario quedaba cortado. */
 @media (max-width: 768px) {
-    .modal-content { width: 100vw; height: 100dvh; border-radius: 0; }
-    .modal-split   { flex-direction: column; }
-    .modal-left    { flex: none; height: 50%; border-right: none; border-bottom: 1px solid #e2e8f0; }
-    .modal-right   { max-width: 100%; }
+    /* Sin padding: .modal-content ya ocupa el 100dvh completo, el padding
+       del overlay solo generaba un doble-scroll (overlay + contenido). */
+    .modal-overlay {
+        padding: 0;
+    }
+
+    .modal-content {
+        width: 100vw;
+        height: 100dvh;
+        border-radius: 0;
+        overflow-y: auto;
+    }
+
+    .modal-split {
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    .modal-left {
+        flex: none;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .modal-right {
+        max-width: 100%;
+        flex: none;
+        overflow: visible;
+        padding: 20px 18px;
+    }
+
+    .resenas-lista {
+        flex: none;
+        overflow-y: visible;
+    }
 }

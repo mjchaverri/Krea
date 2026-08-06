@@ -34,41 +34,21 @@ function Footer() {
           <span className="footer-col-title">Plataforma</span>
           <ul className="footer-links">
             <li><Link to="/" className="footer-link">Inicio</Link></li>
+            <li><Link to="/todos-proyectos" className="footer-link">Explorar portafolios</Link></li>
+            <li><Link to="/comunidades" className="footer-link">Comunidades</Link></li>
             <li><Link to="/Registro" className="footer-link">Crear cuenta</Link></li>
-            <li><Link to="/Login" className="footer-link">Iniciar sesión</Link></li>
-            <li><a href="#" className="footer-link">Explorar portafolios</a></li>
-            <li><a href="#" className="footer-link">Comunidades</a></li>
+            <li><Link to="/Iniciar" className="footer-link">Iniciar sesión</Link></li>
           </ul>
         </div>
 
-        {/* Columna 3: Categorías */}
-        <div className="footer-col">
-          <span className="footer-col-title">Categorías</span>
-          <ul className="footer-links">
-            <li><a href="#" className="footer-link">Diseño y creatividad</a></li>
-            <li><a href="#" className="footer-link">Fotografía y arte visual</a></li>
-            <li><a href="#" className="footer-link">Desarrollo y tecnología</a></li>
-            <li><a href="#" className="footer-link">Música y producción</a></li>
-            <li><a href="#" className="footer-link">Ilustración</a></li>
-          </ul>
-        </div>
-
-        {/* Columna 4: Contacto */}
+        {/* Columna 3: Contacto */}
         <div className="footer-col">
           <span className="footer-col-title">Contacto</span>
           <ul className="footer-links">
             <li><a href="mailto:hola@krea.com" className="footer-link">hola@krea.com</a></li>
-            <li><a href="#" className="footer-link">Centro de ayuda</a></li>
-            <li><a href="#" className="footer-link">Términos de uso</a></li>
-            <li><a href="#" className="footer-link">Privacidad</a></li>
+            <li><Link to="/sobre-nosotros" className="footer-link">Sobre nosotros</Link></li>
+            <li><Link to="/pagina-contacto" className="footer-link">Contacto</Link></li>
           </ul>
-          <div className="footer-schedule-inline">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width="14" height="14">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
-            <span>Atención: 8:00 AM – 5:00 PM</span>
-          </div>
         </div>
 
       </div>

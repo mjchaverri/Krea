@@ -64,3 +64,27 @@
 .icon-btn span {
   font-size: 18px;
 }
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .navbar {
+    padding: 0 16px;
+  }
+
+  .logo h1 {
+    font-size: 17px;
+  }
+
+  .icon-buttons {
+    gap: 8px;
+  }
+
+  .icon-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .icon-btn span {
+    font-size: 15px;
+  }
+}

@@ -17,9 +17,13 @@ const MAPA = {
 const CANVAS_WIDTH = 860;
 const noop = () => {};
 
+// Las 7 plantillas reales comparten min-height:400px a 860px de ancho, así
+// que la proporción 860:400 es constante — usamos aspect-ratio en CSS para
+// la altura en vez de medirla con JS, evitando cualquier condición de
+// carrera entre el cálculo de escala y el render (la causa de las cajas
+// vacías/descuadradas que aparecían en grillas de varias columnas).
 function PreviewComponentes({ componentes }) {
     const outerRef = useRef(null);
-    const innerRef = useRef(null);
     const [scale, setScale] = useState(1);
     const primeros = useMemo(() => (componentes || []).slice(0, 1), [componentes]);
 
@@ -37,28 +41,20 @@ function PreviewComponentes({ componentes }) {
         applyScale();
         const ro = new ResizeObserver(applyScale);
         ro.observe(outer);
-        return () => ro.disconnect();
+        // Red de seguridad: si la primera medición cae en 0 (grillas con
+        // varias tarjetas montando a la vez), reintenta en el próximo frame.
+        const raf = requestAnimationFrame(applyScale);
+        return () => {
+            ro.disconnect();
+            cancelAnimationFrame(raf);
+        };
     }, []);
-
-    // After every render (new scale or new components), sync outer height
-    // to the scaled height of the inner content
-    useLayoutEffect(() => {
-        const outer = outerRef.current;
-        const inner = innerRef.current;
-        if (!outer || !inner) return;
-
-        const innerH = inner.offsetHeight;
-        if (innerH > 0) {
-            outer.style.height = `${innerH * scale}px`;
-        }
-    }); // runs after every render — intentional (scale + primeros both affect height)
 
     return (
         <div className="prevc-outer" ref={outerRef}>
             <div
                 className="prevc-inner"
-                ref={innerRef}
-                style={{ transform: `scale(${scale})`, width: CANVAS_WIDTH }}
+                style={{ transform: `scale(${scale})` }}
             >
                 {primeros.length === 0 && <div className="prevc-empty" />}
                 {primeros.map((comp, i) => {

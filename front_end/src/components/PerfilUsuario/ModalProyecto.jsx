@@ -185,6 +185,7 @@ function ModalProyecto({ proyecto, resenas = [], onClose, onReviewAdded }) {
                             ) : (
                                 <div style={{ pointerEvents: 'none' }} inert="">
                                     <Lienzo
+                                        escalarMobile
                                         tituloProyecto={proyecto.titulo}
                                         descripcionProyecto={proyecto.descripcion}
                                         childrenEstructura={<>{renderComponentes()}</>}
@@ -196,6 +197,15 @@ function ModalProyecto({ proyecto, resenas = [], onClose, onReviewAdded }) {
 
                     {/* ── Derecha: reseñas ── */}
                     <div className="modal-right">
+
+                        {!isOwner && (
+                            <button
+                                className="modal-btn-ver-perfil"
+                                onClick={() => { onClose(); navigate(`/perfil/${proyecto.usuarioId}`); }}
+                            >
+                                <i className="fa-solid fa-user" /> Ver perfil del creador
+                            </button>
+                        )}
 
                         {proyecto.categorias?.length > 0 && (
                             <div className="modal-cats-section">

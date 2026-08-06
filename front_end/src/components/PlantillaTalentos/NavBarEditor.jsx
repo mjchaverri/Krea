@@ -1,8 +1,10 @@
+import { useState } from "react"
 import "../../styles/PlantillaTalentos/NavBarEditor.css"
 
 function NavBarEditor({ guardar, onPreview, onDescargar }) {
     const usuario = JSON.parse(localStorage.getItem("UsuarioActivo") || "{}");
     const fotoPerfil = usuario?.img || "";
+    const [menuAbierto, setMenuAbierto] = useState(false);
 
     return (
         <nav className="navbar-editor">
@@ -34,7 +36,24 @@ function NavBarEditor({ guardar, onPreview, onDescargar }) {
                 <a href="/perfil-usuario" className="avatar-link" title="Volver al perfil">
                     <img src={fotoPerfil} alt="Perfil" className="avatar" />
                 </a>
+
+                <button
+                    className="navbar-editor__toggle"
+                    aria-label="Menú"
+                    onClick={() => setMenuAbierto(v => !v)}
+                >
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
             </div>
+
+            {menuAbierto && (
+                <div className="navbar-editor__mobile-menu">
+                    <a href="/principal" onClick={() => setMenuAbierto(false)}>Inicio</a>
+                    <a href="/perfil-usuario" onClick={() => setMenuAbierto(false)}>Mis proyectos</a>
+                </div>
+            )}
 
         </nav>
     )

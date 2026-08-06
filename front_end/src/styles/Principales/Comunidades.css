@@ -139,6 +139,70 @@
 }
 
 /* ============================================================
+   TABS: Todas las comunidades / Mis comunidades
+   Solo para mobile — en escritorio esa distinción ya la da el sidebar
+   (Discovery / Mis comunidades), que se oculta debajo de 768px.
+   ============================================================ */
+.com-tabs-section {
+    display: none;
+    background: var(--com-surface);
+    border-bottom: 1px solid var(--com-border);
+    padding: 0 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .com-tabs-section {
+        display: block;
+    }
+}
+
+.com-tabs {
+    display: flex;
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.com-tab {
+    background: none;
+    border: none;
+    border-bottom: 2.5px solid transparent;
+    padding: 14px 2px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--com-text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Inter', sans-serif;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.com-tab:hover:not(:disabled) {
+    color: var(--com-text);
+}
+
+.com-tab:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.com-tab--activa {
+    color: var(--com-primary);
+    border-bottom-color: var(--com-primary);
+}
+
+.com-tab__badge {
+    background: var(--com-primary-glow);
+    color: var(--com-primary);
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 1px 7px;
+    border-radius: 50px;
+}
+
+/* ============================================================
    FILTROS
    ============================================================ */
 .com-filtros-section {
@@ -214,45 +278,6 @@
 
 .com-filtros-section .pp-filter-btn:hover:not(.active) {
     color: #0ea5e9;
-}
-
-/* ============================================================
-   STATS
-   ============================================================ */
-.com-stats {
-    display: flex;
-    justify-content: center;
-    gap: 4rem;
-    padding: 2.5rem 2rem;
-    background: var(--com-surface);
-    margin-bottom: 0;
-    border-bottom: 1px solid var(--com-border);
-}
-
-.com-stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.3rem;
-}
-
-.com-stat__numero {
-    font-size: 2.4rem;
-    font-weight: 900;
-    color: var(--com-primary);
-    line-height: 1;
-    background: linear-gradient(135deg, #0ea5e9, #38bdf8);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.com-stat__label {
-    font-size: 0.85rem;
-    color: var(--com-text-muted);
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
 }
 
 /* ============================================================
@@ -1631,4 +1656,119 @@
 }
 .ch-modal__btn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
 .ch-modal__btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ============================================================
+   RESPONSIVE — hero / tabs / filtros / stats / cards más chicos
+   ============================================================ */
+@media (max-width: 640px) {
+    .com-hero {
+        padding: 2rem 1.25rem 1.5rem;
+    }
+
+    .com-hero__badge {
+        font-size: 0.62rem;
+        margin-bottom: 0.7rem;
+    }
+
+    .com-hero__titulo {
+        font-size: 1.5rem;
+        margin-bottom: 0.6rem;
+    }
+
+    .com-hero__subtitulo {
+        font-size: 0.82rem;
+        line-height: 1.5;
+        margin-bottom: 1.2rem;
+    }
+
+    .com-hero__input {
+        padding: 0.65rem 1rem 0.65rem 2.6rem;
+        font-size: 0.82rem;
+    }
+
+    .com-hero__search-icon {
+        left: 0.9rem;
+        font-size: 0.85rem;
+    }
+
+    .com-tabs-section {
+        padding: 0 1rem;
+    }
+
+    .com-tabs {
+        gap: 1rem;
+    }
+
+    .com-tab {
+        font-size: 0.78rem;
+        padding: 10px 2px;
+    }
+
+    .com-filtros-section {
+        padding: 0.55rem 1rem;
+    }
+
+    .com-filtros-section .pp-filter-btn {
+        font-size: 0.75rem;
+        padding: 5px 13px;
+    }
+
+    .com-filtros-section .pp-filters-arrow {
+        width: 24px;
+        height: 24px;
+        font-size: 0.8rem;
+    }
+
+    .com-grid-section {
+        padding: 1.5rem 1rem 3rem;
+    }
+
+    .com-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .com-card__banner {
+        height: 100px;
+    }
+
+    .com-card__icono {
+        font-size: 2rem;
+    }
+
+    .com-card__body {
+        padding: 0.9rem 1rem 1rem;
+    }
+
+    .com-card__categoria {
+        font-size: 0.6rem;
+        padding: 0.2rem 0.55rem;
+        max-width: 110px;
+    }
+
+    .com-card__miembros {
+        font-size: 0.68rem;
+    }
+
+    .com-card__nombre {
+        font-size: 0.95rem;
+    }
+
+    .com-card__descripcion {
+        font-size: 0.78rem;
+        margin-bottom: 0.9rem;
+    }
+
+    .com-card__acciones {
+        gap: 0.4rem;
+    }
+
+    .com-card__btn-ver,
+    .com-card__btn-unirse,
+    .com-card__btn-gestionar,
+    .com-card__btn-chat {
+        font-size: 0.75rem;
+        padding: 7px 12px;
+    }
+}
 

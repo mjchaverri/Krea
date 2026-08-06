@@ -139,3 +139,99 @@
   cursor: not-allowed;
 }
 
+/* ── Barra inferior mobile (Deshacer / Rehacer / Plantillas / Opciones) ── */
+.editor-bottombar {
+  display: none;
+}
+
+.editor-bottombar__btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  padding: 6px 2px;
+  color: #64748b;
+  font-size: 9px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.editor-bottombar__btn i {
+  font-size: 14px;
+}
+
+.editor-bottombar__btn--activo {
+  color: #0ea5e9;
+}
+
+.editor-bottombar__btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  /* El panel de plantillas pasa a ser una hoja que sube desde abajo,
+     en vez de ir apilado sobre el lienzo. Se oculta con visibility (no
+     solo transform) para garantizar que no se pinte ni sea clickeable
+     sin importar cómo el navegador resuelva el position:fixed. */
+  .sidebar-container {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 40vh;    /* fija ambos bordes: la altura queda 100% pegada   */
+    bottom: 56px; /* entre acá y la barra inferior, sin depender de vh */
+    width: 100%;
+    background: #ffffff;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.15);
+    transform: translateY(110%);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.25s;
+    z-index: 2050;
+    pointer-events: none;
+  }
+
+  .sidebar-container--mobile-abierto {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0s;
+  }
+
+  .lienzo-container {
+    overflow-y: visible;
+    /* Deja libre todo el espacio de trabajo: la única barra fija en mobile
+       es la inferior (56px) — las hojas de Imagen/Opciones/Plantillas solo
+       ocupan espacio cuando están abiertas. */
+    padding-bottom: 72px;
+  }
+
+  .editor-bottombar {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 56px;
+    background: #ffffff;
+    border-top: 1px solid #e5e7eb;
+    z-index: 2100;
+  }
+}
+

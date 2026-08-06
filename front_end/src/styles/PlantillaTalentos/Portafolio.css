@@ -139,3 +139,21 @@
   cursor: not-allowed;
 }
 
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  .sidebar-container {
+    width: 100%;
+    height: auto;
+    max-height: 220px;
+    position: static;
+  }
+
+  .lienzo-container {
+    overflow-y: visible;
+  }
+}
+

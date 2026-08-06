@@ -266,3 +266,20 @@
     background: #f1f5f9;
     border-color: #e5e7eb;
 }
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+    .pvw-card {
+        width: 97%;
+        height: 90vh;
+        border-radius: 12px;
+    }
+
+    .pvw-card__header {
+        padding: 10px 14px;
+    }
+
+    .pvw-zoom-bar {
+        padding: 8px 10px;
+    }
+}

@@ -468,7 +468,7 @@ function DashboardAdmin({ onInspeccionar }) {
                                         value={buscarUsuario}
                                         onChange={e => setBuscarUsuario(e.target.value)}
                                         placeholder="Buscar usuario..."
-                                        style={{ paddingLeft: 32, paddingRight: 12, paddingTop: 8, paddingBottom: 8, borderRadius: 8, border: '1.5px solid #e2e8f0', fontSize: 13, outline: 'none', width: 200, fontFamily: 'inherit', background: '#f8fafc' }}
+                                        style={{ paddingLeft: 32, paddingRight: 12, paddingTop: 8, paddingBottom: 8, borderRadius: 8, border: '1.5px solid #e2e8f0', fontSize: 13, outline: 'none', width: 'min(200px, 45vw)', fontFamily: 'inherit', background: '#f8fafc' }}
                                     />
                                 </div>
                             </div>

@@ -458,3 +458,23 @@
         transform: translateY(0);
     }
 }
+
+/* ── Responsive ── */
+/* En mobile los 360px fijos + right:25px se salen de la pantalla — la
+   ventana pasa a ocupar el ancho disponible entre dos márgenes. */
+@media (max-width: 480px) {
+    .chatbot-window {
+        left: 12px;
+        right: 12px;
+        width: auto;
+        height: min(540px, calc(100vh - 130px));
+        bottom: 90px;
+    }
+
+    .chatbot-bubble {
+        right: 16px;
+        bottom: 16px;
+        width: 56px;
+        height: 56px;
+    }
+}

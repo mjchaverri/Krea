@@ -187,3 +187,18 @@
     margin: 0;
     line-height: 1.6;
 }
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+    .lienzo {
+        padding: 72px 14px 40px;
+    }
+
+    .lienzo__titulo {
+        font-size: 1.7rem;
+    }
+
+    .lienzo__descripcion {
+        font-size: 0.9rem;
+    }
+}

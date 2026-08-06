@@ -205,3 +205,14 @@
     color: #9ca3af;
     padding: 0 8px;
 }
+
+/* ── Responsive ── */
+/* En mobile el sidebar ya no va al lado del lienzo (queda arriba, ver
+   Portafolio.css), así que la pastilla se centra sobre todo el ancho
+   en vez de reservar espacio para el sidebar de 260px. */
+@media (max-width: 900px) {
+    .barra-herramientas {
+        left: 50%;
+        max-width: calc(100vw - 24px);
+    }
+}

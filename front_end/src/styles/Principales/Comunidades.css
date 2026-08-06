@@ -221,8 +221,9 @@
    ============================================================ */
 .com-stats {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
-    gap: 4rem;
+    gap: 2.5rem 4rem;
     padding: 2.5rem 2rem;
     background: var(--com-surface);
     margin-bottom: 0;

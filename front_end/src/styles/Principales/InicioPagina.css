@@ -110,6 +110,23 @@
   transform: translateY(-1px);
 }
 
+/* ── Navbar (landing) responsive ── */
+@media (max-width: 480px) {
+  .BrandName {
+    font-size: 1.25rem;
+  }
+
+  .nav-session-btns {
+    gap: 8px;
+  }
+
+  .BtnLogin,
+  .BtnRegister {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}
+
 .HeroWrapper {
   padding: 4rem 0;
   background-color: var(--white);

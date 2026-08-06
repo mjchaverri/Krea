@@ -183,3 +183,38 @@
 .portafolio-container {
   margin-top: 70px;
 }
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .navbar-editor {
+    padding: 0 14px;
+  }
+
+  /* El subtítulo y los links de Inicio/Mis proyectos son secundarios acá —
+     ambos destinos siguen alcanzables por el logo y el avatar. */
+  .navbar-editor__subtitle,
+  .navbar-editor__divider,
+  .navbar-editor__center {
+    display: none;
+  }
+
+  .navbar-editor__right {
+    gap: 6px;
+  }
+
+  /* Botones a solo ícono: el texto queda oculto (font-size:0) y el ícono
+     recupera su tamaño explícitamente, sin tocar el JSX. */
+  .btn-preview,
+  .btn-download,
+  .btn-save {
+    padding: 8px;
+    font-size: 0;
+    gap: 0;
+  }
+
+  .btn-preview i,
+  .btn-download i,
+  .btn-save i {
+    font-size: 15px;
+  }
+}

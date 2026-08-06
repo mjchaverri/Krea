@@ -9,7 +9,6 @@ import ModalProyecto from '../components/PerfilUsuario/ModalProyecto';
 import { calcularPromedio } from '../utils/calcularPromedio';
 import "../styles/EstilosPerfilUsuario/ProyectosRecientes.css";
 import "../styles/PlantillaTalentos/TodosProyectos.css";
-import ChatBotBubble from '../components/PlantillaTalentos/ChatBotBubble';
 
 const ITEMS_POR_PAGINA = 12;
 
@@ -22,6 +21,7 @@ function TodosProyectos() {
     const [cargando, setCargando] = useState(true);
     const [tabActiva, setTabActiva] = useState("todos");
     const [paginaActual, setPaginaActual] = useState(1);
+    const [vista, setVista] = useState("cuadricula");
 
     const [filtroProvincia, setFiltroProvincia] = useState("");
     const [filtroCanton, setFiltroCanton] = useState("");
@@ -60,7 +60,6 @@ function TodosProyectos() {
 
     const [portafoliosSiguiendo, setPortafoliosSiguiendo] = useState([]);
     const [cargandoSiguiendo, setCargandoSiguiendo] = useState(false);
-    const [paginaSiguiendo, setPaginaSiguiendo] = useState(1);
 
     const cargarDatos = async () => {
         setCargando(true);
@@ -90,9 +89,9 @@ function TodosProyectos() {
             .finally(() => setCargandoSiguiendo(false));
     }, [tabActiva]);
 
-    // Reset página cuando cambian filtros
+    // Reset página cuando cambian filtros o de pestaña
     useEffect(() => { setPaginaActual(1); }, [
-        filtroProvincia, filtroCanton, filtroDistrito, filtroRating, ordenarPor, busqueda, filtroCategoria
+        filtroProvincia, filtroCanton, filtroDistrito, filtroRating, ordenarPor, busqueda, filtroCategoria, tabActiva
     ]);
 
     const provinciasUnicas = useMemo(() =>
@@ -111,8 +110,10 @@ function TodosProyectos() {
             .map(p => p.usuario?.Distrito).filter(Boolean))],
         [portafolios, filtroCanton]);
 
-    const proyectosFiltrados = useMemo(() => {
-        let resultado = portafolios.reduce((acc, proyecto) => {
+    // Filtro/orden reutilizable — sirve tanto para "Todos los portafolios"
+    // como para "Siguiendo", cada una con su propia lista de origen.
+    const aplicarFiltros = (lista) => {
+        let resultado = lista.reduce((acc, proyecto) => {
             const u = proyecto.usuario || {};
 
             if (filtroProvincia && u.Provincias !== filtroProvincia) return acc;
@@ -138,10 +139,19 @@ function TodosProyectos() {
         if (ordenarPor === "populares") resultado.sort((a, b) => b.cantidadResenas - a.cantidadResenas);
 
         return resultado;
-    }, [portafolios, todasResenas, filtroProvincia, filtroCanton, filtroDistrito, filtroRating, ordenarPor, busqueda, filtroCategoria]);
+    };
 
-    const totalPaginas = Math.max(1, Math.ceil(proyectosFiltrados.length / ITEMS_POR_PAGINA));
-    const proyectosPagina = proyectosFiltrados.slice(
+    const proyectosFiltrados = useMemo(() => aplicarFiltros(portafolios),
+        [portafolios, todasResenas, filtroProvincia, filtroCanton, filtroDistrito, filtroRating, ordenarPor, busqueda, filtroCategoria]);
+
+    const siguiendoFiltrados = useMemo(() => aplicarFiltros(portafoliosSiguiendo),
+        [portafoliosSiguiendo, todasResenas, filtroProvincia, filtroCanton, filtroDistrito, filtroRating, ordenarPor, busqueda, filtroCategoria]);
+
+    const listaActiva = tabActiva === 'todos' ? proyectosFiltrados : siguiendoFiltrados;
+    const cargandoActiva = tabActiva === 'todos' ? cargando : cargandoSiguiendo;
+
+    const totalPaginas = Math.max(1, Math.ceil(listaActiva.length / ITEMS_POR_PAGINA));
+    const proyectosPagina = listaActiva.slice(
         (paginaActual - 1) * ITEMS_POR_PAGINA,
         paginaActual * ITEMS_POR_PAGINA
     );
@@ -213,9 +223,8 @@ function TodosProyectos() {
                 </div>
             </div>
 
-            {/* ── Contenido ── */}
-            {tabActiva === 'todos' ? (
-                <div className="tp-layout">
+            {/* ── Contenido — mismo layout de filtros para ambas pestañas ── */}
+            <div className="tp-layout">
 
                     {/* Barra de filtros con dropdowns */}
                     <div className="tp-filtros" ref={dropdownsRef}>
@@ -347,16 +356,48 @@ function TodosProyectos() {
                     <main className="tp-main">
                         <div className="tp-main__header">
                             <p className="tp-main__count">
-                                {cargando ? 'Cargando...' : `${proyectosFiltrados.length} resultado${proyectosFiltrados.length !== 1 ? 's' : ''}`}
+                                {cargandoActiva
+                                    ? 'Cargando...'
+                                    : tabActiva === 'todos'
+                                        ? `${listaActiva.length} resultado${listaActiva.length !== 1 ? 's' : ''}`
+                                        : `${listaActiva.length} portafolio${listaActiva.length !== 1 ? 's' : ''} de usuarios que sigues`
+                                }
                             </p>
+                            <div className="proyectos-vista-toggle" role="group" aria-label="Tipo de vista">
+                                <button
+                                    className={`proyectos-vista-btn ${vista === 'cuadricula' ? 'proyectos-vista-btn--activo' : ''}`}
+                                    onClick={() => setVista('cuadricula')}
+                                    title="Vista de cuadrícula"
+                                    type="button"
+                                >
+                                    <i className="fa-solid fa-table-cells-large" />
+                                </button>
+                                <button
+                                    className={`proyectos-vista-btn ${vista === 'lista' ? 'proyectos-vista-btn--activo' : ''}`}
+                                    onClick={() => setVista('lista')}
+                                    title="Vista de lista"
+                                    type="button"
+                                >
+                                    <i className="fa-solid fa-list" />
+                                </button>
+                            </div>
                         </div>
 
-                        {cargando ? (
+                        {cargandoActiva ? (
                             <div className="tp-loading">
                                 <div className="tp-spinner" />
                                 <p>Cargando portafolios...</p>
                             </div>
-                        ) : proyectosFiltrados.length === 0 ? (
+                        ) : tabActiva === 'siguiendo' && portafoliosSiguiendo.length === 0 ? (
+                            <div className="tp-empty">
+                                <i className="fa-regular fa-star" />
+                                <h3>Aún no sigues a nadie</h3>
+                                <p>Visita el perfil de un talento y haz clic en <strong>Seguir</strong> para ver su trabajo aquí.</p>
+                                <button className="tp-empty__btn" onClick={() => setTabActiva('todos')}>
+                                    Explorar portafolios
+                                </button>
+                            </div>
+                        ) : listaActiva.length === 0 ? (
                             <div className="tp-empty">
                                 <i className="fa-solid fa-magnifying-glass" />
                                 <h3>Sin resultados</h3>
@@ -369,7 +410,7 @@ function TodosProyectos() {
                             </div>
                         ) : (
                             <>
-                                <div className="proyectos-grid">
+                                <div className={`proyectos-grid ${vista === 'lista' ? 'proyectos-grid--lista' : ''}`}>
                                     {proyectosPagina.map(proyecto => (
                                         <CardProyecto
                                             key={proyecto.id}
@@ -380,6 +421,7 @@ function TodosProyectos() {
                                             promedio={proyecto.promedio}
                                             usuario={proyecto.usuario}
                                             onVerProyecto={() => setProyectoSeleccionado(proyecto)}
+                                            vista={vista}
                                         />
                                     ))}
                                 </div>
@@ -425,64 +467,7 @@ function TodosProyectos() {
                             </>
                         )}
                     </main>
-                </div>
-            ) : (
-                /* ── Tab Siguiendo ── */
-                <div className="tp-siguiendo-view">
-                    {cargandoSiguiendo ? (
-                        <div className="tp-loading">
-                            <div className="tp-spinner" />
-                            <p>Cargando portafolios...</p>
-                        </div>
-                    ) : portafoliosSiguiendo.length === 0 ? (
-                        <div className="tp-empty">
-                            <i className="fa-regular fa-star" />
-                            <h3>Aún no sigues a nadie</h3>
-                            <p>Visita el perfil de un talento y haz clic en <strong>Seguir</strong> para ver su trabajo aquí.</p>
-                            <button className="tp-empty__btn" onClick={() => setTabActiva('todos')}>
-                                Explorar portafolios
-                            </button>
-                        </div>
-                    ) : (
-                        <>
-                            <p className="tp-main__count" style={{ marginBottom: 16 }}>
-                                {portafoliosSiguiendo.length} portafolio{portafoliosSiguiendo.length !== 1 ? 's' : ''} de usuarios que sigues
-                            </p>
-                            <div className="proyectos-grid">
-                                {portafoliosSiguiendo
-                                    .slice((paginaSiguiendo - 1) * ITEMS_POR_PAGINA, paginaSiguiendo * ITEMS_POR_PAGINA)
-                                    .map(proyecto => {
-                                        const resenasP = todasResenas.filter(r => r.portafolioId === proyecto.id);
-                                        return (
-                                            <CardProyecto
-                                                key={proyecto.id}
-                                                idProyecto={proyecto.id}
-                                                nombreProyecto={proyecto.titulo}
-                                                componentes={proyecto.componentes}
-                                                categorias={proyecto.categorias || []}
-                                                promedio={calcularPromedio(resenasP)}
-                                                onVerProyecto={() => setProyectoSeleccionado(proyecto)}
-                                            />
-                                        );
-                                    })}
-                            </div>
-                            {Math.ceil(portafoliosSiguiendo.length / ITEMS_POR_PAGINA) > 1 && (
-                                <div className="tp-paginacion">
-                                    {Array.from({ length: Math.ceil(portafoliosSiguiendo.length / ITEMS_POR_PAGINA) }, (_, i) => i + 1).map(num => (
-                                        <button
-                                            key={num}
-                                            className={`tp-pag-btn ${paginaSiguiendo === num ? 'tp-pag-btn--activa' : ''}`}
-                                            onClick={() => setPaginaSiguiendo(num)}
-                                        >
-                                            {num}
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
-                        </>
-                    )}
-                </div>
-            )}
+            </div>
 
             <Footer />
 
@@ -492,17 +477,6 @@ function TodosProyectos() {
                 onClose={() => setProyectoSeleccionado(null)}
                 onReviewAdded={cargarDatos}
             />
-
-            {proyectoSeleccionado && (
-                <button
-                    className="tp-btn-perfil-flotante"
-                    onClick={() => navigate(`/perfil/${proyectoSeleccionado.usuarioId}`)}
-                >
-                    <i className="fa-solid fa-user" /> Ver perfil del creador
-                </button>
-            )}
-
-            <ChatBotBubble />
         </div>
     );
 }

@@ -676,6 +676,7 @@ function CompComunidades({
     const [usuario, setUsuario] = useState(null)
     const [cargando, setCargando] = useState(true)
     const [categoriaLocal, setCategoriaLocal] = useState('Todas')
+    const [vistaComunidades, setVistaComunidades] = useState('todas')
     const categoriaActiva = categoriaExterna ?? categoriaLocal
     const setCategoriaActiva = (cat) => {
         if (onCategoriaChange) onCategoriaChange(cat)
@@ -762,9 +763,11 @@ function CompComunidades({
             const coincideBusqueda =
                 c.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
                 c.descripcion.toLowerCase().includes(busqueda.toLowerCase())
-            return coincideCategoria && coincideBusqueda
+            const coincideVista = vistaComunidades === 'todas' || (usuario &&
+                miembros.some(m => m.comunidadId === c.id && m.usuarioId === usuario.id))
+            return coincideCategoria && coincideBusqueda && coincideVista
         })
-    }, [comunidades, categoriaActiva, busqueda])
+    }, [comunidades, categoriaActiva, busqueda, vistaComunidades, miembros, usuario])
 
     const esMiembro = (comunidadId) => {
         if (!usuario) return false
@@ -915,6 +918,29 @@ function CompComunidades({
                         </div>
                     </section>
 
+                    {/* Tabs: todas las comunidades / solo las mías */}
+                    <section className="com-tabs-section">
+                        <div className="com-tabs">
+                            <button
+                                className={`com-tab ${vistaComunidades === 'todas' ? 'com-tab--activa' : ''}`}
+                                onClick={() => setVistaComunidades('todas')}
+                            >
+                                Todas las comunidades
+                            </button>
+                            <button
+                                className={`com-tab ${vistaComunidades === 'mias' ? 'com-tab--activa' : ''}`}
+                                onClick={() => setVistaComunidades('mias')}
+                                disabled={!usuario}
+                                title={!usuario ? 'Inicia sesión para ver tus comunidades' : undefined}
+                            >
+                                Mis comunidades
+                                {usuario && miembros.length > 0 && (
+                                    <span className="com-tab__badge">{miembros.length}</span>
+                                )}
+                            </button>
+                        </div>
+                    </section>
+
                     {/* Filtros */}
                     <section className="com-filtros-section">
                         <div className="pp-filters-carousel">
@@ -936,22 +962,6 @@ function CompComunidades({
                             <button className="pp-filters-arrow" onClick={() => scrollFilters(1)}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                             </button>
-                        </div>
-                    </section>
-
-                    {/* Stats */}
-                    <section className="com-stats">
-                        <div className="com-stat">
-                            <span className="com-stat__numero">{comunidades.length}</span>
-                            <span className="com-stat__label">Comunidades</span>
-                        </div>
-                        <div className="com-stat">
-                            <span className="com-stat__numero">{miembros.length}</span>
-                            <span className="com-stat__label">Miembros activos</span>
-                        </div>
-                        <div className="com-stat">
-                            <span className="com-stat__numero">{CATEGORIAS.length - 1}</span>
-                            <span className="com-stat__label">Categorías</span>
                         </div>
                     </section>
 

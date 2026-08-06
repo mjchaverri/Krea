@@ -206,6 +206,7 @@
 
 .HeroButtons {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
 }
 
@@ -473,6 +474,22 @@
   padding: 0;
   max-width: 1300px;
   margin: 3rem auto 0;
+}
+
+@media (max-width: 900px) {
+  .FeaturesContainer {
+    flex-wrap: wrap;
+  }
+
+  .FeatureCard {
+    flex: 1 1 260px;
+  }
+}
+
+@media (max-width: 640px) {
+  .FeaturesContainer {
+    flex-direction: column;
+  }
 }
 
 .FeatureCard {

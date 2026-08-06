@@ -44,6 +44,11 @@ function EditorPortafolio() {
         setActiveElement,
         showPreviewModal,
         showPdfCapture,
+        mostrarPlantillasMobile,
+        setMostrarPlantillasMobile,
+        mostrarOpcionesMobile,
+        setMostrarOpcionesMobile,
+        cerrarHojasMobile,
         pdfCaptureRef,
         lienzoRef,
         indiceRef,
@@ -64,6 +69,19 @@ function EditorPortafolio() {
         setDescripcionProyecto,
         setCategorias,
     } = usePortafolioEditor();
+
+    // Cierra las hojas móviles al entrar al editor y también cuando el
+    // navegador restaura la página desde su caché de atrás/adelante
+    // (bfcache), que congela y repone el estado de React tal como quedó
+    // la última vez — incluida una hoja que se había dejado abierta.
+    useEffect(() => {
+        cerrarHojasMobile();
+        const handlePageShow = (e) => {
+            if (e.persisted) cerrarHojasMobile();
+        };
+        window.addEventListener("pageshow", handlePageShow);
+        return () => window.removeEventListener("pageshow", handlePageShow);
+    }, []);
 
     // =========================================
     // ESCUCHAR PORTAFOLIO GENERADO POR KREIA
@@ -114,7 +132,9 @@ function EditorPortafolio() {
                 onDescargar={descargarPDF}
             />
 
+            {/* Escritorio: barra completa (ver Portafolio.css la oculta en mobile) */}
             <BarraHerramientas
+                vista="completa"
                 activeElement={activeElement}
                 onDeshacer={deshacer}
                 onRehacer={rehacer}
@@ -125,18 +145,32 @@ function EditorPortafolio() {
                 }
             />
 
+            {/* Mobile: hoja de Opciones (fondo/imagen + formato de texto),
+                anclada arriba de la barra inferior, se abre desde su ícono
+                o desde la flechita del ícono Texto */}
+            <div
+                className={`barra-sheet-mobile${mostrarOpcionesMobile ? " barra-sheet-mobile--abierta" : ""}`}
+                onClick={(e) => e.stopPropagation()}
+            >
+                <BarraHerramientas vista="opciones" activeElement={activeElement} />
+            </div>
+
             <ImageProvider>
 
                 <div
                     className="portafolio-container"
-                    onClick={() =>
+                    onClick={() => {
                         setActiveElement(null)
-                    }
+                        cerrarHojasMobile()
+                    }}
                 >
 
                     <div className="layout">
 
-                        <div className="sidebar-container">
+                        <div
+                            className={`sidebar-container${mostrarPlantillasMobile ? " sidebar-container--mobile-abierto" : ""}`}
+                            onClick={(e) => e.stopPropagation()}
+                        >
 
                             <SidebarTalentos
                                 actEst1={() =>
@@ -179,6 +213,8 @@ function EditorPortafolio() {
                         >
 
                             <Lienzo
+                                escalarMobile
+
                                 tituloProyecto={tituloProyecto}
 
                                 descripcionProyecto={descripcionProyecto}
@@ -233,6 +269,53 @@ function EditorPortafolio() {
                     </div>
                 </div>
             </ImageProvider>
+
+            {/* Barra inferior — solo visible en mobile (ver Portafolio.css) */}
+            <div className="editor-bottombar">
+                <button
+                    className="editor-bottombar__btn"
+                    title="Deshacer"
+                    disabled={indiceRef.current <= 0}
+                    onClick={deshacer}
+                >
+                    <i className="fa-solid fa-rotate-left"></i>
+                    <span>Deshacer</span>
+                </button>
+
+                <button
+                    className="editor-bottombar__btn"
+                    title="Rehacer"
+                    disabled={indiceRef.current >= historialRef.current.length - 1}
+                    onClick={rehacer}
+                >
+                    <i className="fa-solid fa-rotate-right"></i>
+                    <span>Rehacer</span>
+                </button>
+
+                <button
+                    className={`editor-bottombar__btn${mostrarPlantillasMobile ? " editor-bottombar__btn--activo" : ""}`}
+                    onClick={() => {
+                        setActiveElement(null)
+                        setMostrarOpcionesMobile(false)
+                        setMostrarPlantillasMobile(v => !v)
+                    }}
+                >
+                    <i className="fa-solid fa-shapes"></i>
+                    <span>Plantillas</span>
+                </button>
+
+                <button
+                    className={`editor-bottombar__btn${mostrarOpcionesMobile ? " editor-bottombar__btn--activo" : ""}`}
+                    disabled={!activeElement}
+                    onClick={() => {
+                        setMostrarPlantillasMobile(false)
+                        setMostrarOpcionesMobile(v => !v)
+                    }}
+                >
+                    <i className="fa-solid fa-sliders"></i>
+                    <span>Opciones</span>
+                </button>
+            </div>
 
             {/* PDF */}
 

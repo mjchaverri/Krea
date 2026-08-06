@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useLayoutEffect } from "react";
 import Lienzo from "./Lienzo";
 import Estructura1 from "./Estructura1";
 import Estructura1_1 from "./Estructura1_1";
@@ -15,8 +15,28 @@ const MAPA = {
     GrillaDoble, GrillaTriple, Grilla1_2_Izda,
 };
 
+const HOST_WIDTH = 860;
+
 function ModalVistaPrevia({ visible, componentes, tituloProyecto, descripcionProyecto, categorias, onClose }) {
     const [zoom, setZoom] = useState(1);
+    const bodyRef = useRef(null);
+
+    // El host mide siempre 860px de ancho real (ver CSS), así que al abrir
+    // el modal calculamos un zoom inicial que lo haga entrar en pantalla
+    // en vez de arrancar siempre en 100% y obligar a achicar a mano.
+    useLayoutEffect(() => {
+        if (!visible) return;
+        const body = bodyRef.current;
+        if (!body) return;
+        const ajustar = () => {
+            const disponible = body.clientWidth - 48; // margen del host (24px * 2)
+            if (disponible > 0) setZoom(Math.min(1, +(disponible / HOST_WIDTH).toFixed(2)));
+        };
+        ajustar();
+        const ro = new ResizeObserver(ajustar);
+        ro.observe(body);
+        return () => ro.disconnect();
+    }, [visible]);
 
     if (!visible) return null;
 
@@ -43,7 +63,7 @@ function ModalVistaPrevia({ visible, componentes, tituloProyecto, descripcionPro
                     </button>
                 </div>
 
-                <div className="pvw-body" onWheel={handleWheel}>
+                <div className="pvw-body" ref={bodyRef} onWheel={handleWheel}>
                     <div className="pvw-scale-host pvw-preview-mode" style={{ zoom }}>
                         <Lienzo
                             tituloProyecto={tituloProyecto}

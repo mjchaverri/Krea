@@ -184,22 +184,60 @@
   margin-top: 70px;
 }
 
+/* ── Menú hamburguesa (mobile) ── */
+.navbar-editor__toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.navbar-editor__toggle span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: #475569;
+  border-radius: 2px;
+  margin: 0 auto;
+}
+
+.navbar-editor__mobile-menu {
+  display: none;
+}
+
 /* ── Responsive ── */
 @media (max-width: 900px) {
   .navbar-editor {
     padding: 0 14px;
   }
 
-  /* El subtítulo y los links de Inicio/Mis proyectos son secundarios acá —
-     ambos destinos siguen alcanzables por el logo y el avatar. */
-  .navbar-editor__subtitle,
-  .navbar-editor__divider,
+  /* El link de "Inicio/Mis proyectos" centrado de escritorio se reemplaza
+     por el menú hamburguesa; el subtítulo se achica para que quepa. */
   .navbar-editor__center {
     display: none;
   }
 
+  .navbar-editor__subtitle {
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 34vw;
+  }
+
   .navbar-editor__right {
     gap: 6px;
+  }
+
+  .navbar-editor__toggle {
+    display: flex;
   }
 
   /* Botones a solo ícono: el texto queda oculto (font-size:0) y el ícono
@@ -216,5 +254,39 @@
   .btn-download i,
   .btn-save i {
     font-size: 15px;
+  }
+
+  .navbar-editor__mobile-menu {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 70px;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-bottom: 1px solid #e6eaf0;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    z-index: 1999;
+    padding: 8px 0;
+  }
+
+  .navbar-editor__mobile-menu a {
+    padding: 12px 20px;
+    color: #2c3e50;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .navbar-editor__mobile-menu a:hover {
+    background: #f0f9ff;
+    color: #0ea5e9;
+  }
+}
+
+@media (max-width: 380px) {
+  .navbar-editor__subtitle,
+  .navbar-editor__divider {
+    display: none;
   }
 }

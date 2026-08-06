@@ -127,10 +127,14 @@
 .pvw-body::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 .pvw-body::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-/* HOST DEL ZOOM — zoom CSS afecta el layout correctamente */
+/* HOST DEL ZOOM — ancho FIJO (no max-width) para que el lienzo siempre
+   se renderice a su ancho real de diseño y el zoom lo escale como una
+   unidad completa; con max-width el host se achicaba en pantallas
+   angostas y las plantillas (con min-height fijo) quedaban distorsionadas
+   antes de que el control de zoom entrara a actuar. */
 .pvw-scale-host {
     background: #ffffff;
-    max-width: 860px;
+    width: 860px;
     margin: 24px auto;
     box-shadow: 0 4px 24px rgba(0,0,0,0.10);
     border-radius: 8px;

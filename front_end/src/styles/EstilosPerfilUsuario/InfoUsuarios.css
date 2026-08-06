@@ -356,19 +356,62 @@
     background: #dcfce7;
 }
 
-/* ── Responsive ── */
+/* ── Responsive ──
+   Misma organización que en escritorio (foto a la izquierda, info a la
+   derecha, todo alineado a la izquierda), solo escalada a un tamaño más
+   compacto para celular — sin apilar ni centrar. */
 @media (max-width: 640px) {
     .perfil-container {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        gap: 20px;
-        padding: 24px 0;
+        gap: 14px;
+        padding: 20px 0;
     }
 
-    .perfil-nombre-row { justify-content: center; }
-    .perfil-ubicacion  { justify-content: center; }
-    .perfil-contacto-basic p { justify-content: center; }
-    .perfil-botones    { justify-content: center; }
-    .perfil-inputs-ubicacion { justify-content: center; }
+    .perfil-info { gap: 6px; }
+
+    .perfil-img img,
+    .perfil-avatar-placeholder {
+        width: 64px;
+        height: 64px;
+        border-width: 2px;
+    }
+
+    .perfil-avatar-placeholder { font-size: 26px; }
+
+    .perfil-img-subir,
+    .perfil-img-eliminar {
+        font-size: 9.5px;
+        padding: 3px 7px;
+    }
+
+    .perfil-nombre-row { gap: 7px; }
+
+    .perfil-nombre-row h1 { font-size: 17px; }
+
+    .perfil-rol-badge {
+        font-size: 9.5px;
+        padding: 2px 7px;
+    }
+
+    .perfil-ubicacion { font-size: 11.5px; }
+
+    .perfil-descripcion {
+        font-size: 12px;
+        max-width: 100%;
+    }
+
+    .perfil-stats { font-size: 12px; gap: 6px; }
+
+    .perfil-contacto-basic { gap: 3px; }
+
+    .perfil-contacto-basic p { font-size: 12px; }
+
+    .perfil-botones {
+        gap: 7px;
+        margin-top: 2px;
+    }
+
+    .btn-perfil {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
 }

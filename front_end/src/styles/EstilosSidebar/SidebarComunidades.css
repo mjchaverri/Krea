@@ -496,16 +496,27 @@
 .sb__convo-btn--cerrar:hover    { color: #f59e0b; background: #fffbeb; }
 .sb__convo-btn--eliminar:hover  { color: #ef4444; background: #fef2f2; }
 
+/* ── Layout de la página (sidebar + contenido) ── */
+.pc-layout {
+    display: flex;
+    align-items: flex-start;
+}
+
+.pc-content {
+    flex: 1;
+    min-width: 0;
+}
+
 /* ── Responsive ── */
 @media (max-width: 768px) {
+    /* En mobile la propia grilla de CompComunidades ya funciona como
+       lista (tarjetas) y abre el chat al tocar "Ir al chat" — mostrar
+       este sidebar además solo apretaba todo en dos columnas rotas. */
     .sb {
-        width: 100%;
-        min-width: 100%;
-        height: auto;
-        position: relative;
-        top: 0;
-        border-right: none;
-        border-bottom: 1px solid #e2e8f0;
+        display: none;
     }
-    .sb__scroll { max-height: 45vh; }
+
+    .pc-content {
+        width: 100%;
+    }
 }

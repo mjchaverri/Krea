@@ -11,11 +11,11 @@
 /* ── Sección principal con columnas ── */
 .footer-main {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 48px;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 40px;
   max-width: 1680px;
   margin: 0 auto;
-  padding: 56px var(--gutter) 40px;
+  padding: 40px var(--gutter) 28px;
 }
 
 /* ── Columna marca ── */
@@ -112,7 +112,7 @@
 /* ── Barra inferior ── */
 .footer-bottom {
   border-top: 1px solid #e2e8f0;
-  padding: 18px var(--gutter);
+  padding: 14px var(--gutter);
   max-width: 1680px;
   margin: 0 auto;
   display: flex;

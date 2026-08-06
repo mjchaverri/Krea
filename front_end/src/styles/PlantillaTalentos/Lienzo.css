@@ -146,6 +146,26 @@
     flex-direction: column;
 }
 
+/* Solo se agrega cuando el canvas está activamente escalado en mobile
+   (ver Lienzo.jsx) — en escritorio nunca se aplica. */
+.lienzo__canvas--escalando {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Envoltorio que escala el canvas completo como una sola unidad en mobile,
+   para que las plantillas conserven sus proporciones exactas de escritorio
+   en vez de reflowear con sus alturas fijas y distorsionarse. Solo se monta
+   en el DOM cuando realmente se está escalando. */
+.lienzo__canvas-scaler {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: top left;
+    display: flex;
+    flex-direction: column;
+}
+
 /* ESTADO VACÍO */
 .lienzo__empty {
     width: 100%;

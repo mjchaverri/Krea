@@ -302,6 +302,7 @@
 
 .pp-destacado-card {
     display: flex;
+    align-items: center; /* la preview ya no se estira a la altura del texto */
     gap: 0;
     max-width: 1280px;
     width: 100%;
@@ -311,10 +312,14 @@
     box-shadow: 0 4px 24px rgba(14, 165, 233, 0.08);
 }
 
+/* Misma proporción (860:400) que PreviewComponentes, para que la caja
+   quede exactamente del alto de su contenido — sin esto quedaba más alta
+   que la imagen y se veía un espacio vacío debajo. */
 .pp-destacado-preview {
     flex: 1.1;
+    aspect-ratio: 860 / 400;
     background: #f8fafc;
-    overflow-y: auto;
+    overflow: hidden;
 }
 
 .pp-destacado-info {
@@ -485,9 +490,11 @@
     }
     .pp-destacado-card {
         flex-direction: column;
-    }
-    .pp-destacado-preview {
-        min-height: 280px;
+        /* align-items:center (puesto para la fila de escritorio) encoge la
+           preview a su ancho mínimo en la pila vertical — acá vuelve a
+           estirarse a todo el ancho para que el aspect-ratio le dé una
+           altura real en vez de casi cero. */
+        align-items: stretch;
     }
 }
 
@@ -843,10 +850,83 @@
 
 @media (max-width: 640px) {
     .cf-section {
-        padding: 4rem 20px;
+        padding: 2.5rem 16px;
     }
+
+    /* En celular la ilustración va AL LADO del texto (no abajo), ambos
+       escalados chicos — se sobreescribe el flex-direction:column de
+       arriba, que era para tablets. */
+    .cf-inner {
+        flex-direction: row;
+        gap: 0.9rem;
+        align-items: flex-start;
+    }
+
+    .cf-left {
+        flex: 1.3;
+        gap: 0.7rem;
+        min-width: 0;
+    }
+
+    .cf-eyebrow {
+        font-size: 0.6rem;
+    }
+
     .cf-title {
-        font-size: 1.8rem;
+        font-size: 1.15rem;
+        line-height: 1.15;
+    }
+
+    .cf-subtitle {
+        font-size: 0.72rem;
+        line-height: 1.4;
+    }
+
+    .cf-steps {
+        gap: 0.7rem;
+        margin-top: 0.2rem;
+    }
+
+    .cf-step-icon {
+        width: 26px;
+        height: 26px;
+        border-radius: 8px;
+        font-size: 0.68rem;
+    }
+
+    .cf-step-titulo {
+        font-size: 0.72rem;
+        gap: 0.35rem;
+    }
+
+    .cf-step-num {
+        font-size: 0.58rem;
+        padding: 0 5px;
+    }
+
+    /* La descripción larga de cada paso se oculta: no entra cómodo en
+       una columna angosta y el título ya comunica la idea. */
+    .cf-step-desc {
+        display: none;
+    }
+
+    .cf-btn {
+        font-size: 0.72rem;
+        padding: 8px 16px;
+        margin-top: 0.2rem;
+    }
+
+    .cf-right {
+        flex: 1;
+        min-width: 0;
+        justify-content: flex-start;
+    }
+
+    /* Encoge todo el mockup como una sola unidad (zoom, no transform,
+       para que también ocupe menos espacio en el layout y no deje un
+       hueco vacío alrededor). */
+    .cf-mockup {
+        zoom: 0.62;
     }
 }
 
@@ -1116,6 +1196,65 @@
 }
 
 @media (max-width: 640px) {
-    .com-section { padding: 4rem 20px; }
-    .com-title { font-size: 1.8rem; }
+    .com-section { padding: 2.5rem 16px; }
+
+    /* Mismo criterio que "Cómo funciona el editor": ilustración al lado
+       del texto (no arriba), ambos escalados chicos. */
+    .com-inner {
+        flex-direction: row;
+        gap: 0.9rem;
+        align-items: flex-start;
+    }
+
+    .com-left {
+        flex: 1.3;
+        gap: 0.7rem;
+        min-width: 0;
+    }
+
+    .com-right {
+        flex: 1;
+        min-width: 0;
+        justify-content: flex-start;
+    }
+
+    .com-eyebrow { font-size: 0.6rem; }
+
+    .com-title {
+        font-size: 1.15rem;
+        line-height: 1.15;
+    }
+
+    .com-subtitle {
+        font-size: 0.72rem;
+        line-height: 1.4;
+    }
+
+    .com-features {
+        gap: 0.7rem;
+        margin-top: 0.2rem;
+    }
+
+    .com-feature-icon {
+        width: 26px;
+        height: 26px;
+        border-radius: 8px;
+        font-size: 0.68rem;
+    }
+
+    .com-feature-titulo { font-size: 0.72rem; }
+
+    /* La descripción larga se oculta, igual que en "Cómo funciona" */
+    .com-feature-desc { display: none; }
+
+    .com-btn {
+        font-size: 0.72rem;
+        padding: 8px 16px;
+        margin-top: 0.2rem;
+    }
+
+    /* Encoge el mockup del chat como una sola unidad */
+    .com-mockup {
+        zoom: 0.55;
+    }
 }

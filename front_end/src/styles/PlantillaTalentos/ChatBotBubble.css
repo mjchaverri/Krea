@@ -460,6 +460,18 @@
 }
 
 /* ── Responsive ── */
+/* El editor tiene una barra inferior fija (56px) que en mobile taparía
+   la burbuja si se queda pegada al borde — se sube por encima de ella. */
+@media (max-width: 900px) {
+    .chatbot-bubble {
+        bottom: 72px;
+    }
+
+    .chatbot-window {
+        bottom: 146px;
+    }
+}
+
 /* En mobile los 360px fijos + right:25px se salen de la pantalla — la
    ventana pasa a ocupar el ancho disponible entre dos márgenes. */
 @media (max-width: 480px) {
@@ -467,13 +479,13 @@
         left: 12px;
         right: 12px;
         width: auto;
-        height: min(540px, calc(100vh - 130px));
-        bottom: 90px;
+        height: min(540px, calc(100vh - 190px));
+        bottom: 146px;
     }
 
     .chatbot-bubble {
         right: 16px;
-        bottom: 16px;
+        bottom: 72px;
         width: 56px;
         height: 56px;
     }

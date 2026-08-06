@@ -18,6 +18,7 @@ function ProyectosRecientes() {
     const [loading,              setLoading]              = useState(true)
     const [error,                setError]                = useState(null)
     const [pagina,               setPagina]               = useState(1)
+    const [vista,                setVista]                = useState('cuadricula')
 
     const navigate = useNavigate()
 
@@ -86,25 +87,45 @@ function ProyectosRecientes() {
                     onVerProyecto={() => setProyectoSeleccionado(proyecto)}
                     onEditar={() => handleEditarPortfolio(proyecto)}
                     onDelete={() => handleDeletePortfolio(proyecto.id)}
+                    vista={vista}
                 />
             )
         }),
-    [proyectosPag, todasResenas])
+    [proyectosPag, todasResenas, vista])
 
     return (
         <div className='proyectos-container'>
             <div className="proyectos-header">
                 <h4>Mis Proyectos</h4>
-                <button
-                    className="btn-create-empty"
-                    onClick={() => navigate("/portafolio")}
-                    style={{ padding: '8px 16px', fontSize: '13px' }}
-                >
-                    + Agregar Portafolio
-                </button>
+                <div className="proyectos-header-acciones">
+                    <div className="proyectos-vista-toggle" role="group" aria-label="Tipo de vista">
+                        <button
+                            className={`proyectos-vista-btn ${vista === 'cuadricula' ? 'proyectos-vista-btn--activo' : ''}`}
+                            onClick={() => setVista('cuadricula')}
+                            title="Vista de cuadrícula"
+                            type="button"
+                        >
+                            <i className="fa-solid fa-table-cells-large" />
+                        </button>
+                        <button
+                            className={`proyectos-vista-btn ${vista === 'lista' ? 'proyectos-vista-btn--activo' : ''}`}
+                            onClick={() => setVista('lista')}
+                            title="Vista de lista"
+                            type="button"
+                        >
+                            <i className="fa-solid fa-list" />
+                        </button>
+                    </div>
+                    <button
+                        className="btn-create-empty"
+                        onClick={() => navigate("/portafolio")}
+                    >
+                        + Agregar Portafolio
+                    </button>
+                </div>
             </div>
 
-            <div className="proyectos-grid">
+            <div className={`proyectos-grid ${vista === 'lista' ? 'proyectos-grid--lista' : ''}`}>
                 {loading ? (
                     Array(6).fill(0).map((_, i) => (
                         <div key={i} className="proyecto-card-skeleton">
